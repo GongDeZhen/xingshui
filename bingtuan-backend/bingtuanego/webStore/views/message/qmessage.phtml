@@ -1,0 +1,76 @@
+ <?php include(dirname(__FILE__) . '/../sys/header.phtml')?>
+     <script type="text/javascript" src="/js/baidu_count.js"></script>
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="/setacc/index" class="icon icon-goback pull-left"></a>
+		<?php if($info!=0){ ?> <a href="./editmess?type=<?= $type ?>"  class=" pull-right edit">编辑</a><?php }?>
+		<h1 class="title c-white">消息</h1>
+	</header>
+	<div class="segmented-control top-nav">
+		<a class="control-item <?php if($type==0) echo 'active';?>" href="./qmessage?type=0">
+		   		全部消息
+		</a>
+		<a class="control-item <?php if($type==1) echo 'active';?>" href="./qmessage?type=1">
+		    	订单消息
+		</a>
+		<?php if($receiver==2){?>
+		<a class="control-item <?php if($type==2) echo 'active';?>" href="./qmessage?type=2">
+		    	账单消息
+		</a>
+	  <?php }?>
+		<a class="control-item <?php if($type==3) echo 'active';?> " href="./qmessage?type=3">
+		    	官方消息
+		</a>
+	</div>
+	
+	<div class="order-box  content">
+	  <div  class="control-content  active">
+	     <?php if($info!=0){ foreach ($info as $k  => $v) {?>
+    	  	<ul >
+    	  		<li>
+    	  			<a class="content-box" href="javascript:;" onclick="transmit('<?=$v['title']?>','<?=$v['content']?>','<?= date('Y-m-d',$v['create_time'])?>','<?=$v['id']?>','<?=$v['associated_id']?>','<?=$v['type']?>',<?=$v['parent_id']?>)">
+    	  				<div class="row">
+    	  					<div class="col-xs-8">
+    	  						<h3 class="order <?php if($v['status']==0){echo 'red';}?>"><?=$v["title"]?></h3>
+    	  						<p class="d-des"><?=$v["content"]?></p>
+    	  					</div>
+    	  					<div class="col-xs-4 text-right text-right">
+    	  						<p class="time"><?= date("Y-m-d",$v["create_time"])?></p>
+    	  						<p><?=$v["title"]?></p>
+    	  						
+    	  					</div>
+    	  				</div>
+    	  			</a>		
+    	  		</li>
+    	  	</ul>
+    	  	<?php } }else{?>
+    	  	      <div class="content-box text-center mt-120" >                
+                  <p class="fs-17 c-gary1">您最近没有消息</p>
+                 </div>
+    	  	<?php }?>
+	  </div>
+	</div>
+ <?php include(dirname(__FILE__) . '/../sys/footer.phtml')?>
+<script type="text/javascript">
+function transmit(title,connect,time,id,associated_id,type,parent_id){
+  if(type==1){
+	   	window.location='/cart/info?id='+parent_id+"&mid="+id+"&associated_id="+associated_id+"&type="+type;
+    	return false;
+     }else if(type==2){
+  	   	window.location='/state/billmess?associated_id=';
+    	return false;
+     }
+    $.ajax({
+        type: "POST",
+        url: "./info",
+        dataType: "json",
+        data: "title="+title+"&connect="+connect+"&time="+time+"&id="+id+"&associated_id="+associated_id+"&type="+type,
+        success: function(data){
+            if(data.code==1){
+             	window.location='/message/infomessage?title='+data.title+"&connect="+data.connect+"&time="+data.time
+              }else if(data.code==0){
+          	     alert('查看失败');
+               }
+        }
+       });
+}
+</script>

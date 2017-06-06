@@ -1,0 +1,56 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.s{color:red;}
+th {text-align: center;}
+</style>
+
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="list">品牌列表</a></li>
+      <li class="active">编辑品牌</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="list">品牌列表</a></li>
+    <li role="presentation" class="active"><a href="javascript:void(0)">编辑品牌</a></li>
+    </ul>
+    <br>
+    <?php
+      if ($this->errors != '') {
+        echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div>";
+      }
+    ?>
+    <br>
+    <div class="tab-content">
+        <form action='update' method="POST" enctype="multipart/form-data" class="form-horizontal col-sm-12">
+            <input type='hidden' name='id' value="<?=$this->info['id']?>">
+            <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label" for="Bingtuan_goodsName">品牌名称<span class='s'> *</span></label>
+                <div class="col-sm-3">
+              <input type="text" class="form-control" name='name' value='<?=$this->info['name']?>'><span></span>
+                </div>
+            </div>
+              <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">排序</label>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" name='order' value='<?=$this->info['order']?>'>
+                </div>
+              </div>
+              <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">描述<span class='s'> *</span></label>
+                <div class="col-sm-5">
+                  <textarea class="form-control" name='describe' rows="4" cols='4'><?=$this->info['describe']?></textarea>
+                </div>
+              </div>
+            <div class="form-group col-sm-12">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-success">提交</button>
+                </div>
+              </div>
+        </form>
+    </div>
+</div>

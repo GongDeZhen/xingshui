@@ -1,0 +1,103 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<script>
+    laydate.skin('danlan')
+</script>
+<style>
+th {text-align: center;}
+td>div{width:29%;float:left;padding:0.3em}
+td>input{width:12%;}
+.current{color:red;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="companyaccountlist">公司账单管理</a></li>
+      <li class="active">公司账单列表</li>
+    </ol>
+    <form action="companyaccountinfo" id='ajaxform' method="get">
+        <table class="table" style="background:#f5f5f5">
+            <tr>
+                <td>
+                    <input type='hidden' name='id'  value='<?=$this->get['id']?>'>
+                    <input type='hidden' name='cid'  value='<?=$this->get['cid']?>'>
+                    <div class="input-group col-md-4" style='float: left'>
+                        <div class="input-group-addon">搜索订单</div>
+                        <input class='form-control' type="text" placeholder="订单号" name="order_number" value='<?=$this->get['order_number']?>'>
+                    </div>
+                    <div class="input-group col-md-4" style='float: left'>
+                        <div class="input-group-addon">收货人</div>
+                        <input class='form-control' type="text" placeholder="收货人" name="consignee" value='<?=$this->get['consignee']?>'>
+                    </div>
+                    <div class="input-group col-md-3" style='float: left'>
+                        <div class="input-group-addon">订单状态</div>
+                        <select style="padding: 0.2em;" class="form-control" name="order_status">
+                            <option value="0">请选择</option>
+                            <option value="1" <?=($this->get['order_status'] == '1')?'selected=selected':'' ?>>未付款</option>
+                            <option value="2" <?=($this->get['order_status'] == '2')?'selected=selected':'' ?>>待发货</option>
+                            <option value="3" <?=($this->get['order_status'] == '3')?'selected=selected':'' ?>>发货中</option>
+                            <option value="4" <?=($this->get['order_status'] == '4')?'selected=selected':'' ?>>已收货</option>
+                            <option value="5" <?=($this->get['order_status'] == '5')?'selected=selected':'' ?>>申请退款</option>
+                            <option value="6" <?=($this->get['order_status'] == '6')?'selected=selected':'' ?>>已取消</option>
+                        </select>
+                    </div>
+                    <div class="input-group col-sm-3" style='float: left'>
+                        <div class="input-group-addon">经销商</div>
+                        <select name="warehouse_id" class="form-control">
+                            <option value='0'>全部</option>
+                            <?php foreach ($this->getWarehouseList as $k => $v): ?>
+                            	<option value="<?=$v['id']?>" <?=($this->get['warehouse_id']==$v['id'])?'selected="selected"':'';?> ><?=$v['name']?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <span style='float:right;padding:0.3em'>
+                        <input class="btn btn-primary" type="submit" value="搜索">
+                    </span>
+                </td>
+            </tr>
+                
+        </table>
+    </form>
+    <table class="table table-hover" style="text-align: center;">
+    <caption></caption>
+    <thead>
+        <tr>
+            <th>订单号</th>
+            <th>收货人</th>
+            <th>经销商</th>
+            <th>总金额</th>
+            <th>应付金额</th>
+            <th>下单时间</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+      <tbody>
+        <?php if ($this->list['list']): ?>
+        <?php foreach ($this->list['list'] as $order): ?>
+        <tr>
+            <td class='col-md-3'><?=$order['order_number']?></td>
+            <td class="col-md-1"><?=$order['consignee']; ?></td>
+            <td class="col-md-2"><?=$order['warehousename']; ?></td>
+            <td class='col-md-1'><?=$order['goods_amount']?></td>
+            <td class='col-md-1'><?=$order['pay_money']?></td>
+            <td class='col-md-2'><?=date('Y-m-d H:i:s',$order['add_time'])?></td>
+             <td class='col-md-1 status-<?=$order['id']; ?> status'><?=$order['status']?></td>
+            <td class='col-md-1'>
+                <a href="/orders/orderInfo?order_id=<?=$order['id']?>">查看</a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+    <?php echo $this->paglist; ?>
+    <div class="row">
+        <div class="col-xs-12 col-md-8"></div>
+        <div class="col-xs-6 col-md-4 h4">订单数量总计：<?= $this->list['countOrderNumber']?></div>
+        <div class="col-xs-12 col-md-8"></div>
+        <div class="col-xs-6 col-md-4 h4">结算金额总计：<span class='glyphicon glyphicon-yen'><?= number_format($this->list['pay_money'],2); ?></span></div>
+    </div>
+</div>

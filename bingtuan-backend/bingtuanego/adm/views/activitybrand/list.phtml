@@ -1,0 +1,235 @@
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+.table>tbody>tr>td>.input-group {float: left;padding: 0.2em;width:20%}
+</style>
+<script>
+    laydate.skin('danlan')
+</script>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="javascript:void(0)">品牌活动管理</a></li>
+      <li class="active">品牌活动列表</li>
+    </ol>
+    <div>
+        <form action="" method="get" id='ajaxform'>
+        <table class="table" style="background:#f5f5f5">
+            <tr>
+                <td>
+                    <div class="input-group" style='width: 18em'>
+                        <div class="input-group-addon">公司</div>
+                        <select name="company_id" class='form-control' id='company_id'>
+                            <option value="0">全部</option>
+                            <?php foreach($this->getCompanyList as $k => $v){ ?>
+                                    <option value="<?=$v['id']?>" <?= ($this->get['company_id'] == $v['id']) ? 'selected=selected' :'' ?>><?= $v['name']; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="input-group" style='width: 21em'>
+                        <div class="input-group-addon">时间</div>
+                        <input type="text" class='form-control' style='width: 8em;' placeholder="开始时间" onclick="laydate()" name="ktime" id='ktime' value='<?=$this->get['ktime']?>'>
+                        <input name="gtime" class='form-control' style='width: 8em;' type="text" placeholder="结束时间" onclick="laydate()" id='gtime' value='<?=$this->get['gtime']?>'>
+                    </div>
+                    <div class="text-right"><input type="submit" class='btn btn-primary' placeholder="搜索"><div>
+                </td>
+            </tr>
+        </table>
+        </form>
+    </div>
+    <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a href="javascript:void(0)">品牌活动列表</a></li>
+      <li role="presentation"><a href="add">添加品牌活动</a></li>
+    </ul>
+    <div style='margin-top: 1em'>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="col-md-2">活动名称</th>
+                    <th class="col-md-2">品牌</th>
+                    <th class="col-md-2">开始时间</th>
+                    <th class="col-md-2">结束时间</th>
+                    <th class="col-md-2">创建时间</th>
+                    <th class="col-md-1">上下架</th>
+                    <th class="col-md-2">操作</th>
+                </tr>
+            </thead>
+            <tbody id="list-body">
+                <?php if($this->list) { ?>
+                <?php foreach($this->list as $key => $item) : ?>
+                    <tr id="is_del_<?=$item['id']; ?>" <?=(time() > $item['end_time']+86399)? 'style="background-color:#F9EDED"' :''; ?> >
+                        <td class="text-center"><input type="checkbox" name='permission[]' value="<?=$item['id']; ?>" is_show='<?=$item['is_show']?>' style='float: left;'><?= $item['name']; ?></td>
+                        <td class="text-center"><?= $item['activity_brand_id']; ?></td>
+                        <td class="text-center"><?= date('Y-m-d', $item['start_time']); ?></td>
+                        <td class="text-center"><?= date('Y-m-d', $item['end_time']); ?></td>
+                        <td class="text-center"><?= date('Y-m-d H:i:s', $item['create_time']); ?></td>
+                        <td class='text-center' id="is_show_<?=$item['id']?>" ><?=  ($item['is_show'] == 1)?"<span class='btn btn-success' id='is_show_".$item['id']."' onclick='show(". $item['id'] .",".$item['is_show'].")'>已上架</span>":"<span class='btn btn-default' id='is_show_".$item['id']."' onclick='show(". $item['id'] .",".$item['is_show'].")'>已下架</span>" ?></td>
+                        <td class="text-center">
+                            <ul class="list-inline">
+                                <?php if (time() < $item['end_time']+86399) : ?>
+                                    <li><a href="/activitybrand/update?id=<?= $item['id'] ?>">编辑详情</a></li>
+                                    <?php if ($this->rbac == '*' ? true :(in_array('activitybrand_delete', $this->rbac['action']))) :?>
+                                        <li class="last"><a href="javascript:void(0)" class="item-del" data-model="limittime" onclick='del(<?= $item['id'];?>)'>删除</a></li>
+                                    <?php endif;?>
+                                    <?php if ($this->rbac == '*' ? true :(in_array('activitybrand_activityorder', $this->rbac['action']))) :?>
+                                        <li class="last"><a href="javascript:void(0)" class="order-btn" data-model="limittime" onclick='order(<?= $item['id'];?>)'>置顶</a></li>
+                                    <?php endif;?>
+                                <?php else: ?>
+                                    <li><a href="/activitybrand/update?id=<?= $item['id'] ?>">编辑详情</a></li>
+                                <?php endif;?>
+                            </ul>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                <?php } ?>
+            </tbody>
+        </table>
+        <div class="btn-toolbar" style='margin-bottom: 1em;'>
+            <input class='btn btn-default' type="button" value="全选" onclick="CheckAll()" style='float:left'/>
+            <input class='btn btn-default' type="button" value="不选" onclick="UnCheck()" style='float:left'/>
+            <input class='btn btn-default' type="button" value="反选" onclick="othercheck()" style='float:left'/>
+            <input class='btn btn-success' type="button" value="批量选择" onclick="updateCheck()" style='float:left'/>
+        </div>
+        <?= $this->paglist; ?>
+    </div>
+</div>
+<script>
+$(document).on('submit','#ajaxform',function(){
+    var ktime = $('#ktime').val();
+    var gtime = $('#gtime').val();
+    if(ktime > gtime){ alert('开始时间不能小于结束时间');return false;}
+});
+//===================删除活动=====================
+function del(id)
+{
+	if(confirm('您确定要删除该活动吗？') == false) {
+		return false;
+	} else {
+        $.ajax({
+            type: "POST",
+            url: "delete",
+            dataType: "json",
+            data: "id="+id,
+            success: function(data){
+                if (data) {
+                    $("#is_del_"+id).remove();
+                    alert('删除成功');
+                } else {
+                	alert('请重试');
+                }
+            }
+         });
+	}
+}
+
+//=======================上下架=================
+function show(id,is_show)
+{
+	if ('<?php echo $this->rbac == '*' ? 'true' :(in_array('activitybrand_upshow', $this->rbac['action']) ? 'true':'false')?>' == 'false') {
+	    alert('权限不足');
+	    return;
+	}
+	
+    $.ajax({
+       type: "POST",
+       url: "upShow",
+       dataType: "json",
+       data: "id="+id+"&is_show="+is_show,
+       success: function(data){
+           if (data == 1) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-success' onclick='show("+id+" ,1)'>已上架</span>");alert('上架成功');
+           } else if(data == 0) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-default' onclick='show("+id+" ,0)'>下架</span>");alert('下架成功');
+           } 
+           if (data == 400) {
+               alert('失败');
+           }
+       }
+    });
+}
+
+//===============置顶=====================
+function order(id)
+{
+    var ktime = $('#ktime').val();
+    var gtime = $('#gtime').val();
+    var company_id = $('#company_id').val();
+    $.ajax({
+        type: "POST",
+        url: "activityOrder",
+        dataType: "json",
+        data: "id="+id,
+        success: function(data){
+            window.location.href='list?company_id='+company_id+'ktime='+ktime+'&gtime='+gtime;
+        }
+     });
+}
+
+//===================选择================
+var CheckBox = $('input[name="permission[]"]');
+
+//全选
+function CheckAll(){
+    for(i=0;i<CheckBox.length;i++){
+        CheckBox[i].checked=true;
+    };
+};
+//不选
+function UnCheck(){
+    for(i=0;i<CheckBox.length;i++){
+        CheckBox[i].checked=false;
+    };
+};
+//反选
+function othercheck(){
+    for(i=0;i<CheckBox.length;i++){
+        if(CheckBox[i].checked==true){
+             CheckBox[i].checked=false;
+        } else {
+            CheckBox[i].checked=true;
+        }
+    }
+};
+//====================批量修改上下架======================
+function updateCheck(){
+	if ('<?php echo $this->rbac == '*' ? 'true' :(in_array('activitybrand_updatecheck', $this->rbac['action']) ? 'true':'false')?>' == 'false') {
+	    alert('权限不足');
+	    return;
+	}
+	
+	if(confirm('您确定要修改吗？') == true ) {
+		var arr = '';
+        for(i=0;i<CheckBox.length;i++){
+            if (CheckBox[i].checked == true) {
+                arr += CheckBox.eq(i).val()+':'+CheckBox.eq(i).attr('is_show')+',';
+            }
+        };
+        arr += '';
+        if (arr.length == 2) {
+            alert('请选择上下架');
+            return false;
+        }
+        
+        $.ajax({
+            type: "POST",
+            url: "updateCheck",
+            dataType: "json",
+            data: {check:arr},
+            success: function(data){
+                if (data) {
+                    alert('修改成功');
+                    window.location.reload();
+                } else {
+                	alert('修改失败');
+                }
+            }
+         });
+	} else {
+	    return false;
+	}
+}
+</script>

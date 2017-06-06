@@ -1,0 +1,109 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<script>
+    laydate.skin('danlan')
+</script>
+<style>
+th {text-align: center;}
+td>div{width:29%;float:left;padding:0.3em}
+td>input{width:12%;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">经销商统计</a></li>
+      <li class="active">终端统计</li>
+    </ol>
+    <form action="" id='ajaxformhah' method="get">
+        <table class="table" style="background:#f5f5f5">
+            <tr>
+                <td>
+                    <div class='input-group col-md-8' style='float: left'>
+                        <div class="input-group">
+                            <div class="input-group-addon">时间</div>
+                            <input class='form-control' style='width:50%;display: inline' type="text" placeholder="开始时间" onclick="laydate()" name="ktime" id='ktime' value='<?=$this->get['ktime']?>'>
+                            <input class='form-control' style='width:50%;display: inline' name="gtime" id='gtime' type="text" placeholder="结束时间" onclick="laydate()" value='<?=$this->get['gtime']?>'>
+                        </div>
+                    </div>
+                    <div class="input-group col-md-2">
+                        <div class="input-group-addon">搜索用户</div>
+                        <input type="text" class="form-control" style="width: 15em;" placeholder="搜索用户名" name="comName" value="<?= $this->get['comName']; ?>">
+                    </div>
+                    <div class="input-group col-md-10">
+                        <div class="input-group-addon" style="margin-right:10px">范围</div>
+                        <label style="margin-right:10px"><input name="range" type="radio" value="" <?=($_GET['range']=="")?'checked':'';?> >全部</label>
+                        <label style="margin-right:10px"><input name="range" type="radio" value="3" <?=($_GET['range']=="3")?'checked':'';?>/>下单成交终端店</label>
+                        <label style="margin-right:10px"><input name="range" type="radio" value="1" <?=($_GET['range']=="1")?'checked':'';?>/>下单未成交终端店</label>
+                        <label style="margin-right:10px"><input name="range" type="radio" value="4" <?=($_GET['range']=="4")?'checked':'';?>/>从未下单终端店</label>
+                    </div>
+</div>
+</div>
+                    <span style='float:right;padding:0.3em'>
+                        <input class="btn btn-primary" type="submit" value="搜索">
+                        <bottom class="btn btn-primary export" style='width:8em'>导出数据</bottom>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table class="table table-hover" style="text-align: center;">
+    <caption></caption>
+    <thead>
+        <tr>
+            <th>用户名</th>
+            <th>店名</th>
+            <th>收货人姓名</th>
+            <th>收货电话</th>
+            <th>上次登录时间</th>
+            <th>上次下单时间</th>
+            <th>审核状态</th>
+            <th><span onclick="sort('num','<?= !isset($_GET['num']) ? 'desc' : ($_GET['num'] == 'desc' ? 'asc' : 'desc') ?>')">下单数量<span class='glyphicon glyphicon-chevron-<?=($_GET['num'] == 'desc') ? 'up':'down'?>' style='top: 4px;'></span></span></th></th>
+        </tr>
+    </thead>
+      <tbody>
+      <?php if ($this->developer): ?>
+          <?php foreach ($this->developer as $info): ?>
+              <tr>
+                  <td class='col-md-1'><?=$info['account']?></td>
+                  <td class="col-md-1"><?=$info['comName']; ?></td>
+                  <td class='col-md-1'><?=$info['user_name']?></td>
+                  <td class="col-md-1"><?=$info['phone']; ?></td>
+                  <td class="col-md-1"><?=($info['updateTime']=='')?'':date("Y-m-d H:i:s",$info['updateTime']); ?></td>
+                  <td class="col-md-1"><?=($info['last_time']=='')?'':date("Y-m-d H:i:s",$info['last_time']); ?></td>
+                  <td class="col-md-1"><?php if($info['auditType']==0){
+                          echo "审核中";
+                      }elseif($info['auditType']==1){
+                          echo "不通过";
+                      }elseif($info['auditType']==2){
+                          echo "通过";
+                      }else{
+                          echo "拉黑";
+                      } ?></td>
+                  <td class='col-md-1'><?=(empty($info['oid']))?0:$info['num']?></td>
+              </tr>
+          <?php endforeach; ?>
+      <?php endif; ?>
+      </tbody>
+    </table>
+    <?php echo $this->paglist; ?>
+</div>
+
+<script>
+    $(document).on('click','.export',function(){
+        if (confirm("你确定要导出终端统计信息吗？")) {
+            window.location.href="/distributor/terminalsExport?"+$("form").serialize();
+        }
+    });
+    function sort(name, state)
+    {
+        if (name == 'num') {
+            if (<?= $this->get['num'] ? 'true' : 'false' ?> == false) {
+                window.location.href="terminalssatistics?"+$("#ajaxformhah").serialize()+'&num='+state;
+            } else {
+                window.location.href="terminalssatistics?"+$("#ajaxformhah").serialize()+'&num='+state;
+            }
+        }
+    }
+</script>

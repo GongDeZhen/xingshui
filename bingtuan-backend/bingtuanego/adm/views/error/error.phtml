@@ -1,0 +1,24 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <div class="alert alert-warning text-center h4" role="alert"><?=$this->errors?>！</div>
+</div>
+<style>
+.table tbody>tr>td {padding-left:0;}
+</style>
+<script>
+$(function(){
+	var where = document.referrer;
+    var secs = 3000;
+	if (where==""){
+		setTimeout("window.location.href='/dev'",secs);
+	} else {
+		if (<?= (in_array($this->controller.'_'.$this->action, $this->rbac['action']) ? false : true); ?> == false) {
+//			setTimeout("window.location.href='/dev'",secs);
+		} else {
+//			setTimeout("window.history.go(-1)",secs);
+		}
+	}
+});
+</script>

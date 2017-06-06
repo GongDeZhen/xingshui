@@ -1,0 +1,105 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<script>
+    laydate.skin('danlan')
+</script>
+<style>
+th {text-align: center;}
+td>div{width:29%;float:left;padding:0.3em}
+td>input{width:12%;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">后支付用户账单管理</a></li>
+      <li class="active">后支付用户账单列表</li>
+    </ol>
+    <form action="" id='ajaxform' method="get">
+        <table class="table" style="background:#f5f5f5">
+            <tr>
+                <td>
+                    <?=$this->companyDealersList?>
+                    <div class='input-group col-md-5' style='float: left'>
+                        <div class="input-group">
+                            <div class="input-group-addon">时间</div>
+                            <input class='form-control' style='width:50%;display: inline' type="text" placeholder="开始时间" onclick="laydate()" name="ktime" id='ktime' value='<?=$this->get['ktime']?>'>
+                            <input class='form-control' style='width:50%;display: inline' name="gtime" id='gtime' type="text" placeholder="结束时间" onclick="laydate()" value='<?=$this->get['gtime']?>'>
+                        </div>
+                    </div>
+                    <div class='input-group col-md-2' style='float: left'>
+                        <div class="input-group-addon">状态</div>
+                        <select name='status' class='form-control'>
+                            <option value=''>请选择</option>
+                            <option value='0' <?= $this->get['status'] == '0' ? 'selected=selected':''?>>未结算</option>
+                            <option value='1' <?= $this->get['status'] == '1' ? 'selected=selected':''?>>已结算</option>
+                        </select>
+                    </div>
+                    <span style='float:right;padding:0.3em'>
+                        <input class="btn btn-primary" type="submit" value="搜索">
+                    </span>
+                </td>
+            </tr>
+                
+        </table>
+    </form>
+    <table class="table table-hover" style="text-align: center;">
+    <caption></caption>
+    <thead>
+        <tr>
+            <th>用户名</th>
+            <th>联系人</th>
+            <th>联系电话</th>
+            <th>经销商</th>
+            <th>账单时间</th>
+            <th>付款日</th>
+            <th>规则</th>
+            <th>结算金额</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+      <tbody>
+        <?php if ($this->list): ?>
+        <?php foreach ($this->list as $info): ?>
+            <tr id='is_del_<?=$info['id']?>' style="<?=($info['status'] == 0 && time() > $info['end_time'])? "background-color:#F9EDED" : '' ?>">
+                <td class='col-md-1'><?=$info['account']?></td>
+                <td class="col-md-1"><?=$info['userName']; ?></td>
+                <td class='col-md-1'><?=$info['telphone']?></td>
+                <td class="col-md-1"><?=$info['warehousename']; ?></td>
+                <td class='col-md-1'><?=date('Y-m',$info['create_time'])?></td>
+                <td class="col-md-1"><?=$info['refundTime']; ?>日</td>
+                <td class="col-md-1"><?=$info['refundRules']; ?>月</td>
+                <td class='col-md-2'><?=$info['money']?></td>
+                <td class='col-md-1 status-<?=$info['id']; ?>'><?=($info['status'] == 0) ? '未结算' : '已结算'?></td>
+                <td class='col-md-2'>
+                    <span><a href="accountlist?id=<?=$info['id']?>">查看订单</a></span>
+                    <?php if ($info['status'] == 0 && time() > $info['end_time']): ?>
+                        <span id='select_<?=$info['id']?>'><a style="cursor: pointer" onclick="updateStatus(<?=$info['id']?>)" paystatus="<?=$info['pay_status']; ?>" class="paybian">确认结算</a></span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+    <?php echo $this->paglist; ?>
+</div>
+<script>
+function updateStatus(id)
+{
+	if(confirm('您确定要修改该账单的状态吗？')==false) {
+		return false;
+	} else {
+    	$.post('/Afterpayuser/updateStatus',{id:id},function(ev){
+            if(ev) {
+                $('.status-'+id).html('已结算');
+                $('.refund_time_'+id).html(ev.substr(1,ev.length-2));
+            }
+            $('#select_'+id).remove();
+            alert('修改成功!');
+        });
+	}
+}
+</script>

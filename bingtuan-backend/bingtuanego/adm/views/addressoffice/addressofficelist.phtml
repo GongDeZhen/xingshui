@@ -1,0 +1,89 @@
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+.input-group[class*="col-"]{float: left;}
+form>div>div>div{width: 15em;float: left;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a  href="javascript:void(0)" class="active">地区公司管理</a></li>
+      <li >分公司列表</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a href="javascript:void(0)" >分公司列表</a></li>
+	  <li role="presentation"><a href="add">添加分公司</a></li>
+    </ul>
+    <br>
+    <form method="get">
+        <div class="col-md-12">
+            <div class="row ctrls bg-p">
+                <?=$this->jiliancaidan?>
+                <div class="input-group col-md-3">
+                    <div class="input-group-addon">状态</div>
+                    <select class='form-control' name="status">
+                        <option value=''>审核状态</option>
+                        <option value='0' <?= ($this->info['status'] == '0') ? 'selected=selected' : ''?>>未通过</option>
+                        <option value='1' <?= ($this->info['status'] == '1') ? 'selected=selected' : ''?>>通过</option>
+                    </select>
+                </div>
+                <div class="input-group col-md-2">
+                    <div class="input-group-addon">内容</div>
+                    <input class="search form-control" style="width: 150px" type="text" name="companyname"  placeholder="搜索公司" value='<?=$this->info['companyname'] ?>'>
+                </div>
+                <button type="submit" class="btn btn-primary" style='float: left;'>搜索</button>
+            </div>
+        </div>
+    </form>
+    <br><br><br>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="col-md-1">ID</th>
+                <th class="col-md-3"><span class="line"></span>分公司名称</th>
+                <th class="col-md-2"><span class="line"></span>地区</th>
+                <th class="col-md-1"><span class="line"></span>联系人</th>
+                <th class="col-md-1"><span class="line"></span>联系人手机</th>
+                <th class="col-md-1"><span class="line"></span>状态</th>
+                <th class="col-md-2"><span class="line"></span>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if ($this->list){?>
+                <?php foreach($this->list as $key => $item) { ?>
+                <tr class="first" id="brand-item-<?= $item['id']; ?>">
+                    <td class="col-md-1 text-center">
+                       <span class="line"></span><?= $item['id']; ?>
+                    </td>
+                    <td class="col-md-3 text-center">
+                       <span class="line"></span><?= $item['companyname']; ?>
+                    </td>
+                    <td class="col-md-2 text-center">
+                      <span class="line"></span><?= $item['province']; ?><?= $item['city']; ?><?= $item['area']; ?>
+                    </td>
+                    <td class="col-md-1 text-center">
+                      <span class="line"></span> <?= $item['contact']; ?>
+                    </td>
+                    <td class="col-md-1 text-center">
+                      <span class="line text-center"></span> <?=$item['mobile']?>
+                    </td>
+                    <td class="col-md-1 text-center">
+                      <span class="line"></span> 
+                     <?= ($item['status'] == 1)?'正常运营':'暂停运营';?>
+                    </td>
+                    <td class="col-md-1 text-center">
+                       <ul class='list-inline'>
+                        <li><a href="edit?id=<?= $item['id']; ?>">编辑</a></li>
+                        <li><a href="companyInfo?id=<?=$item['id']?>">详情</a></li>
+                        <!-- <li><a href="/developer/zonelist?id=<?= $item['id']; ?>">账号列表</a></li> -->
+                       </ul>
+                    </td>
+                </tr>
+                <?php }?>
+            <?php }?>
+        </tbody>
+    </table>
+    <?=$this->pagebar; ?>
+</div>

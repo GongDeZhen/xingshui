@@ -1,0 +1,281 @@
+<style>
+    #admin>li>a {padding: 10px 20px;}
+    #main-nav {margin-left: 1px;}
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #4A515B;
+        background: #E9E9E9;
+        background: -moz-linear-gradient(top, #FAFAFA 0%, #E9E9E9 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FAFAFA), color-stop(100%,#E9E9E9));
+        background: -webkit-linear-gradient(top, #FAFAFA 0%,#E9E9E9 100%);
+        background: -o-linear-gradient(top, #FAFAFA 0%,#E9E9E9 100%);
+        background: -ms-linear-gradient(top, #FAFAFA 0%,#E9E9E9 100%);
+        background: linear-gradient(top, #FAFAFA 0%,#E9E9E9 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E9E9E9');
+        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E9E9E9')";
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+    #main-nav.nav-tabs.nav-stacked > li > a > span {color: #4A515B;}
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #FFF;
+        background: #3C4049;
+        background: -moz-linear-gradient(top, #4A515B 0%, #3C4049 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4A515B), color-stop(100%,#3C4049));
+        background: -webkit-linear-gradient(top, #4A515B 0%,#3C4049 100%);
+        background: -o-linear-gradient(top, #4A515B 0%,#3C4049 100%);
+        background: -ms-linear-gradient(top, #4A515B 0%,#3C4049 100%);
+        background: linear-gradient(top, #4A515B 0%,#3C4049 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4A515B', endColorstr='#3C4049');
+        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#4A515B', endColorstr='#3C4049')";
+        border-color: #2B2E33;
+    }
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover > span {color: #FFF;}
+    #main-nav.nav-tabs.nav-stacked > li {margin-bottom: 4px;}
+    /*定义二级菜单样式*/
+    .secondmenu a {font-size: 10px;color: #4A515B;text-align: left;}
+    .navbar-static-top {background-color: #212121;margin-bottom: 5px;}
+    .navbar-brand {background: url('') no-repeat 10px 8px;display: inline-block;vertical-align: middle;padding-left: 50px;color: #fff;}
+    .li-bk-cl{background-color:#f5f5f5}
+</style>
+
+<!-- 左折叠菜单     开始-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                <li class="active">
+                    <a href="/dev"><i class="glyphicon glyphicon-th-large" style="margin-right: 0.5em;"></i>首页</a>
+                </li>
+                <?php if ($this->rbac == '*' ? true :(in_array('addressoffice', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="#addressOffice" class="nav-header collapsed" data-toggle="collapse">
+                        <i class="glyphicon glyphicon-apple" style="margin-right: 0.5em;"></i>地区公司管理<span class="pull-right glyphicon glyphicon-chevron-down"></span>
+                    </a>
+                    <ul id="addressOffice"
+                    <?=(in_array($this->controller.'_'.$this->action, array('Addressoffice_addressofficelist','Addressoffice_companyaccountlist','Addressoffice_add','Addressoffice_edit','Addressoffice_companyinfo','Addressoffice_warehouseaccountlist','Addressoffice_companyaccountinfo','Addressoffice_warehouseaccountinfo'))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>
+                    >
+                        <?php if ($this->rbac == '*' ? true :(in_array('addressoffice_addressofficelist', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Addressoffice_addressofficelist','Addressoffice_edit','Addressoffice_companyinfo'))?"class='li-bk-cl'":'' ?>><a href="/addressOffice/addressOfficeList"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>公司列表</a></li>
+                        <?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true :(in_array('addressoffice_companyaccountlist', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Addressoffice_companyaccountlist','Addressoffice_companyaccountinfo'))?"class='li-bk-cl'":'' ?>><a href="/addressOffice/companyaccountlist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>公司账单</a></li>
+                         <?php endif; ?>
+                         <?php if ($this->rbac == '*' ? true :(in_array('addressoffice_warehouseaccountlist', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array( 'Addressoffice_warehouseaccountlist','Addressoffice_warehouseaccountinfo'))?"class='li-bk-cl'":'' ?>><a href="/addressOffice/warehouseaccountlist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>经销商账单</a></li>
+                         <?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true :(in_array('addressoffice_add', $this->rbac['action']))) : ?>
+                            <li <?=($this->controller.'_'.$this->action == 'Addressoffice_add')?"class='li-bk-cl'":'' ?>><a href="/addressOffice/add"><i class="glyphicon glyphicon-plus" style="margin-right: 0.5em;"></i>添加公司</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('developer', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="#admin" class="nav-header collapsed" data-toggle="collapse">
+                        <i class="glyphicon glyphicon-apple" style="margin-right: 0.5em;"></i>权限管理<span class="pull-right glyphicon glyphicon-chevron-down"></span>
+                    </a>
+                    <ul id="admin" 
+                    <?=(in_array($this->controller.'_'.$this->action, array('Developer_adminlist','Developer_rolelist','Developer_rbclist','Developer_update','Developer_roleadd','Developer_roleupdate','Developer_addrbc','Developer_updatemenu','Developer_signup'))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>
+                    >
+                        <?php if ($this->rbac == '*' ? true :(in_array('developer_adminlist', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Developer_adminlist','Developer_update','Developer_signup'))?"class='li-bk-cl'":'' ?>><a href="/developer/adminlist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>账号管理</a></li>
+                        <?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true :(in_array('developer_rolelist', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Developer_rolelist','Developer_roleadd','Developer_roleupdate'))?"class='li-bk-cl'":'' ?>><a href="/developer/rolelist"><i class="glyphicon glyphicon-plus" style="margin-right: 0.5em;"></i>角色管理</a></li>
+                        <?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true :(in_array('developer_rbclist', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Developer_rbclist','Developer_addrbc','Developer_updatemenu'))?"class='li-bk-cl'":'' ?>><a href="/developer/rbclist"><i class="glyphicon glyphicon-plus" style="margin-right: 0.5em;"></i>应用列表</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('coupons', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="/Afterpayuser/getlist"><i class="glyphicon glyphicon-calendar" style="margin-right: 0.5em;"></i>后支付用户账单管理</a>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('log', $this->rbac['controller']))): ?>
+                    <li>
+                        <a href="/log/list"><i class="glyphicon glyphicon-calendar" style="margin-right: 0.5em;"></i>日志管理</a>
+                    </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('users', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="#userList" class="nav-header collapsed" data-toggle="collapse" >
+                        <i class="glyphicon glyphicon-apple" style="margin-right: 0.5em;"></i>用户管理<span class="pull-right glyphicon glyphicon-chevron-down"></span>
+                    </a>
+                    <ul id="userList"
+                    <?=(in_array($this->controller.'_'.$this->action, array('Warehouse_warehouselist','Warehouse_add','Warehouse_edit','Warehouse_warehouseinfo','Users_userlist','Users_dodel','Users_userdetail','Users_cancelstock','Users_adduser'))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>
+                    >
+                        <?php if ($this->rbac == '*' ? true :(in_array('warehouse_warehouselist', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Warehouse_warehouselist','Warehouse_add','Warehouse_edit','Warehouse_warehouseinfo'))?"class='li-bk-cl'":'' ?>><a href="/warehouse/warehouselist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>经销商列表</a></li>
+                        <?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true :(in_array('users_userlist', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Users_userlist','Users_userdetail','Users_dodel','Users_cancelstock'))?"class='li-bk-cl'":'' ?>><a href="/users/userlist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>用户列表</a></li>
+                        <?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true :(in_array('users_adduser', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Users_adduser'))?"class='li-bk-cl'":'' ?>><a href="/users/adduser"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>添加用户</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('orders', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="#orderList" class="nav-header collapsed" data-toggle="collapse">
+                        <i class="glyphicon glyphicon-apple" style="margin-right: 0.5em;"></i>订单管理<?= ($this->countComment > 0)? '<i class="glyphicon" style="border-radius: 50%;width:10px;height:10px;background-color:red;margin-left:10px"></i>' :''; ?><span class="pull-right glyphicon glyphicon-chevron-down"></span>
+                    </a>
+                    <ul id="orderList" 
+                    <?=(in_array($this->controller.'_'.$this->action, array('Orders_orderlist','Orders_orderinfo'))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>
+                    >
+                        <?php //if ($this->rbac == '*' ? true :(in_array('orders_buyorderlist', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Orders_orderlist','Orders_orderinfo'))?"class='li-bk-cl'":'' ?>><a href="/orders/orderlist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>订单列表</a></li>
+                        <?php //endif; ?>
+                    </ul>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('coupons', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="/message/messagelist"><i class="glyphicon glyphicon-calendar" style="margin-right: 0.5em;"></i>消息管理</a>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('goods', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="#goodsList" class="nav-header collapsed" data-toggle="collapse">
+                        <i class="glyphicon glyphicon-apple" style="margin-right: 0.5em;"></i>商品管理<span class="pull-right glyphicon glyphicon-chevron-down"></span>
+                    </a>
+                    <ul id="goodsList" 
+                    <?=(in_array($this->controller.'_'.$this->action, array('Goods_list','Goods_add','Goods_goodsinfo','Goods_update', 'Goods_nochange',))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>
+                    >
+                        <?php //if ($this->rbac == '*' ? true :(in_array('goods_list', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Goods_list','Goods_update','Goods_goodsinfo'))?"class='li-bk-cl'":'' ?>><a href="/goods/list"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>商品列表</a></li>
+                        <?php //endif; ?>
+                        <?php //if ($this->rbac == '*' ? true :(in_array('goods_add', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Goods_add'))?"class='li-bk-cl'":'' ?>><a href="/goods/add"><i class="glyphicon glyphicon-plus" style="margin-right: 0.5em;"></i>添加商品</a></li>
+                        <?php //endif; ?>
+                        <?php //if ($this->rbac == '*' ? true :(in_array('goods_add', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Goods_nochange'))?"class='li-bk-cl'":'' ?>><a href="/goods/nochange"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>价格限定</a></li>
+                        <?php //endif; ?>
+                    </ul>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('classify', $this->rbac['controller']) || in_array('brand', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="#classify" class="nav-header collapsed" data-toggle="collapse"><i class="glyphicon glyphicon-globe" style="margin-right: 0.5em;"></i>品牌分类录入<span class="pull-right glyphicon glyphicon-chevron-down"></span></a>
+                    <ul id="classify"
+                    <?=(in_array($this->controller.'_'.$this->action, array('Brand_list','Brand_add','Brand_update','Classify_list','Classify_update','Classify_add'))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>
+                    >
+                        <?php //if ($this->rbac == '*' ? true :(in_array('brand_list', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Brand_list','Brand_update','Brand_add'))?"class='li-bk-cl'":'' ?>><a href="/brand/list"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>品牌</a></li>
+                        <?php //endif; ?>
+                        <?php //if ($this->rbac == '*' ? true :(in_array('classify_list', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Classify_list','Classify_update','Classify_add'))?"class='li-bk-cl'":'' ?>><a href="/classify/list"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>分类</a></li>
+                        <?php //endif; ?>
+                    </ul>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('activityfree', $this->rbac['controller']) || in_array('activitylimittime', $this->rbac['controller']) || in_array('activitygift', $this->rbac['controller']) || in_array('activitybrand', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="#activityList" class="nav-header collapsed" data-toggle="collapse"><i class="glyphicon glyphicon-globe" style="margin-right: 0.5em;"></i>促销活动<span class="pull-right glyphicon glyphicon-chevron-down"></span></a>
+                    <ul id="activityList"
+                    <?=(in_array($this->controller.'_'.$this->action, array('Activitylimittime_list','Activitygift_list','Activitybrand_list','Activitylimittime_add','Activitygift_add','Activitybrand_add','Activitylimittime_update','Activitygift_update','Activitybrand_update'))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>
+                    >
+                        <?php //if ($this->rbac == '*' ? true :(in_array('activitylimittime_list', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Activitylimittime_list','Activitylimittime_add','Activitylimittime_update'))?"class='li-bk-cl'":'' ?>><a href="/activitylimittime/list"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>限时抢购</a></li>
+                        <?php //endif; ?>
+                        <?php //if ($this->rbac == '*' ? true :(in_array('activitygift_list', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Activitygift_list','Activitygift_add','Activitygift_update'))?"class='li-bk-cl'":'' ?>><a href="/activitygift/list"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>买就送</a></li>
+                        <?php //endif; ?>
+                        <?php //if ($this->rbac == '*' ? true :(in_array('activitybrand_list', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Activitybrand_list','Activitybrand_add','Activitybrand_update'))?"class='li-bk-cl'":'' ?>><a href="/activitybrand/list"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>品牌活动</a></li>
+                        <?php //endif; ?>
+                    </ul>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('ad', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="#adList" class="nav-header collapsed" data-toggle="collapse"><i class="glyphicon glyphicon-calendar" style="margin-right: 0.5em;"></i>广告管理<span class="pull-right glyphicon glyphicon-chevron-down"></span></a>
+                     <ul id="adList" 
+                     <?=(in_array($this->controller.'_'.$this->action, array('Ad_list','Ad_add', 'Ad_update'))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>
+                     >
+                        <?php //if ($this->rbac == '*' ? true :(in_array('ad_list', $this->rbac['action']))) : ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Ad_list', 'Ad_update'))?"class='li-bk-cl'":'' ?>><a href="/ad/list"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>广告列表</a></li>
+                        <?php //endif; ?>
+                        <?php //if ($this->rbac == '*' ? true :(in_array('ad_detail', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Ad_add'))?"class='li-bk-cl'":'' ?>><a href="/ad/add"><i class="glyphicon glyphicon-plus" style="margin-right: 0.5em;"></i>添加广告</a></li>
+                        <?php //endif; ?>
+                    </ul>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('securities', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="/securities/list"><i class="glyphicon glyphicon-calendar" style="margin-right: 0.5em;"></i>代金劵</a>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('coupons', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="/coupons/list"><i class="glyphicon glyphicon-calendar" style="margin-right: 0.5em;"></i>优惠劵</a>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('coupons', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="/benefits/benefitlist"><i class="glyphicon glyphicon-calendar" style="margin-right: 0.5em;"></i>满减满赠</a>
+                </li>
+                <?php endif; ?>
+                <li>
+                    <a href="/app/index"><i class="glyphicon glyphicon-fire" style="margin-right: 0.5em;"></i>应用更新</a>
+                </li>
+                <?php if ($this->rbac == '*' ? true :(in_array('admstatis', $this->rbac['controller']))): ?>
+                <li>
+                    <a href="#Admin" class="nav-header collapsed" data-toggle="collapse"><i class="glyphicon glyphicon-globe" style="margin-right: 0.5em;"></i>平台统计<span class="pull-right glyphicon glyphicon-chevron-down"></span></a>
+                    <ul id="Admin"
+                    <?=(in_array($this->controller.'_'.$this->action, array('Activitylimittime_list','Activitygift_list','Activitybrand_list','Activitylimittime_add','Activitygift_add','Activitybrand_add','Activitylimittime_update','Activitygift_update','Activitybrand_update'))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>
+                    >
+                         <?php if ($this->rbac == '*' ? true :(in_array('admstatis_indexlist', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('admstatis_indexlist'))?"class='li-bk-cl'":'' ?>><a href="/admstatis/indexlist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>实时统计</a></li>
+                        <?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true :(in_array('admstatis_salelist', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('admstatis_salelist'))?"class='li-bk-cl'":'' ?>><a href="/admstatis/salelist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>销售统计</a></li>
+                        <?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true :(in_array('admstatis_brandlist', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('admstatis_brandlist','Activitygift_add','Activitygift_update'))?"class='li-bk-cl'":'' ?>><a href="/admstatis/brandlist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>品牌销售额</a></li>
+                        <?php endif; ?>
+                          <?php if ($this->rbac == '*' ? true :(in_array('admstatis_storelist', $this->rbac['action']))): ?> 
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Activitybrand_list','Activitybrand_add','Activitybrand_update'))?"class='li-bk-cl'":'' ?>><a href="/admstatis/onebrand"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>单品牌销量</a></li>
+                        <?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true :(in_array('admstatis_singlelist', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Activitybrand_list','Activitybrand_add','Activitybrand_update'))?"class='li-bk-cl'":'' ?>><a href="/admstatis/singlelist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>单品销量</a></li>
+                        <?php endif; ?>
+                         <?php if ($this->rbac == '*' ? true :(in_array('admstatis_storelist', $this->rbac['action']))): ?>
+                            <li <?=in_array($this->controller.'_'.$this->action, array('Activitybrand_list','Activitybrand_add','Activitybrand_update'))?"class='li-bk-cl'":'' ?>><a href="/admstatis/storelist"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>终端店统计</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </li>
+                <?php endif; ?>
+                <?php if ($this->rbac == '*' ? true :(in_array('distributor', $this->rbac['controller']))): ?>
+                    <li>
+                        <a href="#distributor" class="nav-header collapsed" data-toggle="collapse">
+                            <i class="glyphicon glyphicon-apple" style="margin-right: 0.5em;"></i>经销商统计<span class="pull-right glyphicon glyphicon-chevron-down"></span>
+                        </a>
+                        <ul id="distributor"
+                            <?=(in_array($this->controller.'_'.$this->action, array('Developer_adminlist','Developer_rolelist','Developer_rbclist','Developer_update','Developer_roleadd','Developer_roleupdate','Developer_addrbc','Developer_updatemenu','Developer_signup'))?'class="nav nav-list secondmenu collapse in"  aria-expanded="true"' : 'class="nav nav-list collapse secondmenu" style="height: 0px;"')?>>
+                            <?php if ($this->rbac == '*' ? true :(in_array('distributor_index', $this->rbac['action']))) : ?>
+                                <li <?=in_array($this->controller.'_'.$this->action, array('Developer_adminlist','Developer_update','Developer_signup'))?"class='li-bk-cl'":'' ?>><a href="/distributor/index"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>实时统计</a></li>
+                            <?php endif; ?>
+                            <?php if ($this->rbac == '*' ? true :(in_array('distributor_goodsstatistics', $this->rbac['action']))) : ?>
+                                <li <?=in_array($this->controller.'_'.$this->action, array('Developer_rolelist','Developer_roleadd','Developer_roleupdate'))?"class='li-bk-cl'":'' ?>><a href="/distributor/goodsstatistics"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>商品统计</a></li>
+                            <?php endif; ?>
+                            <?php if ($this->rbac == '*' ? true :(in_array('distributor_terminalssatistics', $this->rbac['action']))) : ?>
+                                <li <?=in_array($this->controller.'_'.$this->action, array('Developer_rbclist','Developer_addrbc','Developer_updatemenu'))?"class='li-bk-cl'":'' ?>><a href="/distributor/terminalssatistics"><i class="glyphicon glyphicon-list" style="margin-right: 0.5em;"></i>终端统计</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- <span class="label label-warning pull-right">5</span> -->
+<!-- 左折叠菜单     结束-->

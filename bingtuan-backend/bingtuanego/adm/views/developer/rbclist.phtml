@@ -1,0 +1,77 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+    .current{color:#000000;}
+    th {text-align: center;}
+</style>
+
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="javascript:void(0)">应用管理</a></li>
+      <li class="active">应用列表</li>
+    </ol>
+    <hr>
+    <ul class="nav nav-pills">
+        <li role="presentation" class="active"><a href="javascript:void(0)">应用列表</a></li>
+        <?php if ($this->rbac == '*' ? true : false) :?>
+            <li role="presentation"><a href="/developer/addrbc">添加应用</a></li>
+        <?php endif; ?>
+    </ul>
+    <table class="table table-hover" style="text-align: center;">
+        <caption></caption>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>控制器</th>
+            <th>方法</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if ($this->menulist): ?>
+            <?php foreach ($this->menulist as $adm): ?>
+                <tr id='is_del_<?=$adm['id']?>'>
+                    <td class='col-xs-1'><?=$adm['id']?></td>
+                    <td class='col-xs-3'><?=$adm['name']?></td>
+                    <td class='col-xs-2'><?=$adm['controller']?></td>
+                    <td class='col-xs-2'><?=$adm['method']?></td>
+                    <td class='col-xs-2'>
+                        <?php if ($this->rbac == '*' ? true : false) :?>
+                            <a href="/developer/updatemenu?id=<?=$adm['id']?>"><span class="glyphicon glyphicon-pencil"></span> 编辑</a>
+                        <?php else: ?>无权限操作<?php endif; ?>
+                        <?php if ($this->rbac == '*' ? true : false) :?>
+                            <a href="javascript:void(0)" onclick="if(confirm('操作不可恢复，确认删除么？')==false)return false;del(<?=$adm['id']?>)"><span class="glyphicon glyphicon-trash"></span> 删除</a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+    <?php echo $this->paglist; ?>
+
+</div>
+
+<script>
+    function del(id)
+    {
+        $.ajax({
+            type: "POST",
+            url: "/developer/delerbc",
+            dataType: "json",
+            data: "id="+id,
+            success: function(data){
+                if (data.code == 200) {
+                    $("#is_del_"+id).remove();
+                    $("#modal").append('<div class="col-md-3"></div><div class="col-md-6" style="margin-top: 60px"><div class="alert alert-success" role="alert"><p>删除成功</p></div></div><div class="col-md-3"></div>');
+                    setTimeout(function(){$("#modal").modal("hide")},2000);
+                }
+                if (data.code == 300) {
+                    alert(data.msg);
+                }
+            }
+        });
+    }
+</script>

@@ -1,0 +1,249 @@
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<script src="/js/multiselect_gift.js" type="text/javascript"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+</style>
+<script>
+    laydate.skin('danlan')
+</script>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">买就送管理</a></li>
+      <li class="active">添加买就送</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation" class=""><a href="list">买就送列表</a></li>
+      <li role="presentation" class='active'><a href="javascript:void(0)">添加买就送</a></li>
+    </ul>
+    <br>
+    <div id='errors'></div>
+    <form method="post" action="javascript:void(0)" id="post-form" class="form-horizontal col-sm-12">
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">公司<span class='s'> *</span></label>
+            <div class="col-sm-4">
+                <select name="cid" class='form-control' id='cid'>
+                    <?php foreach($this->getCompanyList as $k => $v){ ?>
+                        <option value="<?=$v['id']?>" <?= ($this->info['cid'] == $v['id']) ? 'selected=selected' :'' ?>><?=$v['name']; ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动名称<span class='s'> *</span></label>
+            <div class="col-md-4">
+                <input class="form-control" type="text" name="name" value="<?= $this->info['name']; ?>" id="name">
+            </div> 
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">排序<span class='s'> *</span></label>
+            <div class="col-md-4">
+                <input class="form-control" type="text" name="order" value="<?= $this->info['order']; ?>" id="order">
+            </div> 
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动时间<span class='s'> *</span></label>
+            <div class="col-md-4" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">开始</div>
+                    <input type="text" class='form-control time' placeholder="开始时间" name="start_time" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" id='start_time' value='<?=$this->info['start_time']?>' style="width:180px;">
+                </div>
+            </div>
+            <div class="col-md-4" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">结束</div>
+                    <input name="end_time" class='form-control' type="text" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" id='end_time' value='<?=$this->info['end_time']?>' style="width:180px;">
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动规则<span class='s'> *</span></label>
+            <div class="col-md-3" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">买</div>
+                    <input type="text" class='form-control' name="receiving_num" value='<?=$this->info['receiving_num']?>'>
+                </div>
+            </div>
+            <div class="col-md-3" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">送</div>
+                    <input name="free_num" class='form-control' type="text" value='<?=$this->info['free_num']?>'>
+                </div>
+            </div>
+            <div class="control-label s" style='float:left'>( 默认取整数 )</div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动描述<span class='s'> *</span></label>
+            <div class="col-md-7">
+                <textarea class="form-control" rows="4" name="description"><?= $this->info['description']; ?></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动商品搜索<span class='s'> *</span></label>
+            <div class="col-sm-3">
+                <input class="form-control search" type="text" id="goods-keyword" placeholder="商品关键词">
+            </div>
+            <button class="btn btn-primary" type="button" id="goods-search">搜索</button>
+        </div>
+        <div class="form-group col-sm-12" style='margin-left: 0px;width:120%'>
+        	<div class="col-xs-5" style='padding-left: 0px;padding-right: 0px;width: 45%'>
+        		<select id="keepRenderingSort" class="form-control" size="8" multiple="multiple">
+        		</select>
+        	</div>
+        	<div class="col-xs-1" style='margin-top: 3.5em;'>
+        		<button type="button" id="keepRenderingSort_rightSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+        		<button type="button" id="keepRenderingSort_leftSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+        	</div>
+        	<div class="col-xs-5" style='padding-left: 0px;padding-right: 0px;width: 45%'>
+        		<select id="keepRenderingSort_to" class="form-control" size="8" multiple="multiple"></select>
+        	</div>
+        </div>
+        <div class="field-box actions text-center" >
+            <input type="hidden" value="<?=$this->info['id'];?>" name='id' id="id" />
+            <input type="hidden" value="" name='goods_list' id="result" />
+        </div>
+        
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">赠品商品搜索<span class='s'> *</span></label>
+            <div class="col-sm-3">
+                <input class="form-control search" type="text" id="gift-goods-keyword" placeholder="商品关键词">
+            </div>
+            <button class="btn btn-primary" type="button" id="gift-goods-search">搜索</button>
+        </div>
+        <div class="form-group col-sm-12" style='margin-left: 0px;width:120%'>
+        	<div class="col-xs-5" style='padding-left: 0px;padding-right: 0px;width: 45%'>
+        		<select id="giftKeepRenderingSort" class="form-control" size="8" multiple="multiple">
+        		</select>
+        	</div>
+        	<div class="col-xs-1" style='margin-top: 3.5em;'>
+        		<button type="button" onclick="doMove('giftKeepRenderingSort','giftKeepRenderingSort_to')" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+        		<button type="button" onclick="doMove('giftKeepRenderingSort_to','giftKeepRenderingSort')" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+        	</div>
+        	<div class="col-xs-5" style='padding-left: 0px;padding-right: 0px;width: 45%'>
+        		<select id="giftKeepRenderingSort_to" class="form-control" size="8" multiple="multiple"></select>
+        	</div>
+        </div>
+        <div class="field-box actions text-center" >
+            <input type="hidden" value="<?=$this->info['id'];?>" name='id' id="id" />
+            <input type="hidden" value="" name='gift_goods_list' id="gift_goods_list" />
+            <input type="submit" class="btn btn-primary" value="提交活动信息">
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+	$('#keepRenderingSort').multiselect({
+		keepRenderingSort: true
+	});
+});
+
+$('#cid').change(function(){
+	$('#keepRenderingSort').empty();
+	$('#keepRenderingSort_to').empty();
+	$('#giftKeepRenderingSort').empty();
+	$('#giftKeepRenderingSort_to').empty();
+});
+
+//日期插件
+function laydate_time(id){
+	laydate({
+	    elem: '#'+id, //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+	    format: 'YYYY-MM-DD',
+	    choose: function(datas){ //选择日期完毕的回调
+	    	$('#keepRenderingSort').empty();
+	    	$('#keepRenderingSort_to').empty();
+	    }
+	});
+}
+
+function doMove(id1,id2){
+	//获取两个下拉框对象
+	if (id1 == 'giftKeepRenderingSort' && id2 == 'giftKeepRenderingSort_to') {
+		var goods_leng = $('#giftKeepRenderingSort option:selected').length;//选中数
+		var goods_val = $('#giftKeepRenderingSort option:selected').val();//选中的值
+// 		var goods_arr = new Array();
+// 	    for(var i=0;i<goods_leng;i++){
+// 	    	goods_arr[i] = $('#giftKeepRenderingSort option:selected').eq(i).val();
+// 	    }
+		var goods_id = $('#gift_goods_list').val();
+		
+		if (goods_id > 0 || goods_leng > 1) {
+		    alert('抱歉，本活动只能选择一个赠品');
+		    return false;
+		}
+		$('#gift_goods_list').val(goods_val);
+	}
+	if (id1 == 'giftKeepRenderingSort_to' && id2 == 'giftKeepRenderingSort') {
+    	$('#gift_goods_list').val('');
+	}
+	$("#"+id1+" option:selected").appendTo("#"+id2);
+}
+// 搜索商品
+$('#goods-search').click(function() {
+	var company = $('#cid').val();
+	var id = $('#id').val();
+	var keyword = $('#goods-keyword').val();
+	var result = $('#result').val();
+    var start_time = $('input[name="start_time"]').val();
+    var end_time = $('input[name="end_time"]').val();
+	if (start_time == '' || end_time == '') {
+		alert('请选择活动时间');
+		return false;
+	}
+	
+    $.ajax({
+        type: "POST",
+        url: "goodsSearch",
+        dataType: "json",
+        data: "company_id="+company+"&goodsName="+keyword+'&result='+result+'&id='+id+'&start_time='+start_time+'&end_time='+end_time,
+        success: function(data){
+        	$('#keepRenderingSort').empty();
+        	$('#keepRenderingSort').append(data);
+        }
+     });
+});
+// 搜索赠品
+$('#gift-goods-search').click(function() {
+	var company = $('#cid').val();
+    var gift_goods_list = $('gift_goods_list').val();
+    var keyword = $('#gift-goods-keyword').val();
+    $.ajax({
+        type: "POST",
+        url: "giftGoodsSearch",
+        dataType: "json",
+        data: 'id='+gift_goods_list+'&keyword='+keyword+'&company='+company,
+        success: function(data){
+        	$('#giftKeepRenderingSort').empty();
+        	$('#giftKeepRenderingSort').append(data);
+        }
+     });
+});
+// 提交表单
+$(document).on('submit','#post-form',function(){
+    console.log($('#post-form').serialize());
+	$.ajax({
+        type: "POST",
+        url:'add',
+        dataType: "json",
+        data:$('#post-form').serialize(),// formid
+        success: function(data) {
+            if (data == 200) {
+                alert('提交成功');
+                window.location.href = 'list';
+            } else {
+            	$('#errors').empty();
+            	$('#errors').append("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button><strong>"+data.error+"</strong></div>");
+            }
+        },
+        error: function(request) {
+            console.log(request);
+        	$('#errors').empty();
+        	$('#errors').append("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button><strong>提交失败</strong></div>");
+        }
+    });
+});
+</script>

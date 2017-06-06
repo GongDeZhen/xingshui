@@ -1,0 +1,135 @@
+<script src="/js/thumbnails.js"></script>
+<script type="text/javascript" src="/js/bootstrap3-typeahead.min.js"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<style>
+.current{color:#000000;}
+.thumbnail{margin-bottom: 0px;}
+tr{border-top: 1px solid #ddd;text-align: center;}
+th {text-align: center;}
+.table>tbody>tr>td>.input-group {float: left;padding: 0.2em;width:23%}
+</style>
+<script>
+    laydate.skin('danlan')
+</script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">日志管理</a></li>
+      <li class="active">日志列表</li>
+    </ol>
+    <!--<div>
+        <form action="" method="get" id='ajaxForm'>
+        <table class="table" style="background:#f5f5f5">
+            <tr>
+                <td>
+                    <div class="input-group" style='width: 20em'>
+                        <div class="input-group-addon">公司</div>
+                        <select name="company_id" class='form-control'>
+                            <option value="0">全部</option>
+                            <?php /*foreach($this->getCompanyList as $k => $v){ */?>
+                                    <option value="<?/*=$v['id']*/?>" <?/*= ($this->get['company_id'] == $v['id']) ? 'selected=selected' :'' */?>><?/*= $v['name']; */?></option>
+                            <?php /*} */?>
+                        </select>
+                    </div>
+                    <div class="input-group" style='width: 18em'>
+                        <div class="input-group-addon">时间</div>
+                        <input type="text" class='form-control' style='width: 8em;' placeholder="开始时间" onclick="laydate()" name="ktime" value='<?/*= $this->get['ktime']; */?>'>
+                        <input class='form-control' style='width: 8em;' type="text" placeholder="结束时间" onclick="laydate()" name="gtime" value='<?/*= $this->get['gtime']; */?>'>
+                    </div>
+                    <div class="input-group" style='width: 18em'>
+                        <div class="input-group-addon">价格</div>
+                        <input type="text" class='form-control' style='width: 8em;' placeholder="下限-价格" name="minprice" value='<?/*= $this->get['minprice']; */?>'>
+                        <input type="text" class='form-control' style='width: 8em;' placeholder="上限-价格" name="maxprice" value='<?/*= $this->get['maxprice']; */?>'>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+              <td>
+                  <div class="input-group col-md-3">
+                    <div class="input-group-addon">品牌</div>
+                      <input type="hidden" name="brand" value="<?php /*echo $this->get['brand']; */?>">
+                      <input type="text" class="form-control typeahead dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown"
+                             data-provide="typeahead" style="width:150px;" value="<?php /*echo $this->brands[$this->get['brand']]; */?>">
+                      <span class="caret" style="position:absolute; left:148px; bottom:15px;"></span>
+                      <ul class="dropdown-menu dropdown-menu-right" role="menu" id="dropdown1" aria-labelledby="dropdownMenu2"
+                          style="width:150px; height:300px; overflow: auto;">
+                          <?php /*foreach ($this->getBrand as $key): */?>
+                              <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:void(0);"
+                                                         data-id="<?/*= $key['id'] */?>"><?/*= $key['name'] */?></a></li>
+                          <?php /*endforeach; */?>
+                      </ul>
+
+                  </div>
+                  <div class="input-group col-md-3">
+                    <div class="input-group-addon">品类</div>
+                    <select name="goods_type" class='form-control'>
+                        <option value="0">请选择</option>
+                        <?php /*foreach($this->get_goods_type as $gv){ */?>
+                            <option value="<?php /*echo $gv['id']; */?>" <?/*= ($this->get['goods_type'] == $gv['id']) ? 'selected=selected' :'' */?> ><?php /*echo $gv['name']; */?></option>
+                        <?php /*} */?>
+                    </select>
+                  </div>
+                  <div class="input-group col-md-3">
+                    <div class="input-group-addon">优惠劵</div>
+                    <select name="coupons" class='form-control'>
+                          <option value="0">请选择</option>
+                          <?php /*foreach($this->coupons as $v){ */?>
+                          <option value="<?php /*echo $v['id']; */?>" <?/*= ($this->get['coupons'] == $v['id']) ? 'selected=selected' :'' */?>><?php /*echo $v['name']; */?></option>
+                          <?php /*} */?>
+                      </select>
+                  </div>
+                  <div class="input-group col-md-5">
+                    <div class="input-group-addon">促销活动</div>
+                      <select name="activity" class='form-control'>
+                          <option value="0">请选择</option>
+                          <?php /*foreach($this->activity as $v){ */?>
+                          <option value="<?php /*echo $v['id']; */?>" <?/*= ($this->get['activity'] == $v['id']) ? 'selected=selected' :'' */?>><?php /*echo $v['name']; */?></option>
+                          <?php /*} */?>
+                      </select>
+                  </div>
+                  <div class="input-group col-md-5">
+                    <div class="input-group-addon">搜索商品</div>
+                    <input type="text" class='form-control' style='width: 15em;' placeholder="商品名称" name="goods_name" value='<?/*= $this->get['goods_name']; */?>'>
+                  </div>
+                <div class="input-group col-md-1" style='width:0;float: right;'><input type="submit" class='btn btn-primary' placeholder="搜索"><div></td>
+            </tr>
+        </table>
+
+    </div>-->
+    <table class="table table-hover">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>编号</th>
+          <th>日志类型</th>
+          <th>操作</th>
+          <th>操作人账号</th>
+          <th>操作时间</th>
+          <th>操作id</th>
+          <th>操作内容</th>
+          <th>操作人ip</th>
+        </tr>
+    </thead>
+      <tbody>
+      <?php if($this->list): ?>
+          <?php foreach($this->list as $item): ?>
+            <tr>
+                <td><?php echo $item['id']; ?></td>
+                <td><?php echo $item['log_type']; ?></td>
+                <td><?php echo $item['action']; ?></td>
+                <td><?php echo $item['email']; ?></td>
+                <td><?php echo date('Y-m-d H:m:s', $item['create_time']); ?></td>
+                <td><?php echo $item['action_id']; ?></td>
+                <td style="max-width:160px !important; word-wrap: break-word;"><?php echo $item['action_json']; ?></td>
+                <td><?php echo $item['ip']; ?></td>
+            </tr>
+          <?php endforeach; ?>
+      <?php endif; ?>
+
+      </tbody>
+    </table>
+    </form>
+    <?php echo $this->paglist; ?>
+</div>

@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>编辑地址</title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="<?=Yaf_Registry::get('weixinurl')?>vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+	<link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>vendor/css/ratchet.min.css" />
+	<link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>css/mobile-select-area.css">
+	<link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>css/app.css">
+	<link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>css/mycss.css" />
+	<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>js/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>js/function.js"></script>
+	<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>js/dialog.js"></script>
+	<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>js/mobile-select-area.js"></script>
+	<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>js/mobiscroll_date.js" ></script> 
+	<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>js/mobiscroll.js"></script>
+	    <script type="text/javascript" src="/js/baidu_count.js"></script>
+</head>
+<body class="addressbody">
+<div class="contbody whitebg">
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="./index" class="icon icon-goback pull-left"></a>
+		<a href="javascript:;" class="pull-right listbtn del_btn"></a>
+		<h1 class="title c-white">编辑地址</h1>
+	</header>
+	<br><br>
+	<div class="editbox">
+	<form action='./edit'  id='ajaxform' method="POST" >
+		<ul class="edituladdress">
+			<li class="editliaddress">
+				<span class="editaddresspanIco editaddresspanIco01"></span>
+				<div class="editliaddressdiv">
+					<input type="text" value="<?=isset($_GET['name'])?$_GET['name']:$info['user_name']?>" name="user" class="editliaddressput editliaddressputmax" />
+				</div>
+			</li>
+			<li class="editliaddress">
+				<span class="editaddresspanIco editaddresspanIco02"></span>
+				<div class="editliaddressdiv">
+					<input type="text" value="<?=isset($_GET['account'])?$_GET['account']:$info['account']?>" name="phone" class="editliaddressput editliaddressputmax" />
+				</div>
+			</li>
+			<li class="editliaddress">
+				<span class="editaddresspanIco editaddresspanIco03"></span>
+				<div class="editliaddressdiv">
+					<div class="editlicity clearfix">
+						<!--<div class="editlicityinfo">
+							<input type="text" value="北京" class="editliaddressput  editliaddressputmax editliaddressputmin" readonly />
+							<span class="editselectIco"></span>
+						</div>
+						<div class="editlicityinfo">
+							<input type="text" value="北京" class="editliaddressput  editliaddressputmax editliaddressputmin" readonly />
+							<span class="editselectIco"></span>
+						</div>
+						<div class="editlicityinfo">
+							<input type="text" value="北京" class="editliaddressput  editliaddressputmax editliaddressputmin" readonly />
+							<span class="editselectIco"></span>
+						</div>-->
+						<div class="">
+								<input type="text" id="txt_area2" class="editliaddressput editliaddressputmax" name="address" readonly value="<?php echo isset($province)?$province:'';?> <?php echo isset($city)?$city:'';?> <?php echo isset($area)?$area:'';?>" data-value="<?php echo $province_id;?>,<?php echo $city_id;?>,<?php echo $area_id;?>"/>
+								<input type="hidden" id="hd_area" name="city" value="<?php echo $province_id;?>,<?php echo $city_id;?>,<?php echo $area_id;?>"/>
+								<input type="hidden" id="address_id" name="address_id" value="<?=isset($_GET['id'])?$_GET['id']:$info['address_id']?>"/>
+								<script class="resources library" src="/js/area.js" type="text/javascript"></script>
+							<script>
+								var selectArea2 = new MobileSelectArea();
+								selectArea2.init({trigger:'#txt_area2',value:$('#txt_area2').data('value'),data:json,eventName:'click'});
+							</script>
+		
+							</div>
+					</div>
+					<input type="text" name="address" value="<?=isset($_GET['address'])?$_GET['address']:$info['address']?>" class="editliaddressput editliaddressputmax" />
+				</div>
+			</li>
+		</ul>
+		<input type="submit" class="editliaddressbtn" value="提交" />
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$(document).on('click','.del_btn',function () {
+			if (confirm("确定要删除这地址吗?")) {
+				var id = $("#address_id").val();
+				$.ajax({
+					type: "POST",
+					url: "/address/deladdress",
+					dataType: "json",
+					data: {'id': id},
+					success: function (data) {
+						if(data.success==1){
+							alert('删除成功');window.location.href="/address/index";
+						}else {
+							alert('删除失败');
+						}
+					}
+				})
+			}
+		})
+	});
+</script>
+
+</body>
+</html>

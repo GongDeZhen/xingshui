@@ -1,0 +1,187 @@
+ <?php include(dirname(__FILE__) . '/../sys/header.phtml')?>
+     <script type="text/javascript" src="/js/baidu_count.js"></script>
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="/setacc/index" class="icon icon-goback pull-left"></a>
+		
+		<h1 class="title c-white">全部订单</h1>
+	</header>
+	<div class="segmented-control top-nav">
+		<a class="control-item <?php if($type==0) active?>" href="./qstate?status=0">
+		   		全部
+		</a>
+		<a class="control-item <?php if($type==1) active?>" href="./qstate?status=1">
+		    	待付款
+		</a>
+		<a class="control-item <?php if($type==2) active?>" href="./qstate?status=2">
+		    	待发货
+		</a>
+		<a class="control-item <?php if($type==3) active?>" href="./qstate?status=3">
+		    	待收货
+		</a>
+		<a class="control-item <?php if($type==4) active?>" href="./qstate?status=4">
+		    	已收货
+		</a>
+		<a class="control-item <?php if($type==5) active?>" href="./qstate?status=5">
+		    	已取消
+		</a>
+	</div>
+	<div class="content pt-0 bg-gray2 dingdan" >
+		<ul class="table-view dingdan-item">
+		  <?php if($info!=0){ foreach($this->info as $k => $v){ ?>
+    			<li class="table-view-cell  ">
+    			  	<div class="order-status clearfix">
+    			  		<span class="pull-left">订单号<small class="number" name="<?=$v['order_number']?>"><?=$v['order_number']?></small></span>
+    			  		<span class="pull-right c-bule">
+    			  		 <?=$v['status'] ?>
+    			  		</span>
+    			  	</div>
+    			    <a class="navigate-right" href="./info?id=<?=$v['id']?>">
+    				    <div class="goods-pic">
+    				        <?php foreach( $v["goods_list"] as $k => $val){ ?>
+    				    	   <img class="media-object pull-left" src="<?=$val['goods_thumb']?>" >
+    				    	  <?php }?>
+    				    	<span  class="ellipsis" >...</span>
+    				    </div>
+    			     	<div class="pull-right goods-des">
+    			     		<span class="goods-num">共<?=$v['goods_num']?>件商品</span>
+    			     		<span>合计:</span>
+    			     		<span class="price" name="<?=$v["pay_money"]?>">￥<?=$v["pay_money"]?></span>
+    			     	</div>  
+    			    </a>
+    			    <div class="order-btn-box clearfix">	
+            		   <?php if($v['status_num']==1){?>
+            		       <button class="btn bg-bule c-white b-bule pull-right mr-10" onclick="qorder(this,<?=$v['id']?>,1)">立即支付</button>
+            		       <button id="dorder" class="btn  bg-white c-bule b-bule pull-right" onclick="JavaScript:if(confirm('是否要取消该订单')) qorder(this,<?=$v['id']?>,2);return false;">取消订单</button>
+            		  <?php }elseif($v['status_num']==2){?>
+            		        <button class="btn bg-bule c-white b-bule pull-right mr-10" onclick="JavaScript:if(confirm('是否要取消该订单')) qorder(this,<?=$v['id']?>,2);return false;">取消订单</button>
+            		        <button id="dorder" class="btn  bg-white c-bule b-bule pull-right" onclick="qorder(this,<?=$v['id']?>,3)">提醒发货</button>
+            		  <?php }elseif($v['status_num']==3){?>
+            		          <button class="btn bg-bule c-white b-bule pull-right mr-10" onclick="JavaScript:if(confirm('是否要取消该订单')) qorder(this,<?=$v['id']?>,2);return false;">取消订单</button>
+            		          <button id="dorder" class="btn  bg-white c-bule b-bule pull-right" onclick="qorder(this,<?=$v['id']?>,4)">立即签收</button>
+            		  <?php }elseif($v['status_num']==4 || $v['status_num']==5){?>
+            		           <button id="dorder" class="btn  bg-white c-bule b-bule pull-right" onclick="JavaScript:if(confirm('是否要删除该订单')) qorder(this,<?=$v['id']?>,5);return false;">删除订单</button>
+            		  <?php }elseif($v['status_num']==5||$v['status_num']==6){?>
+            		           <button class="btn bg-bule c-white b-bule pull-right mr-10" onclick="JavaScript:if(confirm('是否要删除该订单')) qorder(this,<?=$v['id']?>,5);return false;">删除订单</button>
+            		           <a href="/state/info?id=<?=$v['id']?>">
+            		              <button id="dorder" class="btn  bg-white c-bule b-bule pull-right">查看详情</button>
+            		           </a>
+            		  <?php }?>
+    			  	</div>
+    			</li>
+			<?php }}else{?>
+                <div class="content-box text-center mt-120" >
+                  <img src="/images/car-bule.png" width="75px" height="75px" class="mb-20" style="display:inline"/>
+                  <p class="fs-17 c-gary1">你最近没有消息</p>
+                  <button class="btn btn-block c-white bg-bule b-n btn-public mb-20 f-n mt-50">知道了，去购物！</button>
+                 </div>
+			<?php }?>
+		</ul>
+	</div>
+</body>
+
+
+<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>/vendor/js/zepto.min.js"></script>
+<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>/js/tjp.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+wx.config({
+	debug: false,
+	appId: "<?=$this->jsdata['appId']?>", //测试号ID
+	timestamp: "<?=$this->jsdata['timestamp']?>", //戳
+	nonceStr: "<?=$this->jsdata['nonceStr']?>", //随机串
+	signature: "<?=$this->jsdata['signature']?>", //签名
+	jsApiList: ['chooseWXPay'] //接口列表
+});
+function qorder(obj,id,type)
+{        
+	var ordernum=$(obj).parent('.order-btn-box').siblings('.order-status').find('.number').attr('name');//订单号
+	var paymoney=$(obj).parent('.order-btn-box').siblings('.navigate-right').find('.price').attr('name');//支付金额
+	var orderid=$(obj).attr('name');//订单id
+    $.ajax({
+       type: "POST",
+       url: "qorder",
+       dataType: "json",
+       data: "id="+id+"&type="+type,
+       success: function(data){
+          if(data.type==1){
+              alert('开始支付');
+              pay_money(ordernum,paymoney,id);
+             }else if(data.type==2 && data.message.success==1){
+         	    alert('订单取消成功');
+             }else if(data.type==3 && data.message.success==1){
+            	 alert('提醒成功');
+             }else if(data.type==4 && data.message.success==1){
+            	 alert('签收成功');
+             }else if(data.type==5 && data.message.success==1){
+            	 alert('订单删除成功');
+            	 $(this).parents('.table-view').next('ls').empty();
+             }else{
+         	     alert('异常错误');
+             }
+       }
+    });
+}
+//结算订单
+function pay_money(ordernum,money,id){
+	$.ajax({
+	    type:'POST',
+	    url:'/cart/paymoney',
+	    data:'odery_num='+ordernum+"&money="+money+'&orid='+id,
+	    dataType:'json',
+	    success : function(msg){
+	    	result = msg;
+	    	console.log(result);return false;
+	    	if(result.success==101){
+	    		alert(result.data);
+	    		window.location.href="/login/login";
+	    		return false;
+	        }
+	    	if(result.success==102){
+	    		alert(result.data);
+	    		window.location.href="/cart/index";
+	    		return false;
+	        }
+	        if(result.success == 1){
+	            var $orid = id;
+	            wx.chooseWXPay({
+	            	appId: result.data.appId,
+	                timestamp: result.data.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+	                nonceStr: result.data.nonceStr, // 支付签名随机串，不长于 32 位
+	                package: result.data.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+	                signType: result.data.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+	                paySign: result.data.paySign, // 支付签名
+	                success: function (res) {
+	                    var str = JSON.stringify(res);
+	                    // 支付成功后的回调函数
+	                    alert(str);
+	                    if(res.errMsg == "chooseWXPay:ok"){
+	                    	$.ajax({
+	                        	url : '/cart/setstatus',
+	                        	type : 'post',
+	                        	data : {'oid':$orid},
+	                         	success : function(tes){
+										window.location.href = '/state/qstate?status=2';
+										location.reload();
+		                           }
+	                    	})
+	                    }else{
+	                        //$.post( '/goods/cancelOrder',{'id': $orid},function( delres ) {
+	                            alert("支付失败！");
+	                            window.location.href = '/state/qstate?status=1';
+	                       // },'json' )
+	                    }
+	                }
+	            });
+	        }else{
+ 	            alert( result.error );
+	        }
+	    },
+	    error : function(msg){
+			alert("取消支付");
+			console.log('error');
+			console.log(msg);
+	    }
+	});
+}
+ </script>
+ <?php include(dirname(__FILE__) . '/../sys/header.phtml')?>

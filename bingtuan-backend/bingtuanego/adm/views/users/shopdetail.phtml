@@ -1,0 +1,173 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: right;background-color: #f9f9f9;}
+td>div{float:left;width:25%}
+#allmap{height:300px;width:560px;}
+#r-result{width:100%; font-size:14px;}
+</style>
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=I96kbvyGCYIXh7b3mFOGldWl"></script>
+<br>
+<?php
+if ($this->errors != '') {
+    echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div>";
+}
+?>
+<br>
+<br>
+<!-- 品牌活动（新建）详情 -->
+<div class="col-md-10">
+	<h4>商户详情</h4>
+	<hr>
+	   <form method="post" id="ajaxform" enctype="multipart/form-data">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th class='col-md-1'>ID</th><td class='col-md-4'><?=$this->userInfo['id']?></td>
+              <th class='col-md-1'>注册时间</th><td class='col-md-4'><?=date("Y-m-d",$this->userInfo['create_time'])?></td>
+            </tr>
+            <tr>
+              <th>审核时间</th><td class='col-md-3'><?=($this->userInfo['status_time'])?date("Y-m-d",$this->userInfo['status_time']):'未审核'?></td>
+              <th>姓名</th><td class='col-md-3'><?=$this->userInfo['real_name']?></td>
+            </tr>
+            <tr>
+                <th>店铺名</th><td class='col-md-3'><input class='form-control' value="<?=$this->userInfo['shop_name']?>" name="shop_name" id="shop_name"> </td>
+                <th>状态</th>
+                <td class='col-md-3'>
+                    <select class='form-control' name="status" id="status">
+                        <?php foreach ($this->statusList as $kS=>$itemS){?>
+                            <option value="<?=$kS?>" <?= $this->userInfo['status'] == $kS ? 'selected' : ''; ?>><?=$itemS?></option>
+                        <?php }?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+              <th>手机</th><td class='col-md-3'><?=$this->userInfo['username']?></td>
+              <th>银行卡账号</th>
+              <td class='col-md-3' colspan='3'>
+                  <?php if($this->userInfo['bankcard']): ?>
+                      <?php foreach ($this->userInfo['bankcard'] as $j): ?>
+                          <?=$j['bank']?>:<?=$j['card_number']?>
+                      <?php endforeach; ?>
+                  <?php endif; ?>
+              </td>
+            </tr>
+            <tr>
+                <th rowspan=2>地区</th>
+                <td rowspan=2 class='col-md-3'>
+                    <?=$this->jiliancaidan?>
+                    <div class="input-group col-md-12">
+                        <div class="input-group-addon">街道</div>
+                        <input class='form-control' name="street" value="<?=$this->userInfo['street']?>" id="street" />
+                    </div>
+                    <div class="input-group col-md-12">
+                        <div class="input-group-addon">详细地址</div>
+                        <input class='form-control' name="address" value="<?=$this->userInfo['address']?>" id="address" />
+                    </div>
+                </td>
+                <th>身份证</th><td class='col-md-3'><input class='form-control' name="id_card_number" value="<?=$this->userInfo['id_card_number']?>" id="car_number" /></td>
+            </tr>
+           <tr>
+                <th>营业执照：</th>
+                <td class='col-md-3' colspan='3'>
+                      <img id="ImgPr" style="height:100px;width:100px;position:absolute; border-radius: 3px;background-size:100px 100px; background-image:url('/img/uploadButton.png')" src="<?=$this->userInfo['business_license']?>" />
+                      <input type="file" id="up" name="business_license" style="padding-left: 0px; opacity: 0;height: 100px;width: 100px; display: inline;"/>
+                  <?php if($this->userInfo['business_license']){ ?>
+                  <a href="<?=$this->userInfo['business_license']?>" target="_blank">查看大图</a>
+                  <?php } ?>
+                </td>
+            </tr>
+            <tr>
+              <td colspan=4>
+               <div id="r-result">
+                  地址获取经纬度：<input id="getAddress" style='width: 24em' />
+                  <input type="button" value="获取经纬度" onclick="theLocation()" /><br>
+                                    经度: <input id="longitude" value='<?=$this->userInfo['longitude']?>' type="text" style="width:100px; margin-right:10px;" />
+                  纬度: <input id="latitude" value='<?=$this->userInfo['latitude']?>' type="text" style="width:100px; margin-right:10px;" />
+                  <input type="button" value="查询地图位置" onclick="theLocation()" /><br>
+                </div>
+                
+                <div><div id="allmap"></div></div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan=4 class='text-right' ><input class='form-control' type="hidden" value="<?= $this->userInfo['id']; ?>" name="id" id="id" />
+              <input type="hidden" value="<?=$this->userInfo['username']?>" name="phone" id="phone" />
+        		<input type="submit" class="btn btn-primary" value="修改">
+        	  </td>
+            </tr>
+          </tbody>
+      </table>
+      </form>
+</div>
+<script>
+var provinceName = $('#province').find("option:selected").text();
+var cityName = $('#city').find("option:selected").text();
+var areaName = $('#area').find("option:selected").text();
+var streetName = $('#street').val();
+var addressName = $('#address').val();
+var getAddress = provinceName + cityName + areaName + streetName + addressName;
+$('#getAddress').val(getAddress);
+    $(document).on('submit','#ajaxform',function(){
+        var status = $('#status').val();
+        if(!status){ alert('状态不能为空');return false;}
+        var shop_name = $('#shop_name').val();
+        if(!shop_name){ alert('店铺名不能为空');return false;}
+        var province = $('#province').val();
+        if(!province){ alert('省不能为空');return false;}
+        
+        if(!city){ alert('市不能为空');return false;}
+        
+        if(!area){ alert('区不能为空');return false;}
+        
+        if(!street){ alert('街道能为空');return false;}
+        
+        if(!address){ alert('地址不能为空');return false;}
+        var car_number = $('#car_number').val();
+        if(!car_number){ alert('身份证不能为空');return false;}
+        
+    });
+    $("#up").uploadPreview({ Img: "ImgPr", Width: 120, Height: 120, ImgType: ["gif", "jpeg", "jpg", "bmp", "png"], Callback: function () { }});
+    $(function () {
+        $("#IMG_PATH").uploadPreview({ Img: "ImgPr", Width: 120, Height: 120 });
+    });
+
+    // 百度地图API功能
+    var map = new BMap.Map("allmap");
+    map.centerAndZoom(new BMap.Point(<?=$this->userInfo['longitude']?>,<?=$this->userInfo['latitude']?>),16);
+    map.disableScrollWheelZoom();// 禁止鼠标滑轮放大缩小
+    // 用经纬度设置地图中心点
+    $(document).ready(function(){
+      if(document.getElementById("longitude").value != "" && document.getElementById("latitude").value != ""){
+        var new_point = new BMap.Point(<?=$this->userInfo['longitude']?>,<?=$this->userInfo['latitude']?>);
+        var marker = new BMap.Marker(new_point);  // 创建标注
+        map.disableDragging();   //禁止拖拽
+        map.addOverlay(marker);              // 将标注添加到地图中
+        map.panTo(new_point);
+      }
+    });
+
+    // 根据地址获取经纬度
+    function getLatitude(){
+        alert(getAddress);
+    }
+    
+   function theLocation(){
+    if(document.getElementById("longitude").value != "" && document.getElementById("latitude").value != ""){
+      map.clearOverlays(); 
+      var new_point = new BMap.Point(document.getElementById("longitude").value,document.getElementById("latitude").value);
+      var marker = new BMap.Marker(new_point);  // 创建标注
+      map.disableDragging();   //禁止拖拽
+      map.addOverlay(marker);              // 将标注添加到地图中
+      map.panTo(new_point);      
+    }
+  }
+
+</script>
+</body>
+</html>
+

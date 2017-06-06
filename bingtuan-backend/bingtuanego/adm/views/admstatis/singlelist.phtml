@@ -1,0 +1,197 @@
+<script src="/js/thumbnails.js"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<style>
+.current{color:#000000;}
+.thumbnail{margin-bottom: 0px;}
+tr{border-top: 1px solid #ddd;text-align: center;}
+th {text-align: center;}
+.table>tbody>tr>td>.input-group {float: left;padding: 0.2em;width:23%}
+</style>
+<script>
+    laydate.skin('danlan')
+</script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+        <li><a href="#">平台统计</a></li>
+        <li class="active">单品销量</li>
+    </ol>
+    <div>
+        <form action="" method="get" id='ajaxFormha'>
+        <table class="table" style="background:#f5f5f5">
+            <tr>
+                <td>
+                    <div class="input-group" style='width: 18em'>
+                        <div class="input-group-addon">公司</div>
+                        <select name="company_id" class='form-control' onchange=aa(this.value)>
+                            <option value="0">全部</option>
+                            <?php foreach($this->getCompanyList as $k => $v){ ?>
+                                    <option value="<?=$v['id']?>" <?= ($this->get['company_id'] == $v['id']) ? 'selected=selected' :'' ?>><?= $v['name']; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="input-group" style='width: 20em'>
+                            <div class="input-group-addon">经销商</div>
+                            <select name="" id="warehouse" class='form-control' >
+                                <option value="0">全部</option>
+                            </select>
+                    </div>
+                  <div class="input-group col-md-3" style='width: 18em'>
+                    <div class="input-group-addon">品类</div>
+                    <select name="goods_type" class='form-control'>
+                        <option value="0">请选择</option>
+                        <?php foreach($this->get_goods_type as $gv){ ?>
+                            <option value="<?php echo $gv['id']; ?>" <?= ($this->get['goods_type'] == $gv['id']) ? 'selected=selected' :'' ?> ><?php echo $gv['name']; ?></option>
+                        <?php } ?>
+                    </select>
+                  </div>
+                     <div class="input-group col-md-3" style='width: 18em'>
+                    <div class="input-group-addon">品牌</div>
+                    <select name="brand" class='form-control'>
+                        <option value="0">请选择</option>
+                        <?php foreach($this->getBrand as $bv){ ?>
+                            <option value="<?php echo $bv['id']; ?>" <?= ($this->get['brand'] == $bv['id']) ? 'selected=selected' :'' ?>><?php echo $bv['name']; ?></option>
+                        <?php } ?>
+                    </select>
+                  </div>
+                    <div class="input-group" style='width: 18em'>
+                        <div class="input-group-addon">时间</div>
+                        <input type="text" class='form-control' style='width: 14em;' placeholder="开始时间" onclick="laydate()" name="ktime" value='<?= $this->get['ktime']; ?>'>
+                        <input class='form-control' style='width: 14em;' type="text" placeholder="结束时间" onclick="laydate()" name="gtime" value='<?= $this->get['gtime']; ?>'>
+                    </div>
+                     <div class="input-group col-md-5">
+                    <div class="input-group-addon">搜索商品</div>
+                    <input type="text" class='form-control' style='width: 15em;' placeholder="商品名称" name="goods_name" value='<?= $this->get['goods_name']; ?>'>
+                  </div>
+                </td>
+              <td>
+                <div class="input-group col-md-1" style='width:0;float: right;'><input type="submit" class='btn btn-primary' placeholder="搜索"><div><br/>
+                <bottom class="btn btn-primary export" style='width:3.9em'>导出</bottom>
+              </td>
+            </tr>
+        </table>
+        
+    </div>
+    <table class="table table-hover">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>品类</th>
+          <th>品牌</th>
+          <th>商品ID</th>
+          <th>商品名称</th>
+          <th><span id='goods_total' value='<?= !isset($_GET['goods_total']) ? 'desc' : ($_GET['goods_total'] == 'desc' ? 'asc' : 'desc') ?>' onclick="sort('goods_total','<?= !isset($_GET['goods_total']) ? 'desc' : ($_GET['goods_total'] == 'desc' ? 'asc' : 'desc') ?>')">  销售额<span class='glyphicon glyphicon-chevron-<?=($_GET['goods_total'] == 'desc') ? 'up':'down'?>' style='top: 4px;'></span></span></th>
+          <th>销售额占比</th>
+          <th><span id='goods_count' value='<?= !isset($_GET['goods_count']) ? 'desc' : ($_GET['goods_count'] == 'desc' ? 'asc' : 'desc') ?>' onclick="sort('goods_count','<?= !isset($_GET['goods_count']) ? 'desc' : ($_GET['goods_count'] == 'desc' ? 'asc' : 'desc') ?>')">数量<span class='glyphicon glyphicon-chevron-<?=($_GET['goods_count'] == 'desc') ? 'up':'down'?>' style='top: 4px;'></span></span></th>
+          <th>数量占比</th>
+        </tr>
+    </thead>
+      <tbody>
+          <?php if ($this->list): ?>
+            <?php foreach ($this->list as $k=>$v): ?>
+            <tr id='is_del_1'>
+              <td class='col-md-2'><?=$v["type_name"]?></td>
+              <td class='col-md-2'><?=$v["bname"]?></td>
+              <td class='col-md-2'><?=$v["goods_id"]?></td>
+              <td class='col-md-2'><?=$v["goods_name"]?></td>
+              <td class='col-md-2'><?=$v["goods_total"]?$v["goods_total"]:'0' ?></td>
+              <td class='col-md-2'><?=round((float)(($v["goods_total"]/$this->total_money)*100),2).'%'; ?></td>
+              <td class='col-md-2'><?=$v["goods_count"]?$v["goods_count"]:'0' ?></td>
+              <td class='col-md-2'><?=round((float)(($v["goods_count"]/$this->total_count)*100),2).'%'; ?></td>
+            </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
+      </tbody>
+    </table>
+    </form>
+    <?php echo $this->paglist; ?>
+</div>
+
+<script>
+//===================公司=======================
+$('select[name="company_id"]').change(function(){
+    var cid = $('select[name="company_id"]').val();
+    var coupons = $('select[name="coupons"]');
+    var activity = $('select[name="activity"]');
+    $.ajax({
+        type: "POST",
+        url: "selectList",
+        dataType: "json",
+        data: "cid="+cid,
+        success: function(data){
+            if (data.data == '') {
+                coupons.empty();
+                coupons.append('<option value="0">请选择</option>');
+                activity.empty();
+                activity.append('<option value="0">请选择</option>');
+            } else {
+                coupons.empty();
+                coupons.append('<option value="0">请选择</option>'+data.data[0]);
+                activity.empty();
+                activity.append('<option value="0">请选择</option>'+data.data[1]);
+            }
+        }
+     });
+});
+//===================单品导出==============
+$(document).on('click','.export',function(){
+	if (confirm("确定导出？")) {
+		var export_type = $(this).attr('name');
+		window.location.href="singleExport?"+$("form").serialize(); 
+	}
+});
+// function test(){
+// var fm = document.getElementsByTagName('form')[0];
+//  //① 收集表单信息(普通表单域 和 上传文件域)
+//  var fd = new FormData(fm);//也可以使用this(其代表事件的元素节点对象)
+//  //② ajax传递表单信息到服务器
+//  var xhr = new XMLHttpRequest();
+//  xhr.onreadystatechange = function(){
+//      if(xhr.readyState==4){
+//          var strobj=xhr.responseText;
+//          console.log(strobj);
+//      }
+//  }
+//  xhr.open('post','singleExport');
+//  xhr.send(fd);
+// }
+//===================排序================================
+function sort(name, state)
+{
+    if (name == 'goods_total') {
+    	bcount = $("#bcount").attr('value')
+        if (<?= $this->get['goods_total'] ? 'true' : 'false' ?> == false) {
+            window.location.href="singlelist?"+$("#ajaxFormha").serialize()+'&goods_total='+state;
+        } else {
+            window.location.href="singlelist?"+$("#ajaxFormha").serialize()+'&goods_total='+state;
+        }
+    }
+    if (name == 'goods_count') {
+        if (<?= $this->get['goods_count'] ? 'true' : 'false' ?> == false) {
+            window.location.href="singlelist?"+$("#ajaxFormha").serialize()+'&goods_count='+state;
+        } else {
+            window.location.href="singlelist?"+$("#ajaxFormha").serialize()+'&goods_count='+state;
+        }
+    }
+}
+function aa(id){
+    $.ajax({
+        type: "POST",
+        url: "getwarehouse",
+        dataType: "json",
+        data: "cid="+id,
+        success: function(data){
+           if(data==false){
+        	       $('#warehouse').empty();
+        	       $('#warehouse').append("<option value= 0 >全部</option>");
+            }else{
+	               $('#warehouse').empty();
+	               $('#warehouse').append("<option value="+data.id+">"+data.warehousename+"</option>");
+            }
+          
+        }
+     });
+}
+</script>

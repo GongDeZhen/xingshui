@@ -1,0 +1,38 @@
+<script src="/js/thumbnails.js"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+/* .input-group[class*="col-"]{float: left;padding: 0.2em;} */
+form>div>div{float:left;width:25%;padding: 0.2em;}
+.current {color:#000000;}
+</style>
+
+
+ <div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="/users/userlist">用户管理</a></li>
+      <li class="active">导入用户</li>
+    </ol>
+    <hr>
+    
+	<?php
+		if ($this->errors != '') {
+			echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+				<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+		<strong>{$this->errors}</strong>
+			</div>";
+		}
+	?>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="col-md-12" style="background:#f5f5f5;padding: 0.6em;">
+            <?= $this->companyDealersList ?>
+            <input  type="file" name="excel" class='form-group col-md-3' style='margin-top: 1%;'/>
+            <div class="input-group col-md-1">
+                <button type="submit" class="btn btn-primary" >导入Excel</button>
+            </div>
+        </div>
+    </form>
+</div>

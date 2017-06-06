@@ -1,0 +1,95 @@
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.s{color:red;}
+th {text-align: center;}
+input[type="file"]{display: inline;}
+</style>
+
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="warehouselist">经销商管理</a></li>
+      <li class="active">编辑经销商</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="warehouselist">经销商列表</a></li>
+	  <li role="presentation" class="active"><a href="javascript:void(0)">编辑经销商</a></li>
+    </ul>
+    <br>
+    <?php
+      if ($this->errors != '') {
+        echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div>";
+      }
+    ?><br>
+    <div class="tab-content">
+        <form action='edit' method="POST" enctype="multipart/form-data" class="form-horizontal col-sm-12">
+            <input type='hidden' name='id' value='<?=$this->info['id']?>'>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">公司<span class='s'> *</span></label>
+                <div class="col-sm-3">
+                    <select name="company_id" class="form-control">
+                        <?php foreach ($this->getCompanyList as $k => $v): ?>
+                        	<option value="<?=$v['id']?>" <?=($this->info['company_id']==$v['id'])?'selected="selected"':'';?> ><?=$v['name']?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+        		<label class="col-sm-2 control-label" for="Bingtuan_goodsName">经销商名称<span class='s'> *</span></label>
+                <div class="col-sm-3">
+        			<input type="text" class="form-control" name='warehousename' value='<?=$this->info['warehousename']?>'><span></span>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">联系人<span class='s'> *</span></label>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" name='contact' value='<?=$this->info['contact']?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">联系人电话<span class='s'> *</span></label>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" name='mobile' value='<?=$this->info['mobile']?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">邮箱<span class='s'> *</span></label>
+                <div class="col-sm-3">
+                  <input type="'email'" class="form-control" name='email' value='<?=$this->info['email']?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">描述<span class='s'> *</span></label>
+                <div class="col-sm-5">
+                  <textarea class="form-control" name='describe' rows="4" cols='4'><?=$this->info['describe']?></textarea>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">运营状态<span class='s'> *</span></label>
+                <div class="col-md-2">
+                    <select name="status" class="form-control">
+                    	<option value="1" <?=($this->info['status']==1)?'selected="selected"':'';?> >开始运营</option>
+                    	<option value="0" <?=($this->info['status']==0)?'selected="selected"':'';?>>暂停运营</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">上线时间<span class='s'> *</span></label>
+                <div class="col-sm-4">
+                    <input class='form-control' style='width:50%;display: inline' type="text" placeholder="开始时间" onclick="laydate()" name="uptime" id='ktime' value='<?=($this->info['uptime']=='')?'':date("Y-m-d ",$this->info['uptime']); ?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-success">提交</button>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>

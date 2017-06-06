@@ -1,0 +1,21 @@
+@charset "utf-8";
+.st_tree{padding:10px;}
+/* 超链接 */
+.st_tree a{text-decoration:none; color:#333;}
+/* 鼠标经过的超链接 */
+.st_tree a:hover{color:#f33;text-decoration:underline;}
+/* 菜单 */
+.st_tree ul{padding:0 18px;margin:0;}
+/* 菜单项 */
+.st_tree ul li{font-size:13px;color:#222;height:26px; width:auto; line-height:26px;cursor:pointer;list-style:none;background-repeat:no-repeat;padding:0 0 3px 0px;}
+/* 子菜单 */
+.st_tree ul li ul{}
+/* 子菜单项 */
+.st_tree ul li ul li{}
+/* 子菜单的父节点 */
+.st_tree .folder{list-style-image:url(../../img/treemenu/st_icon.png);background-repeat:no-repeat;}
+/* 展开的父节点 */
+.st_tree .open{list-style-image:url(../../img/treemenu/st_icon_open.png);background-repeat:no-repeat;}
+.st_tree .top-menu{
+    font-size:14px;
+}

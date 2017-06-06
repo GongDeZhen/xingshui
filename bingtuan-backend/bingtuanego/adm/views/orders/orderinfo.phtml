@@ -1,0 +1,382 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="orderList">订单管理</a></li>
+      <li class="active">用户订单详情</li>
+    </ol>
+    <div style="overflow:hidden;">
+        <ul class="nav nav-pills" style='width: 60%;float:left'>
+          <li role="presentation"><a href="orderList">订单列表</a></li>
+          <li role="presentation" class="active"><a href="javascript:void(0)">用户订单详情</a></li>
+        </ul>
+        <div style='width: 30%;float:right;'>
+            <button class="btn btn-primary" style='width:8em; float:right;' onclick='window.location.href="printOrder?id=<?= $this->order_info['order_id'] ?>"'>打印订单</button>
+            <button type="button" class="btn btn-danger" style="color:white; float:right; margin-right:10px;" readonly="readonly"><?=!$this->order_info['num'] ? '未打印' : '该订单已打印 ' .$this->order_info['num'].' 次'?></button>
+        </div>
+    </div>
+    
+    <br>
+    <div class="tab-content">
+        <table class="table table-bordered">
+            <tr style="background: #f5f5f5;">
+                <td colspan='4' class='text-center'>基本信息</td>
+            </tr>
+            <tr>
+                <td class="col-md-2 text-right">订单支付交易号：</td>
+                <td colspan='3'>
+                    <?php if ($this->rbac == '*' ? true :(in_array('orders_updatetradeno', $this->rbac['action']))) :?>
+                        <?php if ($this->order_info['pay_status'] == 1 && $this->order_info['trade_no'] == ''): ?>
+                            <input type='text' style='display: -webkit-inline-box; width: 40%;' class='form-control' name='trade_no' value='<?= $this->order_info['trade_no']; ?>'>
+                            <span class='btn btn-success' id='updateTradeNo'>修改交易号</span>
+                        <?php else: ?>
+                            <?= $this->order_info['trade_no']; ?>
+                        <?php endif; ?> 
+                    <?php else: ?>
+                        <?= $this->order_info['trade_no']; ?>
+                    <?php endif; ?>
+                    <?php if($this->order_info['pay_id'] == 5 && $this->order_info['trade_no']): ?>
+                    <button class="btn btn-primary" onclick="tradeQuery('<?= $this->order_info['trade_no']; ?>')">交易查询</button>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-2 text-right">订单号：</td>
+                <td class="col-md-4"><?= $this->order_info['order_number']; ?></td>
+                <td class="col-md-2 text-right">订单状态：</td>
+                <td>
+                    <?= $this->order_info['status']; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-2 text-right">购货人：</td>
+                <td><?= $this->order_info['userName']; ?></td>
+                <td class="col-md-2 text-right">下单时间：</td>
+                <td><?= $this->order_info['add_time']?date('Y-m-d H:i',$this->order_info['add_time']):''; ?></td>
+               
+            </tr>
+            <tr>
+                <td class="col-md-2 text-right">店铺名：</td>
+                <td><?= $this->order_info['comName']; ?></td>
+                <td class="col-md-2 text-right">联系电话：</td>
+                <td><?= $this->order_info['account']; ?></td>
+            </tr>
+            <tr>
+                <td class="col-md-2 text-right">支付方式：</td>
+                <td style='padding: 0;'>
+                    <span style="float: left; padding:0 0.5em" class='text-primary h5'>
+                        <?= (empty($this->order_info['pay_id'])? '无' : ($this->order_info['pay_id']==1?'微信':($this->order_info['pay_id']==2?'支付宝':($this->order_info['pay_id']==4?'微信公众号':($this->order_info['pay_id']==5 ? '易极付' : '无'))))) ?></span>
+                    <div style="float: left;" >
+                    <?php if(($this->order_info['order_status'] == 4 || $this->order_info['order_status'] == 7) && $this->order_info['trade_no'] != '') { ?>
+                        <?php if ($this->order_info['pay_id'] == 2) { ?>
+                            <form action="/orders/refund" method="post" target="_blank">
+                                <input type="hidden" name="orderId" value="<?= $this->order_info['order_id'] ?>">
+                                <input type="submit" class='btn btn-success' value="退款审核">
+                                <span type="submit" class='btn btn-success' onclick='refusedOrder(<?= $this->order_info['order_id'] ?>)'>拒绝退款<span>
+                            </form>
+                        <?php } elseif ($this->order_info['pay_id'] == 5) {?>
+                                <input type="submit" class='btn btn-success' onclick='yijiRefund(<?= $this->order_info['order_id'] ?>)' value="退款审核">
+                                <span type="submit" class='btn btn-success' onclick='refusedOrder(<?= $this->order_info['order_id'] ?>)'>拒绝退款<span>
+                        <?php }else{ ?>
+                            <input type="submit" class='btn btn-success' onclick='weixinRefund(<?= $this->order_info['order_id'] ?>)' value="退款审核">
+                            <input type="submit" class='btn btn-success' onclick='refusedOrder(<?= $this->order_info['order_id'] ?>)' value="拒绝退款">
+                        <?php } ?>
+                    <?php }elseif(($this->order_info['order_status'] == 4 || $this->order_info['order_status'] == 7) && $this->order_info['trade_no'] == ''){ ?>
+                        <?php if($this->order_info['pay_id'] == 0) : ?>
+                        <input type="submit" class='btn btn-success' onclick='yijiRefund(<?= $this->order_info['order_id'] ?>)' value="退款审核">
+                        <input type="submit" class='btn btn-success' onclick='refusedOrder(<?= $this->order_info['order_id'] ?>)' value="拒绝退款">
+                            <?php endif; ?>
+                    <?php } ?>
+                    </div>
+                    
+                </td>
+                <td class="col-md-2 text-right">付款时间：</td>
+                <td><?= $this->order_info['pay_time'] ? date('Y-m-d H:i',$this->order_info['pay_time']):'待付款'; ?></td>
+            </tr>
+            <tr>
+                <td class="col-md-2 text-right">分公司：</td>
+                <td><?= $this->order_info['companyName']; ?></td>
+                <td class="col-md-2 text-right">经销商：</td>
+                <td><?= $this->order_info['warehouseName']; ?></td>
+            </tr>
+            <tr>
+                <td class="col-md-2 text-right">经销商电话：</td>
+                <td><?= $this->order_info['seller_tel']; ?></td>
+                <td class="col-md-2 text-right">发货时间：</td>
+                <td><?= $this->order_info['shipments_time']?date('Y-m-d H:i',$this->order_info['shipments_time']):'待配送'; ?></td>
+            </tr>
+        </table>
+        <table class="table table-bordered">
+            <tr style="background:#f5f5f5;">
+                <td colspan="4" style="text-align: center">收货人信息</td>
+            </tr>
+            <tr>
+                <td class="col-md-2 text-right">收货人：</td>
+                <td><?= $this->order_info['consignee']; ?></td>
+                <td class="col-md-2 text-right">手机：</td>
+                <td><?= $this->order_info['tel']; ?></td>
+            </tr>
+            <tr>
+                <td class="col-md-2 text-right">地址：</td>
+                <td colspan='3'><?= $this->order_info['order_address']; ?></td>
+            </tr>
+        </table>
+        <table class="table table-bordered">
+            <tr style="background:#f5f5f5;">
+                <td colspan="4" style="text-align: center">订单备注信息</td>
+            </tr>
+            <tr>
+                <td <?= (empty($this->order_info['postscript'])?'':'style="text-indent:2em;"')?>>
+                    <?= (empty($this->order_info['postscript'])?'<center>无</center>':$this->order_info['postscript'])?>
+                </td>
+            </tr>
+        </table>
+        <table class="table table-bordered">
+            <tr style="background:#f5f5f5;">
+                <td colspan="4" style="text-align: center">已使用：优惠券、代金券</td>
+            </tr>
+            <tr>
+                <td class='col-md-3 text-center'>名称：</td>
+                <td class='col-md-3 text-center'>金额下限：</td>
+                <td class='col-md-3 text-center'>商品：</td>
+                <td class='col-md-3 text-center'>类型：</td>
+            </tr>
+            <?php if ($this->order_info['coupons']): ?>
+                <?php foreach ($this->order_info['coupons'] as $k => $v) : ?>
+                    <tr>
+                        <td class='text-center'><?=$v['name']?></td>
+                        <td class='text-center'><?=$v['least']?>元</td>
+                        <td class='text-center'><?=$v['goods_name']?></td>
+                        <td class='text-center'><?=$v['type']==2 ? $v['type_num'].'折':$v['type_num'].'元' ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </table>
+        <table class="table table-bordered" style="text-align: center;">
+            <tr style="background: #f5f5f5;">
+                <td colspan='6' class='text-center'>商品信息</td>
+            </tr>
+            <tr>
+                <td>商品名称</td>
+                <td>数量</td>
+                <td>价格</td>
+                <td>活动</td>
+                <td>活动赠品</td>
+                <td>小计</td>
+            </tr>
+            <?php if ($this->order_info['goods_list']): ?>
+                <?php $i=0;?>
+                <?php  $count=0; $goods_num=$gifts=0; foreach ($this->order_info['goods_list'] as $k) : ?>
+                    <?php $i++;?>
+                    <?php $goods_num += $k['goods_number']; ?>
+                    <tr>
+                        <td class='col-md-2'><a href="/goods/update?id=<?=$k['goods_id']?>&right_nav=yw3_tab_1"><?=$k['goods_name']?></a></td>
+                        <td class='col-md-1'><?=$k['goods_number']?></td>
+                        <td class='col-md-1'><?=$k['goods_money']?></td>
+                        <td class='col-md-1'>
+                            <?php if (!empty($k['activity_info']['name'])): ?>
+                                <?=$k['activity_info']['name']?>
+                            <?php else: ?>
+                                <center>无活动信息</center>
+                            <?php endif; ?>
+                        </td>
+                        <td class='col-md-1'>
+                            <?php if (isset($k['activity_info']['type']) && $k['activity_info']['type'] == 1): ?>
+                                <?php $gifts += 1; ?>
+                                <a class='col-md-12' class="collapsed" role="button" data-toggle="collapse" href="#collapseListGroup<?=$k['goods_id']?>" aria-expanded="false" aria-controls="collapseListGroup<?=$k['goods_id']?>">活动信息</a>
+                            <?php else: ?>
+                                <center>无赠品信息</center>
+                            <?php endif; ?>
+                        </td>
+                        <td class='col-md-2'><?php $count += ($k['goods_money']*$k['goods_number']); ?><?=number_format($k['goods_money']*$k['goods_number'], 2)?> 元</td>
+                    </tr>
+                    <?php if (!empty($k['activity_info']['gifts_list'])): ?>
+                        <?php $i++;?>
+                        <?php $goods_num++; ?>
+                        <tr>
+                            <td colspan='6' style='padding:0px;border-top:0px' class='col-md-12'>
+                                <div id="collapseListGroup<?=$k['goods_id']?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading<?=$k['goods_id']?>" aria-expanded="false" style="height: 0px;">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <td class='text-center'>赠品</td>
+                                            <td class='text-center'>赠品图</td>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td class='col-md-6 text-center'><?=$k['activity_info']['gifts_list']['goods_name']?></td>
+                                            <td class='col-md-6'>
+                                                <div class='col-md-6 col-md-offset-3'>
+                                                    <a href="<?=$k['activity_info']['gifts_list']['goods_thumb']?>" class="thumbnail"><img src="<?=$k['activity_info']['gifts_list']['goods_thumb']?>" alt="..." style='height:5em;width:5em;'></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                <tr>
+                    <td><? echo $i;?></td>
+                    <td><?=$goods_num?></td>
+                    <th colspan='3' class='text-right'>合计： </th>
+                    <td><?=number_format($count,2)?> 元</td>
+                </tr>
+            <?php endif; ?>
+        </table>
+        <?php if ($this->order_info['giftInfo']['type'] == 1): ?>
+        <table class="table table-bordered" style="text-align: center;">
+            <tr style="background: #f5f5f5;">
+                <td colspan='6' class='text-center'>满赠信息</td>
+            </tr>
+            <tr>
+                <td>赠品名称</td>
+                <td>数量</td>
+                <td>赠品图</td>
+            </tr>
+                <?php foreach ($this->order_info['giftInfo']['gifts'] as $gift) : ?>
+                    <tr>
+                        <td class='col-md-2' style="vertical-align: middle;"><?=$gift['name']?></td>
+                        <td class='col-md-1' style="vertical-align: middle;"><?=$gift['count']?></td>
+                        <td class='col-md-1'><img src="<?=$gift['goods_thumb']?>" style='height:5em;width:5em;'/></td>
+                    </tr>
+                <?php endforeach; ?>
+        </table>
+        <?php endif; ?>
+        <table class="table table-bordered">
+            <tr style="background:#f5f5f5;">
+                <td style="text-align: center">费用信息</td>
+            </tr>
+            <tr>
+                <td class="col-md-6" style="text-align: right">商品总金额:￥<?= $this->order_info['goods_amount'] ?>元</td>
+            </tr>
+            <tr>
+                <td class="col-md-2" style="text-align: right"> = 订单总价格:￥<?= $this->order_info['goods_amount'] ?>元</td>
+            </tr>
+            <tr>
+                <td class="col-md-3" style="text-align: right"> - 优惠券(折扣/减免):￥<?= $this->coupon_amount ?>元 - 使用代金券:￥<?= $this->order_info['voucher']; ?>元 - 满减:￥<?= $this->offcut ?>元</td>
+            </tr>
+            <tr>
+                <td class="col-md-3" style="text-align: right"> = 应付款金额:￥<?= $this->securities_amount ?>元</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+function weixinRefund(orderID) {
+    if(confirm("您确定要给这张单退款吗？")) {
+        $.ajax({
+        	type: "POST",
+            url:'weixinRefund',
+            dataType: "json",
+            data:{id:orderID},
+            success: function(data) {
+                alert(data);
+                window.location.reload();
+                return false;
+            },
+            error: function(request) {
+                alert('提交失败');
+            }
+        });
+	}
+}
+
+function yijiRefund(orderId){
+    if(confirm("您确定要给这张单退款吗？")) {
+        $.ajax({
+            type: "POST",
+            url:'yijiRefund',
+            dataType: "json",
+            data:{orderId:orderId},
+            success: function(data) {
+                console.log(data);
+                if(data.success == 1){
+                    alert('退款成功');
+                    window.location.reload();
+                    return false;
+                }else{
+                    alert('退款失败');
+                }
+            },
+            error: function(request) {
+                alert('提交失败');
+            }
+        });
+    }
+}
+
+function tradeQuery(tradeNo){
+    $.ajax({
+        type: "POST",
+        url:'tradeQuery',
+        dataType: "json",
+        data:{tradeNo:tradeNo},
+        success: function(data) {
+            console.log(data);
+            if(data.success == 1){
+                alert('该订单处理成功!');
+                window.location.reload();
+                return false;
+            }else{
+                alert(data.error);
+            }
+        },
+        error: function(request) {
+            alert('提交失败');
+        }
+    });
+}
+
+function refusedOrder(orderID) {
+    if(confirm("您确定要给拒绝这张单吗？")) {
+        $.ajax({
+        	type: "POST",
+            url:'refusedOrder',
+            dataType: "json",
+            data:{id:orderID},
+            success: function(data) {
+                alert(data);
+                window.location.reload();
+                return false;
+            },
+            error: function(request) {
+                alert('提交失败');
+            }
+        });
+	}
+}
+
+$(document).on('click', '#updateTradeNo', function () {
+    if(confirm("您确定要修改交易号吗？")) {
+        var orderID = '<?= $this->order_info['order_id'] ?>';
+        var trade_no = $('input[name="trade_no"]').val();
+        if (trade_no == '') {
+        	alert('订单支付交易号不能为空');
+        	return false;
+        }
+        if (trade_no.length != 28) {
+        	alert('订单支付交易号错误');
+        	return false;
+        }
+        $.ajax({
+        	type: "POST",
+            url:'updateTradeNo',
+            dataType: "json",
+            data:{id:orderID,trade_no:trade_no},
+            success: function(data) {
+                alert(data);
+                window.location.reload();
+                return false;
+            },
+            error: function(request) {
+                alert('提交失败');
+            }
+        });
+	}
+});
+</script>

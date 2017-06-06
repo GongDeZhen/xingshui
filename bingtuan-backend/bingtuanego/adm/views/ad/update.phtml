@@ -1,0 +1,308 @@
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<script type="text/javascript" src="/js/ajaxfileupload.js"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+</style>
+
+<!-- 代金券详情 -->
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">广告管理</a></li>
+      <li class="active">编辑广告</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation" class=""><a href="list">广告列表</a></li>
+      <li role="presentation" class='active'><a href="javascript:void(0)">编辑广告</a></li>
+    </ul>
+    <br>
+    <div id='errors'></div>
+    <form method="post" action="javascript:void(0)" id="post-form" class="form-horizontal col-sm-12" >
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">公司<span class='s'> *</span></label>
+            <div class="col-sm-4">
+                <select name="cid" class='form-control' id='cid'>
+                    <?php foreach($this->getCompanyList as $k => $v){ ?>
+                        <option value="<?=$v['id']?>" <?= ($this->info['cid'] == $v['id']) ? 'selected=selected' :'' ?>><?=$v['name']; ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">广告名称<span class='s'> *</span></label>
+            <div class="col-md-4">
+                <input class="form-control" type="text" name="name" value="<?= $this->info['name']; ?>" id="name">
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">banner位置<span class='s'> *</span></label>
+            <div class="col-md-4">
+                <select name="location" class='form-control'>
+                    <?php foreach($this->location as $k => $v) { ?>
+                    <option value="<?= $k; ?>" <?= $this->info['location'] == $k ? 'selected' : ''; ?>><?= $v; ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">广告类型<span class='s'> *</span></label>
+            <div class="col-md-4">
+                <select name="type" class='form-control' id='location'>
+                    <option value=0 >请选择</option>
+                    <option value=1 <?= $this->info['type'] == 1 ? 'selected' : ''; ?>>URL</option>
+                    <option value=2 <?= $this->info['type'] == 2 ? 'selected' : ''; ?>>商品</option>
+                    <option value=3 <?= $this->info['type'] == 3 ? 'selected' : ''; ?>>视频</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12" <?= ($this->info['type'] == 1 || $this->info['type'] == 3)?'':"style='display:none'" ?> id="url">
+            <label class="col-sm-2 control-label"><?=$this->info['type'] == 1 ? '跳转路径' : '视频路径' ?><span class='s'> *</span></label>
+            <div class="col-md-8">
+                <input class="form-control" type="text" name="url" value="<?= $this->info['url']; ?>">
+            </div> 
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">广告图片<span class='s'> *</span></label>
+            <div class="col-sm-5">
+                <img id="ImgPr" src="<?=$this->info['image']?>" style="height:414px;width:828px;position:absolute; border-radius: 3px;background: url('/img/uploadButton.png') no-repeat scroll top left;background-size: 414px 828px;" />
+                <input type="file" id="up" name="goods_img" style="padding-left: 0px; opacity: 0;height: 414px;width: 828px;"/>
+                <p class="help-block s">上传图片宽高：828*414</p>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">排序</label>
+            <div class="col-md-4">
+                <input class="form-control" type="text" name="sort" value="<?= $this->info['sort']; ?>" id="sort">
+            </div> 
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动时间<span class='s'> *</span></label>
+            <div class="col-md-4" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">开始</div>
+                    <input type="text" class='form-control' placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" name="start_time" value='<?=date('Y-m-d H:i:s', $this->info['start_time'])?>' style="width:180px;>
+                </div>
+            </div>
+            <div class="col-md-4" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">结束</div>
+                    <input name="end_time" class='form-control' type="text" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" value='<?=date('Y-m-d H:i:s', $this->info['end_time'])?>' style="width:180px;>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动描述</label>
+            <div class="col-md-7">
+                <textarea class="form-control" rows="4" name="description"><?= $this->info['description']; ?></textarea>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">广告背景图<span class='s'> *</span></label>
+            <div class="col-sm-5">
+                <img id="ImgPr_bg_image" src="<?=$this->info['bg_image']?>" style="height:414px;width:828px;position:absolute; border-radius: 3px;background: url('/img/uploadButton.png') no-repeat scroll top left;background-size: 414px 828px;" />
+                <input type="file" id="up_bg_image" name="bg_image" style="padding-left: 0px; opacity: 0;height: 414px;width: 828px;"/>
+                <p class="help-block s">上传图片宽高：828*414</p>
+            </div>
+        </div>
+        <span id='searchGoods' <?= ($this->info['type'] == 1)?"style='display:none'":'' ?> >
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">商品搜索<span class='s'> *</span></label>
+            <div class="col-sm-3">
+                <input class="form-control search" type="text" id="goods-keyword" placeholder="商品关键词">
+            </div>
+            <button class="btn btn-primary" type="button" id="goods-search">搜索</button>
+        </div>
+        <div class="form-group" style='margin-left: 0px; padding:0; !important; width:990px;'>
+        	<div class="col-sm-9" style="width:490px;">
+        		<select id="keepRenderingSort" class="form-control" size="8" multiple="multiple">
+        		</select>
+        	</div>
+        	
+        	<div class="col-sm-2" style='margin-top: 3.5em; width:10%;'>
+        		<button type="button" onclick="doMove('keepRenderingSort','keepRenderingSort_to')" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+        		<button type="button" onclick="doMove('keepRenderingSort_to','keepRenderingSort')" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+        	</div>
+        	
+        	<div class="col-sm-7" style="width:400px;">
+        		<select id="keepRenderingSort_to" class="form-control" size="8" multiple="multiple">
+        		<?=$this->getAdGoods?>
+        		</select>
+        	</div>
+        </div>
+        </span>
+        <div class="field-box actions text-center" >
+            <input type="hidden" value="<?=$this->info['id'];?>" name='id' id="id" />
+            <input type="hidden" value="<?=$this->getAdGoodsValue?>" name='goods_list' id="goods_list" />
+            <input type="submit" class="btn btn-primary" value="提交活动信息">
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+
+$('#location').change(function () {
+	if ($(this).val() == 0) {
+		$('#searchGoods').css('display','none');
+		$('#url').css('display','none');
+		return;
+	}
+    if ($(this).val() == 1) {
+        $('#url').css('display','block');
+        $('#url .control-label').html("跳转路径<span class='s'> *</span>");
+        $('#searchGoods').css('display','none');
+    } else if($(this).val() == 3){
+        $('#url').css('display','block');
+        $('#url .control-label').html("视频路径<span class='s'> *</span>");
+        $('#searchGoods').css('display','none');
+	} else {
+		$('#url').css('display','none');
+		$('#searchGoods').css('display','block');
+	}
+});
+
+$('#cid').change(function(){
+	$('#keepRenderingSort').empty();
+	$('#keepRenderingSort_to').empty();
+});
+
+function doMove(id1,id2){
+	//获取两个下拉框对象
+	if (id1 == 'keepRenderingSort' && id2 == 'keepRenderingSort_to') {
+		var goods_leng = $('#keepRenderingSort option:selected').length;//选中数
+		var goods_val = $('#keepRenderingSort option:selected').val();//选中的值
+		var goods_arr = new Array();
+	    for(var i=0;i<goods_leng;i++){
+	    	goods_arr[i] = $('#keepRenderingSort option:selected').eq(i).val();
+	    }
+	    var goods_list = $('#goods_list').val();
+	    if (goods_list) {
+	    	goods_list = goods_list+'-';
+		} else {
+			goods_list = goods_list;
+		}
+		$('#goods_list').val(goods_list+goods_arr.join('-'));
+	}
+	if (id1 == 'keepRenderingSort_to' && id2 == 'keepRenderingSort') {
+		var goods_leng = $('#keepRenderingSort_to option:selected').length;//选中数
+		var goods_val = $('#keepRenderingSort_to option:selected').val();//选中的值
+		var goods_arr = new Array();
+	    for(var i=0;i<goods_leng;i++){
+	    	goods_arr[i] = $('#keepRenderingSort_to option:selected').eq(i).val();
+	    }
+	    var goods_list = $('#goods_list').val();
+	    goodsList = goods_list.split('-');
+	    for(var i=0;i<goods_arr.length;i++){
+	    	goodsList.splice(goodsList.indexOf(goods_arr[i]), 1);
+	    }
+		$('#goods_list').val(goodsList.join('-'));
+	}
+	$("#"+id1+" option:selected").appendTo("#"+id2);
+}
+
+$('#goods-search').click(function(){
+	var company = $('#cid').val();
+	var id = $('#id').val();
+	var keyword = $('#goods-keyword').val();
+	var result = $('#goods_list').val();
+    $.ajax({
+        type: "POST",
+        url: "goodsSearch",
+        dataType: "json",
+        data: "company_id="+company+"&goodsName="+keyword+'&result='+result+'&id='+id,
+        success: function(data){
+        	$('#keepRenderingSort').empty();
+        	$('#keepRenderingSort').append(data);
+        }
+     });
+});
+$(document).on('submit','#post-form',function(){
+    var name = $('#name').val();
+    if (name == '') {alert('请填写广告名称');return false;}
+    var banner = $('#banner').val();
+    if (banner == '') {alert('请选择广告位置');return false;}
+    var location = $('#location').val();
+    if (location == '') {alert('选择广告类型');return false;}
+//     var up = $('#up').val();
+//     if (up == '') alert("请选择广告图片"); return false;
+    var ktime = $('#start_time').val();
+    var gtime = $('#end_time').val();
+    if (ktime == '') {alert('请选择开始时间');return false;}
+    if (gtime == '') {alert('请选择结束时间');return false;}
+    if(ktime > gtime) {alert('开始时间不能小于结束时间');return false;}
+//     var description = $('#description').val();
+//     if (description == '') {alert('请填写活动描述');return false;}
+// 	var up_bg_image = $('#up_bg_image').val();
+// 	if (up_bg_image == '') {alert('请选择广告背景图');return false;}
+	
+    var arr = $("#post-form").serializeArray();
+    var data = new Array();
+    for (var i=0 ; i<arr.length; i++) {
+    	data[arr[i].name] = arr[i].value;
+    }
+	$.ajaxFileUpload({
+		url: 'update',
+		type: 'POST',
+		fileElementId:['up','up_bg_image'], // 上传文件的id、name属性名
+		dataType: 'json', //返回值类型，一般设置为json、application/json
+		data:data,//一同上传的数据  
+		success : function (data){
+// 			console.log(data);
+            if (data == 200) {
+                alert('提交成功');
+                window.location.href = 'list';
+            } else {
+            	$('#errors').empty();
+            	$('#errors').append("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button><strong>修改失败</strong></div>");
+            }
+		},
+		error: function(data, status, e){
+			$('#errors').empty();
+        	$('#errors').append("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button><strong>"+data.error+"</strong></div>");
+		}
+	});
+});
+
+$("#up").change(function(){
+    var fileList = this.files;
+    var reader = new FileReader();
+    reader.readAsDataURL(fileList[0]);
+    reader.onload = function(e) {
+        var image = new Image();
+        image.src = e.target.result;
+        image.onload=function(){
+            if(image.width < 828 || image.height < 414){
+                alert('图片宽高：'+image.width+'---'+image.height);
+                $("#up").val('');  
+                $('#ImgPr').attr('src','');
+                fileList = null;
+                image = null;
+            } else {
+                $('#ImgPr').attr('src',image.src);
+            }
+        }
+    } 
+});
+$("#up_bg_image").change(function(){
+    var fileList = this.files;
+    var reader = new FileReader();
+    reader.readAsDataURL(fileList[0]);
+    reader.onload = function(e) {
+        var image = new Image();
+        image.src = e.target.result;
+        image.onload=function(){
+            if(image.width < 828 || image.height < 414){
+                alert('图片宽高：'+image.width+'---'+image.height);
+                $("#up_bg_image").val('');  
+                $('#ImgPr_bg_image').attr('src','');
+                fileList = null;
+                image = null;
+            } else {
+                $('#ImgPr_bg_image').attr('src',image.src);
+            }
+        }
+    } 
+});
+</script>

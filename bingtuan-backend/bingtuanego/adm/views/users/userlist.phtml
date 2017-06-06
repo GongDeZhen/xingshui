@@ -1,0 +1,131 @@
+<script src="/js/thumbnails.js"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+.current{color:#000000;}
+.input-group{float: left;width:16em;padding-right:1em}
+.list-inline>li{display: inline-block;padding-left: 0px;padding-right: 0px;}
+</style>
+
+ <div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="javascript:void(0)">用户管理</a></li>
+      <li class="active">普通用户列表</li>
+    </ol>
+    <hr>
+    <div class="col-md-12" style="background:#f5f5f5">
+        <div class="row" style='padding: 0.5em;'>
+            <form action="" method='GET' class="form-horizontal">
+                <?= $this->companyDealersList ?>
+                <div class="input-group">
+                    <div class="input-group-addon">状态</div>
+                    <select name="auditType" class='form-control'>
+                        <option value=''>请选择</option>
+                        <option value='0' <?=($this->get['auditType'] == '0')? 'selected="selected"' : '' ?>>审核中</option>
+                        <option value='1' <?=($this->get['auditType'] == '1')? 'selected="selected"' : '' ?>>审核不通过</option>
+                        <option value='2' <?=($this->get['auditType'] == '2')? 'selected="selected"' : '' ?>>审核通过</option>
+                        <option value='3' <?=($this->get['auditType'] == '3')? 'selected="selected"' : '' ?>>已拉黑</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">用户名</div>
+                    <input class="form-control" type="text" name="account" placeholder="搜索用户名" value='<?=$this->get['account']?>'>
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">用户姓名</div>
+                    <input class="form-control" type="text" name="userName" placeholder="搜索用户" value='<?=$this->get['userName']?>'>
+                </div>
+                <span class="btn btn-primary" style='float: right;margin-top: 5px;margin-left: 10px;' onclick="window.location.href='/users/exportAssets'">导出用户资产</span>
+                <span class="btn btn-primary" style='float: right;margin-top: 5px;margin-left: 10px;' onclick="window.location.href='/users/export'">导出用户</span>
+                <span class="btn btn-primary" style='float: right;margin-top: 5px;margin-left: 10px;' onclick="window.location.href='/users/batchReg'">导入用户</span>
+                <button type="submit" class="btn btn-primary" style='float: right;margin-top: 5px;'>搜索</button>
+            </form>
+        </div>
+      </div>
+      <br> <br> <br>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="col-md-1"><span class="line"></span>用户名</th>
+                <th class="col-md-2"><span class="line"></span>分公司</th>
+                <th class="col-md-1"><span class="line"></span>经销商</th>
+                <th class="col-md-1"><span class="line"></span>姓名</th>
+                <th class="col-md-1"><span class="line"></span>电话</th>
+                <th class="col-md-1"><span class="line"></span>注册时间</th>
+                <th class="col-md-1"><span class="line"></span>审核时间</th>
+                <th class="col-md-1"><span class="line"></span>审核状态</th>
+                <th class="col-md-1"><span class="line"></span>拉黑原因</th>
+                <th class="col-md-2">
+                    <span class="line"></span>操作
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+           <?php if($this->list){ foreach ($this->list as $item ){?>
+            <tr class="first" id="brand-item-<?= $item['id']; ?>">
+                <td class="text-center"><?=$item['account']?></td>
+                <td class="text-center"><?=$item['companyName']?></td>
+                <td class="text-center"><?=$item['warehouseName']?></td>
+                <td class="text-center"><?=$item['userName']?></td>
+                <td class="text-center"><?=$item['telphone']?></td>
+                <td class="text-center"><?=date('Y-m-d',$item['createTime'])?></td>
+                <td class="text-center"><?=($item['auditTime'])?date('Y-m-d',$item['auditTime']):'未审核'; ?></td>
+                <td class="text-center">
+                    <?php
+                        switch ($item['auditType']) {
+                            case 0:
+                                echo '<button type="button" class="btn btn btn-info" style="padding:1px 19px">审核中</button>';
+                            break;
+                            case 1:
+                                echo '<button type="button" class="btn btn-warning" style="padding:1px 5px">审核不通过</button>';
+                            break;
+                            case 2:
+                                echo '<button type="button" class="btn btn-success" style="padding:1px 12px">审核通过</button>';
+                            break;
+                            case 3:
+                                echo '<button type="button" class="btn btn-danger" style="padding:1px 19px">已拉黑</button>';
+                            break;
+                        }
+                    ?>
+                </td>
+                <td class="text-center">
+                    <?php
+                        if($item['reason']){
+                            switch ($item['reason']) {
+                                case 1:
+                                    echo '终端店多账号';
+                                    break;
+                                case 2:
+                                    echo '超配送范围';
+                                    break;
+                                case 3:
+                                    echo '非真实终端店';
+                                    break;
+                                case 4:
+                                    echo $item['remarks'];
+                                    break;
+                            }
+                        }else{
+                            echo '无';
+                        }
+                    ?>
+                </td>
+                <td>
+                    <ul class="list-inline">
+                        <li><a href="/users/userdetail?id=<?= $item['id']; ?>">查看编辑</a></li>
+                        <?php if ($this->rbac == '*' ? true :(in_array('users_dodel', $this->rbac['action']))) :?>
+                            <?php if($item['auditType'] != 3 ): ?>
+                                <li><a class="order-btn" href="/users/blacklist?id=<?= $item['id']; ?>">拉黑</a></li>
+                            <?php endif;?>
+                        <?php endif;?>
+                        <li><a href="/users/cancelstock?id=<?= $item['id']; ?>">审核</a></li>
+                    </ul>
+                </td>
+            </tr>
+            <?php } }?>
+        </tbody>
+    </table>
+    <?=$this->pagebar; ?>
+</div>

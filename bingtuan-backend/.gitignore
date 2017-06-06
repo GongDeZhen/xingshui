@@ -1,0 +1,11 @@
+*.swp
+.rvmrc
+.DS_Store
+bingtuanego/.DS_Store
+bingtuanego/adm/public/LOG_DIR/*
+bingtuanego/adm/public/logs/
+bingtuanego/api/public/logs/
+bingtuanego/adm/public/image/
+bingtuanego/conf/adm.ini
+bingtuanego/conf/api.ini
+

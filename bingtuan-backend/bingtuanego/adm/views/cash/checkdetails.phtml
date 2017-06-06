@@ -1,0 +1,71 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+    .li-1{
+        width:20%;
+        height: 30px;
+        float:left;
+        line-height: 30px;
+    }
+    .li-2{
+        width:80%;
+        height: 30px;
+        float:right;
+        text-align: right;
+        padding-right: 40px;
+        line-height: 30px;
+    }
+
+</style>
+<div class="col-md-10">
+
+    <h4>
+        明细
+    </h4>
+    <ul style="height: 30px;width:95%;list-style: none;margin-bottom:5px;">
+        <li class="li-1">结算周期</li>
+        <li ><?php echo date('Y-m-d H:i:s',$this->cash_info['start_cycle']).'  '.date('Y-m-d H:i:s',$this->cash_info['stop_cycle']);  ?></li>
+    </ul>
+    <ul style="background:#f5f5f5;height: 30px;width:100%;list-style: none;margin-bottom:5px;">
+        <li class="li-1">上期余额</li>
+        <li class="li-2"><?php echo $this->cash_info['prior_money']; ?></li>
+    </ul>
+    <ul style="background:#f5f5f5;height: 30px;width:100%;list-style: none;margin-bottom:5px;">
+        <li class="li-1">本期订单</li>
+        <li class="li-2"><span  class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">展开</span></li>
+    </ul>
+    <div class="collapse in" id="collapseExample">
+            <table class="table table-hover text-center ">
+                    <tr>
+                        <td>订单号</td>
+                        <td>数量</td>
+                        <td>下单时间</td>
+                        <td>销售价</td>
+                        <td>进货价</td>
+                        <td>收益</td>
+                    </tr>
+                <?php if($this->ordre_info){ ?>
+                    <?php foreach($this->ordre_info as $v): ?>
+                        <tr>
+                            <td><?php echo $v['id']; ?></td>
+                            <td><?php echo $v['goods_number']; ?></td>
+                            <td><?php echo $v['add_time']; ?></td>
+                            <td><?php echo $v['goods_amount']; ?></td>
+                            <td><?php echo $v['stock']; ?></td>
+                            <td><?php echo round($v['goods_amount']-$v['stock'],2); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php } ?>
+            </table>
+    </div>
+    <ul style="background:#f5f5f5;height: 30px;width:100%;list-style: none;margin-bottom:5px;">
+        <li class="li-1">可取最大金额</li>
+        <li class="li-2"><?php echo $this->cash_info['advisable_money']; ?></li>
+    </ul>
+    <ul style="background:#f5f5f5;height: 30px;width:100%;list-style: none;margin-bottom:5px;">
+        <li class="li-1">本次提取金额</li>
+        <li class="li-2"><?php echo $this->cash_info['withdrawal_money']; ?></li>
+    </ul>
+    <?=$this->pagebar?>
+</div>

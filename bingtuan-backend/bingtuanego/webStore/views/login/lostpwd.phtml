@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>忘记密码</title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<script src="<?=Yaf_Registry::get('weixinurl')?>/js/jquery-1.8.3.min.js"></script>
+	<link rel="stylesheet" href="<?=Yaf_Registry::get('weixinurl')?>/vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+	<link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>/vendor/css/ratchet.min.css" />
+	<link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>/css/app.css">
+	    <script type="text/javascript" src="/js/baidu_count.js"></script>
+    <style>
+    ::-webkit-input-placeholder { /* WebKit browsers */ 
+    color: #FFFFFF; 
+    } 
+    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */ 
+    color: #FFFFFF; 
+    } 
+    ::-moz-placeholder { /* Mozilla Firefox 19+ */ 
+    color: #FFFFFF; 
+    } 
+    :-ms-input-placeholder { /* Internet Explorer 10+ */ 
+    color: #FFFFFF; 
+    } 
+    </style>
+</head>
+<body class="bg-bule">
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="./Login" class="icon icon-goback pull-left"></a>
+		<h1 class="title c-white 	">忘记密码</h1>
+	</header>
+	<div class="form-box container mt-80">
+		<form action="./lostpwd" method="post">
+			<div class="input-box icon-username p-r mb-10">
+				<input class="c-white bg-bule b-b-2-bule " type="text" name="account"  id="phone" placeholder="输入手机号码"  value="<?=$this->data['account']?>" />
+			</div>
+			<div class="input-box yzm p-r mb-15 yzm1">
+				<div class="row">
+					<div class="col-xs-6" style="padding-right: 0px;">
+						<input class="c-white bg-bule b-b-2-bule  mt-10 "  style="padding-right: 0px;padding-bottom:8px " type="text"  name="vcode" placeholder="输入验证码"  value="" />
+					</div>
+					<div class="col-xs-6">
+						<input class="btn btn-block c-bule btn-public mb-15 b-n bg-l-bule"  onclick="verifycode()"  id="times"   style="letter-spacing: 1px" type="button"  value="发送验证码">
+					</div>
+				</div>
+			</div>
+			<div class="input-box icon-password p-r mb-20">
+				<input class="c-white bg-bule b-b-2-bule " type="password" name="password" placeholder="输入新密码"  value="<?=$this->data['password']?>" />
+			</div>
+			<div class="input-box icon-password p-r mb-20">
+				<input class="c-white bg-bule b-b-2-bule " type="password"  name="repassword" placeholder="确认密码"   value="<?=$this->data['repassword']?>" />
+			</div>
+			<button class="btn btn-block c-bule btn-public mb-20 bg-l-bule">提交</button>	
+		</form>
+	</div>
+</body>
+<script type="text/javascript">
+function verifycode(){
+	 var value=$('#phone').val();
+    $.ajax({
+       type: "POST",
+       url: "vcode",
+      dataType: "json",
+       data: " phone="+value,
+       success: function(data){
+    	   if(data.success==0){
+    		   alert(data.error); 
+      		}else{
+     			settime();
+            }
+       }
+   	 });
+}
+var countdown=60; 
+function settime(){
+	    if (countdown == 0) { 
+	        $('#times').removeAttr("disabled");    
+	        $('#times').attr("value","重新发送验证码"); 
+	        countdown = 60; 
+	        return;
+	    } else { 
+	    	$('#times').attr("disabled", true); 
+	    	$('#times').attr("value","重新发送(" + countdown + ")"); 
+	        countdown--; 
+	    } 
+	    setTimeout("settime()" ,1000);
+}
+</script>
+</html>
+
+
+
+

@@ -1,0 +1,22 @@
+.Wdate{
+	border:#ccc 1px solid;
+	height:30px;
+    width:130px;
+	background:#fff url(datePicker.gif) no-repeat right;
+    float:left;
+}
+.WdateGoto {
+    height:30px;
+    width:30px;
+    text-align:center;
+    margin:0;
+    line-height:30px;
+    display:block;
+    float:left;
+}
+.Wdate::-ms-clear{display:none;}
+
+.WdateFmtErr{
+	font-weight:bold;
+	color:red;
+}

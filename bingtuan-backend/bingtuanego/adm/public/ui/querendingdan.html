@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>确认订单</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/css/ratchet.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/app.css">
+</head>
+<body>
+<header class="bar bar-nav bg-bule b-n">
+    <a href="#" class="icon icon-goback pull-left"></a>
+    <h1 class="title c-white">确认订单</h1>
+</header>
+    <div class="content bg-gray2">
+        <ul class="table-view address-box bg-white b-n">
+            <li class="table-view-cell line-box">
+                <a class="navigate-right">
+                    <p>曹大明白<span class="f-r">13910058897</span></p>
+                    <p>北京市通州区八里桥南街经贸国际公寓第八号楼和第九号楼之间的地下停车库</p>
+                </a>
+            </li>
+        </ul>
+
+        <div class="distribution-box bg-white">
+            <ul class="table-view b-n">
+                <li class="table-view-cell b-n company">配送方式 ：公司配送</li>
+                <li class="table-view-cell" style="padding-top:5px; padding-bottom:18px;">
+                    <span class="pull-left icon icon-text"></span>
+                        <form class="form input-group">
+                            <input class="remark" type="text" placeholder="备注">
+                        </form>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="ticket-box bg-white">
+            <ul class="table-view b-n">
+                <li class="table-view-cell">
+                    <a class="navigate-right c-gray fs-15">
+                        优惠券
+                    </a>
+                </li>
+                <li class="table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <button class="btn btn-reduce">满减优惠</button>
+                        </div>
+                        <div class="col-xs-9">
+                            <span class="fs-12 c-gray4">满200元立即减19.9元</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <button class="btn btn-reduce">梦龙专属</button>
+                        </div>
+                        <div class="col-xs-9">
+                            <span class="fs-12 c-gray4">梦龙商品全部五折</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <button class="btn btn-reduce">伊利专属</button>
+                        </div>
+                        <div class="col-xs-9">
+                            <span class="fs-12 c-gray4">伊利商品全部五折</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="table-view-cell">
+                    <a class="navigate-right c-gray fs-15">
+                        代金券
+                    </a>
+                </li>
+                <li class="table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <button class="btn btn-reduce" style="padding:7px 19px;">20元</button>
+                        </div>
+                        <div class="col-xs-9">
+                            <span class="fs-12 c-gray4">订单金额立减20元</span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="pay-box bg-white">
+            <ul class="table-view b-n">
+                <li class="table-view-cell fs-15 c-gray b-n">支付方式</li>
+                <li class="afterInput table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <a>
+                                <span class="pull-left icon icon-weixin"></span>
+                                <span class="c-gary1 fs-13" style="margin-left:15px;">微信支付</span>
+                            </a>
+                        </div>
+                        <div class="col-xs-4 pull-right">
+                            <div class="aftermi radio pull-right">
+                                <label>
+                                    <input type="radio" name="radio" value="1" checked>
+                                </label>
+
+                                <div class="text-right check-box">
+                                    <span class="icon  icon-radio-blue"></span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="afterInput table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <a>
+                                <span class="pull-left icon icon-zfb"></span>
+                                <span class="c-gary1 fs-13" style="margin-left:15px;">支付宝支付</span>
+                            </a>
+                        </div>
+                        <div class="col-xs-4 pull-right">
+                            <div class="aftermi radio pull-right">
+                                <label>
+                                    <input type="radio" name="radio" value="1" checked>
+                                </label>
+
+                                <div class="text-right check-box">
+                                    <span class="icon  icon-radio-gray"></span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="afterInput table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <a>
+                                <span class="pull-left icon icon-pay"></span>
+                                <span class="c-gary1 fs-13" style="margin-left:15px;">POS机刷卡</span>
+                            </a>
+                        </div>
+                        <div class="col-xs-4 pull-right">
+                            <div class="aftermi radio pull-right">
+                                <label>
+                                    <input type="radio" name="radio" value="1" checked>
+                                </label>
+                                <div class="text-right check-box">
+                                    <span class="icon  icon-radio-gray"></span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="order-box bg-white">
+            <ul class="table-view b-n">
+                <li class="table-view-cell fs-15 c-gray b-n">订单明细</li>
+                <li class="afterInput table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <span class="fs-13 c-gray">梦龙盒装香草巧克力味</span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="fs-10 c-gary1">X5</span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="fs-10 c-red pull-right">￥8</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="afterInput table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <span class="fs-13 c-gray">梦龙盒装卡布奇诺味</span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="fs-10 c-gary1">X3</span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="fs-10 c-red pull-right">￥12.2</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="afterInput table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <span class="fs-13 c-gray">梦龙盒装香草巧克力味</span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="fs-10 c-gary1">X5</span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="fs-10 c-red pull-right">￥8</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="afterInput table-view-cell">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <span class="fs-13 c-gray">梦龙盒装卡布奇诺味</span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="fs-10 c-gary1">X3</span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="fs-10 c-red pull-right">￥12.2</span>
+                        </div>
+                    </div>
+                <li class="afterInput table-view-cell total-box">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <p class="fs-13 pull-right">价格合计：<span class="c-red">￥999</span></p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="buy-box bg-white">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-8 total-money">
+                        <p class="fs-17">合计 :  <span class="c-red">99.00</span>元</p>
+                        <p class="fs-10 c-gray">商品合计：999元     优惠金额900元</p>
+                    </div>
+                    <div class="col-xs-4 pr-0">
+                        <a class="btn-buy" href="javascript:;">购买</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+<script type="text/javascript" src="vendor/js/zepto.min.js"></script>
+<script type="text/javascript" src="js/ly.js"></script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<script>
+    laydate.skin('danlan')
+</script>
+<style>
+th {text-align: center;}
+td>div{width:29%;float:left;padding:0.3em}
+td>input{width:12%;}
+.current{color:red;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">订单管理</a></li>
+      <li class="active">订单列表</li>
+    </ol>
+    <form action="" id='ajaxform' method="get">
+        <table class="table" style="background:#f5f5f5">
+            <tr>
+                <td>
+                    <?=$this->getCompanyDealersList?>
+                    <div class='input-group col-md-5' style='float: left'>
+                        <div class="input-group">
+                            <div class="input-group-addon">时间</div>
+                            <input class='form-control' style='width:50%;display: inline' type="text" placeholder="开始时间" onclick="laydate()" name="ktime" id='ktime' value='<?=$this->get['ktime']?>'>
+                            <input class='form-control' style='width:50%;display: inline' name="gtime" id='gtime' type="text" placeholder="结束时间" onclick="laydate()" value='<?=$this->get['gtime']?>'>
+                        </div>
+                    </div>
+                    <div class='input-group col-md-5' style='float: left'>
+                        <div class="input-group">
+                            <div class="input-group-addon">价格</div>
+                            <input class='form-control' style='width:50%;display: inline' type="text" placeholder="下限-价格" name="minprice" value='<?=$this->get['minprice']?>'>
+                            <input class='form-control' style='width:50%;display: inline' type="text" placeholder="上限-价格" name="maxprice" value='<?=$this->get['maxprice']?>'>
+                        </div>
+                    </div>
+                    <div class="input-group col-md-3" style='float: left'>
+                        <div class="input-group-addon">订单状态</div>
+                        <select style="padding: 0.2em;" class="form-control" name="order_status">
+                            <option value="0">请选择</option>
+                            <option value="1" <?=($this->get['order_status'] == '1')?'selected=selected':'' ?>>待付款</option>
+                            <option value="2" <?=($this->get['order_status'] == '2')?'selected=selected':'' ?>>待发货</option>
+                            <option value="3" <?=($this->get['order_status'] == '3')?'selected=selected':'' ?>>待收货</option>
+                            <option value="4" <?=($this->get['order_status'] == '4')?'selected=selected':'' ?>>已收货</option>
+                            <option value="5" <?=($this->get['order_status'] == '5')?'selected=selected':'' ?>>申请退款</option>
+                            <option value="6" <?=($this->get['order_status'] == '6')?'selected=selected':'' ?>>已取消</option>
+                            <option value="7" <?=($this->get['order_status'] == '7')?'selected=selected':'' ?>>已退款</option>
+                            <option value="9" <?=($this->get['order_status'] == '9')?'selected=selected':'' ?>>交易处理中</option>
+                        </select>
+                    </div>
+                    <div class="input-group col-md-4" style='float: left'>
+                        <div class="input-group-addon">搜索订单</div>
+                        <input class='form-control' type="text" placeholder="订单号" name="order_number" value='<?=$this->get['order_number']?>'>
+                    </div>
+                    <div class="input-group col-md-4" style='float: left'>
+                        <div class="input-group-addon">用户手机号</div>
+                        <input class='form-control' type="text" placeholder="手机号" name="account" value='<?=$this->get['account']?>'>
+                    </div>
+                    <div class="input-group col-md-4" style='float: left'>
+                        <div class="input-group-addon">收货人手机号</div>
+                        <input class='form-control' type="text" placeholder="手机号" name="tel" value='<?=$this->get['tel']?>'>
+                    </div>
+                    <div style='width: 100%;'>
+                        <span style='float:left;padding:0.3em'>
+                            <?php if ($this->rbac == '*' ? true :(in_array('orders_timingcancelorder', $this->rbac['action']))) :?>
+                                <bottom class="btn btn-primary timing" style='width:9em' name='1'>更新待付款订单</bottom>
+                            <?php endif; ?>
+                            <?php if ($this->rbac == '*' ? true :(in_array('orders_timingreceiveorder', $this->rbac['action']))) :?>
+                                <bottom class="btn btn-primary timing" style='width:9em' name='2'>更新待签收订单</bottom>
+                            <?php endif; ?>
+                        </span>
+                        <span style='float:right;padding:0.3em'>
+                            <bottom class="btn btn-primary export" style='width:8em' name='1'>导出订单列表</bottom>
+                            <bottom class="btn btn-primary export" style='width:8em' name='2'>导出订单详情</bottom>
+                            <input class="btn btn-primary" type="submit" value="搜索">
+                        </span>
+                    </div>
+                </td>
+            </tr>
+                
+        </table>
+    </form>
+    <table class="table table-hover" style="text-align: center;">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>订单号</th>
+          <th>姓名</th>
+            <th>手机</th>
+            <th>地区</th>
+            <th>价格</th>
+            <th>下单时间</th>
+          <th>状态</th>
+          <th>操作</th>
+        </tr>
+    </thead>
+      <tbody>
+        <?php if ($this->order_list): ?>
+        <?php foreach ($this->order_list as $order): ?>
+        <tr id='is_del_<?=$order['id']?>' style='background-color:<?=($order['status'] == '待发货') ? "#dff0d8":($order['status']== '退款中'?'#f2dede':'')?>' >
+          <td class='col-md-1'><?=$order['order_number']?></td>
+            <td class="col-md-1"><?php echo $order['consignee']; ?></td>
+            <td class="col-md-1"><?php echo $order['tel']; ?></td>
+            <td class="col-md-2"><?php echo $order['order_address']; ?></td>
+            <td class='col-md-1'><?=$order['pay_money']?></td>
+            <td class='col-md-3'><?=date('Y-m-d H:i',$order['add_time'])?></td>
+          <td class='col-md-1 status-<?php echo $order['id']; ?> status' ><?=$order['status']?></td>
+          <td class='col-md-2'>
+            <p><a href="orderInfo?order_id=<?=$order['id'] . '&user_id=' . $order['user_id'] ?>">查看订单详情</a></p>
+            <?php if ($this->rbac == '*' ? true :(in_array('orders_ajaxorderstates', $this->rbac['action']))) :?>
+                <p id='select_<?=$order['id']?>'><a style="cursor: pointer" orderid="<?php echo $order['id']; ?>" paystatus="<?php echo $order['pay_status']; ?>" class="paybian">订单状态编辑</a></p>
+            <?php endif; ?>
+            <?php if ($this->rbac == '*' ? true :(in_array('orders_delivergoods', $this->rbac['action']))) :?>
+                <?php if ($order['order_status'] == 3 && $order['pay_status'] == 2 && $order['shipping_status'] == 1) :?>
+                    <a href="javascript:void(0)" onclick="if(confirm('您确定要发货吗？')==false)return false;deliverGoods(<?=$order['id']?>)">发货</a>
+                <?php endif; ?>
+            <?php endif; ?>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+    <?php echo $this->paglist; ?>
+    <?php if($this->hasNewOrder): ?>
+        <audio autoplay="true" src="/audio/neworder.mp3"  width="0" height="0"></audio>
+    <?php endif; ?>
+</div>
+<script>
+//===================导出订单==============
+$(document).on('click','.export',function(){
+	if (confirm("你确定要导出订单详情信息吗？")) {
+		var export_type = $(this).attr('name');
+		window.location.href="/Phpexcel/export?"+$("form").serialize()+'&export_type='+export_type; 
+	}
+});
+//=================更新订单======================
+$(document).on('click','.timing',function(){
+	if (confirm("你确定要更新订单信息吗？")) {
+		var type = $(this).attr('name');
+		if (type == 1) {
+    	    $.post('/orders/timingCancelOrder',{type:type},function(ev){
+    	        alert('更新成功');
+    	        window.location.reload();
+    	    });
+		} else if (type == 2) {
+    	    $.post('/orders/timingReceiveOrder',{type:type},function(ev){
+    	        alert('更新成功');
+    	        window.location.reload();
+    	    });
+		} else {
+		    return false;
+		}
+	}
+});
+
+$(document).on('submit','#ajaxform',function(){
+    var ktime = $('#ktime').val();
+    var gtime = $('#gtime').val();
+    if(ktime > gtime){ alert('开始时间不能小于结束时间');return false;}
+});
+// ===========修改订单状态==============
+$(document).on('click','.paybian',function(){
+    if(confirm('您确定要修改该订单的状态吗？')==false) {
+        return false;
+    }
+    var paystatus = $(this).attr('paystatus');
+    var index = $(this).attr('orderid');
+    var tpl = '<select class="select_id" name="" orderid="'+index+'" >';
+        tpl+= '<option value="">请选择</option>';
+        tpl+= '<option value="1">待付款</option>';
+        tpl+= '<option value="2">待发货</option>';
+        tpl+= '<option value="3">待收货</option>';
+        tpl+= '<option value="4">已收货</option>';
+        tpl+= '<option value="5">申请退款</option>';
+        tpl+= '<option value="6">已取消</option>';
+        tpl+= '<option value="7">已退款</option>';
+        tpl+='</select>';
+    $('.status-'+index).html(tpl);
+});
+$(document).on('change','.select_id',function(){
+    var id = $(this).attr('orderid');
+    var val = $(this).val();
+    var name = '';
+    if (val == 1) {
+        name = '待付款';
+    }
+    if (val == 2) {
+    	name = '待发货';
+    }
+    if (val == 3) {
+    	name = '待收货';
+    }
+    if (val == 4) {
+    	name = '已收货';
+    }
+    if (val == 5) {
+    	name = '申请退款';
+    }
+    if (val == 6) {
+    	name = '已取消';
+    }
+    if (val == 6) {
+    	name = '已退款';
+    }
+    
+    $.post('/orders/ajaxOrderStates',{id:id,type:val},function(ev){
+        $('.status-'+id).html(name);
+        $('#select_'+id).remove();
+        alert('修改成功!');
+        window.location.reload();
+    });
+});
+//===================发货================
+function deliverGoods(id)
+{
+    $.ajax({
+       type: "POST",
+       url: "deliverGoods",
+       dataType: "json",
+       data: "id="+id,
+       success: function(data){
+           if (data == 200) {
+               alert('订单发货成功');
+               $('.status-'+id).html('待收货');
+           } 
+           if (data == 400) {
+               alert('操作失败');
+           }
+       }
+    });
+}
+
+setInterval(function(){
+    location.reload();
+}, 300000)
+</script>

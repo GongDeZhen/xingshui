@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>确认订单</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="/vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/css/ratchet.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/zepto/plugins/pgwmodal/pgwmodal.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/mycss.css" />
+    <link rel="stylesheet" type="text/css" href="/css/app.css">
+    <script src="/js/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="/js/function.js"></script>
+	    <script type="text/javascript" src="/js/baidu_count.js"></script>
+</head>
+<body>
+<header class="bar bar-nav bg-bule b-n">
+	<a href="./index" class="icon icon-goback pull-left"></a>
+	<h1 class="title c-white">确认订单</h1>
+</header>
+<div class="content bg-gray2" style="padding-top: 44px;">
+    <ul class="table-view address-box bg-white b-n">
+        <li class="table-view-cell line-box">
+            <a class="navigate-right"  href="/cart/colladdress">
+               <?php if(is_array($add_info)){?>
+                    <p><?=(isset($add_info['username']))?$add_info['username'] : ((isset($add_info['user_name']))?$add_info['user_name']:'')?><span class="f-r"><?=(isset($add_info['phone']))?$add_info['phone']:''?></span></p>
+                    <p><?=(isset($add_info['address']))?$add_info['address']:''?></p>
+               <?php }else{?>
+                    <span class="addressIco fl"></span><span class="addresspan fl">请添加收货地址</span>
+               <?php }?>
+            </a>
+        </li>
+    </ul>
+	<div class="paydivInfo pd15">
+		<p class="payNavtit payNavtit02">配送方式：<span class="">公司配送</span></p>
+		<div class="paydetailinfo clearfix">
+			<span class="paydetailinfoIco fl"></span>
+			<div class="paydetailinfodiv">
+				<input type="text" name="desc" id="desc" class="paydetailinfoput" placeholder="备注"  value=''/>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix">
+		<ul class="xl_det_ul payxl_det_ul">
+			<li>
+				<div class="payxllidiv clearfix"><span class="li_tit">优惠券</span><span class="li_txt_fr">线上优惠券</span>
+				<span class="more"><a href="./yhquan">&gt;</a></span></div>
+				 <?php if(!empty($activityinfo)){ ?>
+				    <?php foreach($activityinfo as $k => $v){?>
+        				<div class="payxllidiv payxllidiv02 clearfix">
+        			        <span class="redbg fl"><?=$v['name']?></span> <span class="sendtips fl"><?=$v['goos_name']?></span>
+        			        <input type="hidden"  name="c_name" value="<?=$v['activity_id']?>">
+        			    </div>
+    			    <?php }?>
+			      <?php }?>
+			</li>
+			<li class="noborder">
+				<div class="payxllidiv clearfix"><span class="li_tit">代金券</span>
+				<span class="more"><a href="/cart/vouchers">&gt;</a></span></div>
+				<?php if(!empty($voucher_my)){ ?>
+    				<div class="payxllidiv payxllidiv02 clearfix">
+    			        <span class="redbg fl"><?=$voucher_my?></span> <span class="sendtips fl">订单金额立即减<?=$voucher_my?>元</span>
+    			    </div>
+			    <?php }?>
+		  </li>
+		</ul>
+	</div>
+	<?php if(isset($receiver) && $receiver == '1'){?>
+	<div class="paydivInfo pd15">
+		<p class="payNavtit">支付方式</p>
+		<ul class="paylist">
+			<li class="active">
+				<label>
+					<img src="<?=Yaf_Registry::get('weixinurl')?>/images/bt_dot05.png" class="payico">
+					<p class="fl">微信支付</p>
+					<span class="paylichk"><input type="radio" name="payput"  value ='1' checked="checked" class="payput" /></span>
+				</label>
+			</li>
+		</ul>
+	</div>
+	<?php }?>
+	<div class="paydivInfo clearfix">
+		<p class="payNavtit pd15">订单明细</p>
+		<ul class="orderlist pd15">
+		    <?php if(!empty($goods_info)){foreach($goods_info as $k => $v){?>
+    			<li class="orderli clearfix" style="margin-bottom: 10px">
+    				<p id="goods_name" name="<?= $v['names']?>" class="ordername fl"><?= $v['names']?></p>
+    				<p id="num" name="<?= $v['count']?>" class="ordernum fl nums">x<?=$v['count']?></p>
+    				<p id="price" name="<?= $v['price']?>"  class="orderprice fr prices">￥<?=$v['price']?></p>
+    				<input type="hidden" name="np" id="np" class="np" value="<?php echo (float)$v['price']*(float)$v['count'] ?>">
+    			<?php if(isset($v['type']) && $v['type']==1){?>
+    				<div class="fl" style="width:70%">
+    			    <button class="btn btn-reduce fl" style="padding:1px;vertical-align:1;margin:5px 10px 0 0; ">赠品</button>
+    			    <span class="sendtips fl"><?= $v['actign']?></span>
+    			    </div>
+    			    <p id="num" style="float:left;width:10%; text-align: center;"  class="ordernum fl nums">x<?=$v['count']/$v['receiving_num']*$v['free_num']?></p>
+    			<?php }?>
+    			</li>
+
+    	   <?php }}?>
+		</ul>
+		<div class="allprice clearfix">
+			<p class="allpricepro">价格合计：<span class="redfont price_mo">0</span></p>
+		</div>
+	</div>
+	<div class="bottomprice">
+		<div class="bottompricediv">
+			<dl class="bottompricedl fl">
+				<dt>合计 :  <span class="redfont"><?=$price?></span>元</dt>
+				<dd><span class="hpr">商品合计：元</span><span class="">优惠金额<?=$acmoney?>元</span></dd>
+			</dl>
+		<a href="javascript:;"  onclick="send()"><span class="bottompricebtn fr bottompricebtnjs2 <?php if($receiver==2){ echo 'gocart'; }?>">购买</span></a>
+		</div>
+	</div>
+</div>
+<!-- 支付遮罩层 -->
+<div class="window-overlay tx zhezhaohidebox ">
+<div class="window-overlaybg"></div>
+<div class="window">
+	<img src="/images/loading.gif" />
+</div>
+</div>
+<!-- 弹层 -->
+<div class="window-overlay tx orderhidebox">
+	<div class="window-overlaybg"></div>
+	<div class="window">
+		<div class="mineditareadiv"><p class="mineditpro">恭喜您购买成功！</p></div>
+		<div class="mineditbtn clearfix">
+			<a href="/goods/list"><span class="editpabtn fl br1 injuredrestbtn closehidebox">继续逛逛</span></a>
+			<a href="/cart/qstate?status=0"><span class="editpabtn fr submitinjuredbtn closehidebox">查看订单</span></a>
+		</div>
+	</div>
+</div>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+// $(document).on("click",".window-overlaybg",function(){
+// 	$(".zhezhaohidebox").hide();
+// });
+$(document).on("click",".bottompricebtnjs2",function(){
+	$(".zhezhaohidebox").show();
+});
+wx.config({
+ 	debug: false,
+	appId: "<?=$this->jsdata['appId']?>", //测试号ID
+	timestamp: "<?=$this->jsdata['timestamp']?>", //戳
+	nonceStr: "<?=$this->jsdata['nonceStr']?>", //随机串
+	signature: "<?=$this->jsdata['signature']?>", //签名
+ 	jsApiList: ['chooseWXPay'] //接口列表
+ });
+$(document).ready(function() {
+	var price=0;
+	var np=new Array();
+	$('.np').each(function(i){
+	    np[i]=$(this).attr('value');
+	    price+=Number(np[i]);
+	 })
+	// $('.redfont').html(price.toFixed(2));
+// 	 if(price>200){
+// 		var yprice=price
+// 		var yprice=yprice.toFixed(2);
+//      }
+	 $('.price_mo').html(price.toFixed(2));
+	 $('.hpr').html('商品合计：'+price.toFixed(2));
+
+});
+
+function hideBox(){
+	$(".zhezhaohidebox").hide();
+}
+
+
+function send(){
+	var addr_id=$('#addres_id').val();
+	var desc=$('#desc').val();
+	var couponId=$('#gid').val();
+	var voucher_id=0;
+	$.ajax({
+	    type: "POST",
+	    url: "/cart/balance",
+	    dataType: "json",
+	    async: true,
+	    data:'addr_id='+addr_id+"&couponId="+couponId+"&voucher_id="+voucher_id+"&desc="+desc,
+	    success: function(data){
+	    	setTimeout(hideBox,"8000");
+	       if(data.code==1){
+		       if(data.receiver==2){
+		    	     $(".orderhidebox").show();
+				     return false;
+		       }else{
+		           payorder(data.message.data.order_num,data.message.data.pay_money,data.message.data.order_id );
+			   }
+		    }else if(data.code==2){
+		    	alert('请选择地址再购买');
+		    	return false;
+			}else{
+		    	alert(data.message);
+		    	//window.location.href="/cart/qstate?status=0";
+			}
+	     }
+	   });
+}
+//结算订单
+function payorder(order_number,pay_money,orid){
+$.ajax({
+    url : '/cart/paymoney',
+    type : 'post',
+    async: true,
+    data : {'order_number':order_number, 'pay_money':pay_money,'orid':orid},
+    dataType : 'json',
+    success : function(msg){
+    	result = msg;
+    	if(result.success==101){
+    		window.location.href="/login/login";
+    		return false;
+        }
+    	if(result.success==102){
+    		alert(result.data);
+    		window.location.href="/cart/index";
+    		return false;
+        }
+        if(result.success == 1){
+            var $orid = orid;
+            wx.chooseWXPay({
+            	appId: result.data.appId,
+                timestamp: result.data.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+                nonceStr: result.data.nonceStr, // 支付签名随机串，不长于 32 位
+                package: result.data.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+                signType: result.data.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+                paySign: result.data.paySign, // 支付签名
+                success: function (res) {
+                    var str = JSON.stringify(res);
+                    // 支付成功后的回调函数
+                    if(res.errMsg == "chooseWXPay:ok"){
+                        window.location.href = '/cart/qstate?status=2';
+                    }else{
+                        //$.post( '/goods/cancelOrder',{'id': $orid},function( delres ) {
+                            alert("支付失败！");
+                            window.location.href = '/cart/qstate?status=1';
+                       // },'json' )
+                    }
+                },
+                error : function(msg){
+                	window.location.href = '/cart/qstate?status=1';
+            		alert("取消支付");
+                },
+                cancel: function () { 
+                	alert("取消支付");
+                	window.location.href = '/cart/qstate?status=1';
+                }
+            });
+          
+        }else{
+            alert( result.error );
+        }
+    },
+   
+})
+};
+
+
+</script>
+
+</body>
+</html>

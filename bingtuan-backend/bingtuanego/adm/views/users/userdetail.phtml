@@ -1,0 +1,181 @@
+<script src="/js/thumbnails.js"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {
+    text-align: center;
+}
+.input-group{ float:left;width:40%;padding: 0.2em; }
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="/users/userlist">用户管理</a></li>
+      <li class="active">编辑详情</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="/users/userlist">用户列表</a></li>
+      <li role="presentation" class="active"><a>编辑详情</a></li>
+    </ul><br>
+    <?php
+    if ($this->errors != '') {
+        echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div>";
+    }
+    ?>
+    <div id="pad-wrapper" class="form-page" style="padding: 0">
+    <span class='col-md-3 h5'>ID: <?=$this->userInfo['id']?></span>
+       <form method="post">
+        <table class="table table-bordered">
+          <thead></thead>
+          <tbody>
+            <tr class="active">
+              <td class='col-md-2 text-right' style='padding: 8px 0;'>公司/单位/店铺名称：</td>
+              <td class='col-md-4'><input class='form-control' type="text" value="<?=$this->userInfo['comName']?>" name="comName" /></td>
+              <td class='col-md-2 text-right' style='padding: 8px 0;'>用户名：</td>
+              <td class='col-md-4'><?=$this->userInfo['account']?></td>
+            </tr>
+            <tr>
+              <td class='text-right' style='padding: 15px 0;'>经销商：</td>
+              <td colspan=3>
+                  <?= $this->companyDealersList ?>
+              </td>
+            </tr>
+            <tr class="active">
+              <td class='text-right' style='padding: 8px 0;'>联系人：</td>
+              <td><input class='form-control' type="text" value="<?=$this->userInfo['userName']?>" name="userName" /></td>
+              <td class='text-right' style='padding: 8px 0;'>联系电话：</td>
+              <td><input class='form-control' type="text" value="<?=$this->userInfo['telphone']?>" name="telphone" /></td>
+            </tr>
+            <tr class="">
+              <td class='text-right' style='padding: 8px 0;'>注册时间：</td>
+              <td><?=date("Y-m-d H:i:s",$this->userInfo['createTime'])?></td>
+              <td class='text-right' style='padding: 8px 0;'>审核时间：</td>
+              <td><?=($this->userInfo['auditTime'])?date("Y-m-d H:i:s",$this->userInfo['auditTime']):'未审核'?></td>
+            </tr>
+            <tr class="active">
+              <td class='text-right' style='padding: 10px 0;'>审核状态：</td>
+              <td style='padding: 10px 8px;'>
+                <?php
+                    switch ($this->userInfo['auditType']) {
+                        case 0:
+                            echo '<a href="/users/cancelstock?id='.$this->userInfo['id'].'" class="btn btn btn-info" style="padding:1px 19px">审核中</a>(跳转)';
+                        break;
+                        case 1:
+                            echo '<a href="/users/cancelstock?id='.$this->userInfo['id'].'" class="btn btn-warning" style="padding:1px 5px">审核不通过</a>(跳转)';
+                        break;
+                        case 2:
+                            echo '<a href="/users/cancelstock?id='.$this->userInfo['id'].'" class="btn btn-success" style="padding:1px 12px">审核通过</a>(跳转)';
+                        break;
+                        case 3:
+                            echo '<a href="/users/cancelstock?id='.$this->userInfo['id'].'" class="btn btn-danger" style="padding:1px 19px">已拉黑</a>(跳转)';
+                        break;
+                    }
+                ?>
+              </td>
+              <td class='text-right' style='padding: 10px 0;'>邮箱：</td>
+              <td style='padding: 10px 8px;'><input class='form-control' type="email" value="<?=$this->userInfo['email']?>" name="email" /></td>
+            </tr>
+            <tr>
+              <td class='text-right' style='padding: 10px 0;'>用户地址：</td>
+              <td colspan=3><input class='form-control' type="text" value="<?=$this->userInfo['address']?>" name="address" /></td>
+            </tr>
+            <tr>
+              <td class='text-right' style='padding: 10px 0;'>最新收货地址：</td>
+              <td colspan=3><input class='form-control' type="text" value="<?=$this->userInfo['user_address']?>" name="user_address" /></td>
+            </tr>
+            <tr>
+                <td class='text-right' style='padding: 10px 0;'>资产情况：</td>
+                <td class="user-asset" colspan=3>
+                    <div class="form-inline">
+                        <input class='form-control' type="text" value="<?=$this->userAssets[0]?>" name="asset[]" placeholder="冰柜编码" style="width:300px;"/>
+                        <button type="button" class="btn btn-default add-asset">添加资产</button>
+                    </div>
+                    <?php for($i=1; $i<count($this->userAssets); $i++): ?>
+                        <div class="form-inline" style="margin-top: 10px; ">
+                            <input class='form-control' type="text" value="<?=$this->userAssets[$i]?>" name="asset[]" placeholder="冰柜编码" style="width:300px;"/>
+                            <button type="button" class="btn btn-default del-asset" onclick="delAsset(this)">删除资产</button>
+                        </div>
+                    <?php endfor; ?>
+                </td>
+            </tr>
+             <tr>
+              <td colspan=4 class='text-right'>
+                <input type="hidden" value="<?= $this->userInfo['id']; ?>" name="id" id="id" />
+                <input type="submit" class="btn btn-primary" value="提交编辑">
+              </td>
+            </tr>
+          </tbody>
+      </table>
+      </form>
+    </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">原密码</label>
+            <div class="col-sm-5">
+              <input type="text" class="form-control" name='current'>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">新密码</label>
+            <div class="col-sm-5">
+              <input type="text" class="form-control" name='password'>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">确认密码</label>
+            <div class="col-sm-5">
+              <input type="text" class="form-control" name='confirm'>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button id='ajaxform' class="btn btn-danger">确认修改密码</button>
+            </div>
+        </div>
+</div>
+<script>
+    $(function(){
+        var container = $('.user-asset'),
+            enentBar = $("button[class~='add-asset'"),
+            html = '';
+        enentBar.click(function(){
+            html += '<div class="form-inline" style="margin-top:10px;">';
+            html += '<input class="form-control" type="text" name="asset[]" placeholder="冰柜编码" style="width:300px; margin-right:4px;"/>';
+            html += '<button type="button" class="btn btn-default del-asset" onclick="delAsset(this)">删除资产</button>';
+            html += '</div>';
+            container.append(html);
+            html = '';
+        });
+
+    })
+
+    function delAsset(tag){
+        $(tag).parent().remove();
+    }
+
+$(document).on('click','#ajaxform',function(){
+    var id = $("#id").val();
+    var current = $("input[name='current']").val();
+    if(!current){ alert('请输入原密码');return false;}
+    var password = $("input[name='password']").val();
+    var confirm = $("input[name='confirm']").val();
+    if (password == '' || confirm == '') {alert('新密码与确认密码不能为空');return false;}
+    if(password != confirm) {alert('密码过短或两次输入不匹配');return false;}
+
+    $.ajax({
+        type: "POST",
+        url: "updatePassword",
+        data: {id:id, current:current, password:password,confirm:confirm},
+        dataType: "json",
+        success:function(data){
+            if (data.success == 1) {
+                alert(data.data);
+            } else {
+                alert(data.error);
+            }
+        }
+    });
+});
+</script>

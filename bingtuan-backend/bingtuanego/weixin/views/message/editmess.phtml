@@ -1,0 +1,106 @@
+ <!DOCTYPE html>
+<html lang="en">
+    <head>
+    	<meta charset="UTF-8">
+    	<title>消息</title>
+    	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    	<meta name="apple-mobile-web-app-capable" content="yes">
+    	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    	<link rel="stylesheet" href="/vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+    	<link rel="stylesheet" type="text/css" href="/vendor/css/ratchet.min.css" />
+    	<link rel="stylesheet" type="text/css" href="/css/app.css">
+       <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+	   <script type="text/javascript" src="/js/function.js"></script>
+         <script type="text/javascript" src="/js/baidu_count.js"></script>
+    </head>
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="./qmessage" class="icon icon-goback pull-left"></a>
+		<?php if($info!=0) { ?><a href="./qmessage" class=" pull-right edit">完成</a><?php }?>
+		<h1 class="title c-white">消息</h1>
+	</header>
+	<div class="segmented-control top-nav">
+		<a class="control-item <?php if($type==0) echo "active";?>" href="./editmess?type=0">
+		   		全部消息
+		</a>
+		<a class="control-item <?php if($type==1) echo "active";?>" href="./editmess?type=1">
+		    	订单消息
+		</a>
+		<?php if($receiver==2){?>
+		<a class="control-item <?php if($type==2) echo "active";?>" href="./editmess?type=2">
+		    	账单消息
+		</a>
+	  <?php }?>
+		<a class="control-item <?php if($type==3) echo "active";?> " href="./editmess?type=3">
+		    	官方消息
+		</a>
+	</div>
+	<div class="selectall-box" id="check-all">
+		<small>全选</small>
+		<span class="icon icon-check-gray mr-20 " id="checkall" ></span>
+	</div>
+	<div class="order-box  content  mb-60 select-all">
+	  <div  class="control-content active">
+	  	<ul >
+	  	    <?php if($info!=0)
+			if($result){
+			{foreach ($result as $k  => $v) {?>
+    	  		<li>
+    	  			<a class="content-box">
+    	  				<div class="row">
+    	  					<div class="col-xs-8">
+    	  						<h3 class="order <?php if($v['status']==0){?>red<?php }?>"><?=$v["title"]?></h3>
+    	  						<p class="d-des"><?=$v["content"]?></p>
+    	  					</div>
+    	  					<div class="col-xs-4 text-right text-right check-box" >
+    	  						<span class="icon read icon-check-gray" id="<?=$v['id']?>"></span>
+    	  						<input class="associated_id" name='associated_id' id="<?=$v['associated_id']?>">
+    	  						<input class="type" name='type' id="<?=$v['type']?>">
+    	  					</div>
+    	  				</div>
+    	  			</a>		
+    	  		</li>
+    	  	    <?php }}}?>
+	  	</ul>
+	  </div>
+	</div>
+	<div class="bar bar-standard bar-footer-secondary content-box  edit-select">
+		<div class="row">
+			<div class="col-xs-6"><button class="btn btn-block du" onclick="read(this,'read')">标记已读</button></div>
+			<div class="col-xs-6"><button class="btn btn-block remove" onclick="read(this,'remove')">删除</button></div>
+		</div>
+	</div>
+<script type="text/javascript" src="/vendor/js/zepto.min.js"></script>
+<script type="text/javascript" src="/js/tjp.js"></script>
+<script>
+/*
+ * 获取选中的消息数量
+ */
+function read(object,action){
+	var reads;
+	var infoarr=new Array();
+  	  $(".read").each(function(i){
+    	    if($(this).hasClass('icon-check-on')){
+    	    	var id=$(this).attr('id');
+    	    	var associated_id=$(this).siblings('.associated_id').attr('id');
+    	    	var type=$(this).siblings('.type').attr('id');
+    	    	reads={'id':id,'associated_id':associated_id,"type":type};
+    	    	infoarr.push(reads);
+        	}
+       });
+          $.ajax({
+              type: "POST",
+              url: "read?type="+action,
+              dataType: "json",
+              data: {'info':infoarr},
+              success: function(data){
+            	  if(data.code==1){
+            		  alert(data.msg);
+            		  location.reload();
+            	  }else{
+            		  alert(data.msg);
+            	  }
+              }
+             });	  
+     }
+ </script>
+</html>

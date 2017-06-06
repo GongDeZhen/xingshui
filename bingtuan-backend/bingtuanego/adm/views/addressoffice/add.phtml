@@ -1,0 +1,137 @@
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.s{color:red;}
+th {text-align: center;}
+input[type="file"]{display: inline;}
+</style>
+
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="addressOfficeList">地区公司管理</a></li>
+      <li class="active">添加分公司</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="addressOfficeList">分公司列表</a></li>
+	  <li role="presentation" class="active"><a href="javascript:void(0)">添加分公司</a></li>
+    </ul>
+    <br>
+    <?php
+      if ($this->errors != '') {
+        echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div>";
+      }
+    ?><br>
+    <div class="tab-content">
+        <form action='add' id='ajaxform' method="POST" enctype="multipart/form-data" class="form-horizontal col-sm-12">
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">地区<span class='s'> *</span></label>
+                <div class="col-sm-4">
+                    <?php echo $this->jiliancaidan ?>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+        		<label class="col-sm-2 control-label" for="Bingtuan_goodsName">分公司名称<span class='s'> *</span></label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" name='companyname' value='<?=$this->info['companyname']?>'><span></span>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">公司法人<span class='s'> *</span></label>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" name='person' value='<?=$this->info['person']?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">联系人<span class='s'> *</span></label>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" name='contact' value='<?=$this->info['contact']?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">联系人手机<span class='s'> *</span></label>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" name='mobile' value='<?=$this->info['mobile']?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">公司描述</label>
+                <div class="col-sm-5">
+                  <textarea class="form-control" name='describe' rows="4" cols='4'><?=$this->info['describe']?></textarea>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">公司状态<span class='s'> *</span></label>
+                <div class="col-md-2">
+                    <select name="status" class="form-control" id='status'>
+                    	<option value="1" <?=($this->info['status']==1)?'selected="selected"':'';?> >开始运营</option>
+                    	<option value="0" <?=($this->info['status']==0)?'selected="selected"':'';?>>暂停运营</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">营业照<span class='s'> *</span></label>
+                <div class="col-md-6">
+                    <!--上传图片开始 -->
+                        <img id='license_path' src="<?php echo (!empty($this->info['license'])?$this->info['license']:'') ?>" style="height:200px;width:200px;position:absolute; border-radius: 5px;background: url('/img/uploadButton.png') no-repeat scroll top left;background-size: 200px 200px;" />
+                        <input type="file" id="license" name="license" style="padding-left: 0px; opacity: 0;height: 200px;width: 200px;"/>
+                    <!--上传图片结束-->
+                </div>
+<!--                 <p class="help-block s">上传图片宽高：190*194</p> -->
+            </div>
+            <div class="form-group col-sm-12">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-success">提交</button>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+$(document).on('submit','#ajaxform',function(){
+    var city = $('#city').val();
+    if(!city){ alert('市区不能为空');return false;}
+	
+    var companyname = $("input[name='companyname']").val();
+    if(!companyname){ alert('公司名不能为空');return false;}
+    var person = $("input[name='person']").val();
+    if(!person){ alert('法人不能为空');return false;}
+    var contact = $("input[name='contact']").val();
+    if(!contact){ alert('联系人不能为空');return false;}
+    var mobile = $("input[name='mobile']").val();
+    if(!mobile){ alert('联系人手机号不能为空');return false;}
+    if(mobile.length != 11){ alert('联系人手机号必须11位');return false;}
+    var status = $("#status").val();
+    if(!status){ alert('运营状态不能为空');return false;}
+    var license = $("#license").val();
+    if(!license){ alert('营业照不能为空');return false;}
+});
+    
+// 营业执照
+$("#license").change(function(){
+	var fileList = this.files;
+	var reader = new FileReader();
+    reader.readAsDataURL(fileList[0]);
+    reader.onload = function(e) {
+    	var image = new Image();
+    	image.src = e.target.result;
+    	image.onload=function(){
+//         	if(image.width < 414 || image.height < 175){
+//             	alert('图片宽高：'+image.width+'---'+image.height);
+//             	$("#license").val('');
+//             	$('#license_path').attr('src','/img/uploadButton.png');
+//         		fileList = null;
+//         		image = null;
+//             	return false;
+//         	} else {
+        		$('#license_path').attr('src',image.src);
+//             }
+    	}
+    } 
+});
+</script>

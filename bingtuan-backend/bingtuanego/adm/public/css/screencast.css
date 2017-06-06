@@ -1,0 +1,18 @@
+#screencast {
+    position: relative;
+    display: block;
+    width: 322px;
+    height: 570px;
+    border: 1px solid #ccc;
+    overflow: hidden;
+}
+
+#screencast img {
+    position: absolute;
+    display: block;
+    width: 320px;
+    top: 0;
+    left: 0;
+    float: left;
+    display: none
+}

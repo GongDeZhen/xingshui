@@ -1,0 +1,87 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+</style>
+<div class="col-lg-6">
+	<form method="get">
+		<div class="input-group">
+			<input type="text" name="name" class="form-control" id="input-name"
+				placeholder="作品名称" /> <span class="input-group-btn">
+				<button class="btn btn-default" type="submit">搜索</button>
+			</span>
+		</div>
+	</form>
+</div>
+
+<div class="col-md-10">
+
+	<h4>
+		免费限领列表
+		<!--a href="/production/new/">添加</a-->
+	</h4>
+	<table class="table table-hover text-center">
+        <caption></caption>
+        <thead>
+    		<tr>
+    		    <th>活动ID</th>
+    			<th>活动名称</th>
+    			<th>开始时间</th>
+    			<th>结束时间</th>
+    			<th>限领次数</th>
+    			<th>用户限领数量</th>
+    			<th>操作</th>
+    		</tr>
+        </thead>
+        <tbody>
+            <?php if ($this->free_list): ?>
+                <?php foreach ($this->free_list as $data): ?>
+                    <tr id='is_del_<?=$goods['id']?>'>
+                    <td class='col-xs-1'><?=$data['id']?></td>
+                      <td class='col-xs-1'><?=$data['name']?></td>
+                      <td class='col-xs-2'><?=date('Y年m月d日 H时i分',$data['start_time'])?></td>
+                      <td class='col-xs-2'><?=date('Y年m月d日 H时i分',$data['end_time'])?></td>
+                      <td class='col-xs-1'><?=$data['receiving_num']?></td>
+                      <td class='col-xs-1'><?=$data['free_num']?></td>
+                      <td class='col-xs-1'>
+                        <a class='col-xs-12' href="goodsInfo?goods_id=<?=$goods['id']?>">查看</a>
+                        <a class='col-xs-12' href="update?goods_id=<?=$goods['id']?>">编辑</a>
+                        <a class='col-xs-12' onclick="if(confirm('确定要删除吗？')==false)return false; del(<?=$goods['id']?>,1)" >删除</a>
+                      </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+    <?=$this->pagebar?>
+</div>
+<script>
+$(function(){
+	$(".relative").click(function(){
+		var that = $(this);
+	      $.post('/production/thinkname',{
+		      'name':$(this).parents('tr').find('.author').html()
+		   },function(data){
+		      if(data==''){alert('未找到该作者信息');return false;}
+		     // alert($(that).parents('tr').find(".dropdown").html());
+	      $(that).parents('tr').find(".dropdown").html(data).show();
+		})
+	})
+	$(document).on(".submit","click",function(){
+		
+	})
+})
+function dianji(id,e){
+	$.post("/production/relative",{
+		'authorid':id,
+		'id':$(e).parents('tr').find("input[name=id]").val(),
+		},function(data){
+			if(data.code==1){
+				alert('关联成功');
+				$(e).parents('tr').find(".alredyRelative").html('√');
+				$(e).parents('tr').find(".dropdown").hide();
+			}
+		},'json')
+}
+</script>

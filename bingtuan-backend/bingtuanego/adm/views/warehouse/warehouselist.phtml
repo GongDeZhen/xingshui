@@ -1,0 +1,100 @@
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+.input-group[class*="col-"]{float: left;}
+form>div>div>div{width: 15em;float: left;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a  href="javascript:void(0)" class="active">经销商管理</a></li>
+      <li >经销商列表</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a href="javascript:void(0)" >经销商列表</a></li>
+	  <li role="presentation"><a href="add">添加经销商</a></li>
+    </ul>
+    <br>
+    <div class="col-md-12" style="background:#f5f5f5;padding: 0.5em;">
+
+    <form method="get">
+        <div class="col-md-12">
+            <div class="row ctrls bg-p">
+                <div class="input-group col-sm-3">
+                    <div class="input-group-addon">公司</div>
+                    <select name="company_id" class="form-control">
+                        <option value='0'>全部</option>
+                        <?php foreach ($this->getCompanyList as $k => $v): ?>
+                        	<option value="<?=$v['id']?>" <?=($this->info['company_id']==$v['id'])?'selected="selected"':'';?> ><?=$v['name']?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="input-group col-md-3">
+                    <div class="input-group-addon">状态</div>
+                    <select class='form-control' name="status">
+                        <option value=''>请选择</option>
+                        <option value='0' <?= ($this->info['status'] == '0') ? 'selected=selected' : ''?>>暂停运营</option>
+                        <option value='1' <?= ($this->info['status'] == '1') ? 'selected=selected' : ''?>>运营中</option>
+                    </select>
+                </div>
+                <div class="input-group col-md-2">
+                    <div class="input-group-addon">内容</div>
+                    <input class="search form-control" style="width: 150px" type="text" name="warehousename"  placeholder="搜索经销商/联系人" value='<?=$this->info['warehousename'] ?>'>
+                </div>
+                <button type="submit" class="btn btn-primary" style='float: right;'>搜索</button>
+            </div>
+        </div>
+    </form>
+    </div>
+    <br><br><br>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="col-md-1"><span class="line"></span>ID</th>
+                <th class="col-md-3"><span class="line"></span>经销商名称</th>
+                <th class="col-md-1"><span class="line"></span>联系人</th>
+                <th class="col-md-1"><span class="line"></span>联系人手机</th>
+                <th class="col-md-1"><span class="line"></span>状态</th>
+                <th class="col-md-2"><span class="line"></span>录入时间</th>
+                <th class="col-md-1"><span class="line"></span>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if ($this->list){?>
+                <?php foreach($this->list as $key => $item) { ?>
+                <tr class="first" id="brand-item-<?= $item['id']; ?>">
+                    <td class="text-center">
+                       <span class="line"></span><?= $item['id']; ?>
+                    </td>
+                    <td class="text-center">
+                       <span class="line"></span><?= $item['warehousename']; ?>
+                    </td>
+                    <td class="text-center">
+                      <span class="line"></span> <?= $item['contact']; ?>
+                    </td>
+                    <td class="text-center">
+                      <span class="line text-center"></span> <?=$item['mobile']?>
+                    </td>
+                    <td class="text-center">
+                      <span class="line"></span> 
+                     <?= ($item['status'] == 1)?'<button type="button" class="btn btn-success" style="padding:1px 19px">运营中</botton>':'<button class="btn btn-warning" style="padding:1px 12px">暂停运营</button>';?>
+                    </td>
+                    <td class="text-center">
+                      <span class="line text-center"></span> <?=date('Y-m-d H:i:s', $item['create_time'])?>
+                    </td>
+                    <td class="text-center">
+                       <ul class='list-inline'>
+                        <li><a href="edit?id=<?= $item['id']; ?>">编辑</a></li>
+                        <li><a href="warehouseInfo?id=<?=$item['id']?>">详情</a></li>
+                        <!-- <li><a href="/developer/zonelist?id=<?= $item['id']; ?>">账号列表</a></li> -->
+                       </ul>
+                    </td>
+                </tr>
+                <?php }?>
+            <?php }?>
+        </tbody>
+    </table>
+    <?=$this->pagebar; ?>
+</div>

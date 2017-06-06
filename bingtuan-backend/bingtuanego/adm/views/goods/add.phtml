@@ -1,0 +1,28 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.s{color:red;}
+.input-group[class*="col-"] {float:left}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">商品管理</a></li>
+      <li class="active">商品列表</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="/goods/list">商品列表</a></li>
+      <li role="presentation" class="active"><a href="#">添加商品</a></li>
+    </ul>
+    <br>
+	<?php
+		if ($this->errors != '') {
+			echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+				<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+		<strong>{$this->errors}</strong>
+			</div>";
+		}
+	?>
+    <br>
+    <?php include(dirname(__FILE__) . '/form_add_goods.phtml')?>
+</div>

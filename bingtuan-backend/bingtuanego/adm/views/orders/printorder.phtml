@@ -1,0 +1,160 @@
+<style type="text/css">
+*,body { text-align:center;margin:0px auto;padding:0px;}
+td,th { border:solid 1px black; border-width:0px 1px 1px 0px;display:table-cell;text-align:center;font-size: 16pt;}
+.table { border:1px solid black; border-width:1px 0px 0px 1px;width: 1000px; border-collapse: collapse}
+.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td { padding: 0px; border:solid 2px #000;}
+
+</style>
+<style type="text/css" media=print>
+.noprint{display : none }  
+</style>
+<div style="overflow:hidden;" class='noprint'>
+    <ul class="nav nav-pills" style='width: 70%;float:left;padding-bottom:2em;margin-left:5em;'>
+        <li role="presentation" class="active"><a href="javascript:void(0)" onclick="self.location=document.referrer;">返回</a></li>
+    </ul>
+    <div style='width: 15%;float:right;margin-right:3em;'>
+        <bottom class="btn btn-primary" id="print" style='width:8em'>打印订单</bottom>
+    </div>
+</div>
+ <table class="table table-bordered">
+    <tr>
+        <td colspan="7" class='h3'>冰团e购订单</td>
+    </tr>
+    <tr>
+    	<th style='width: 10%'>订单编号</th>
+    	<td style='width: 30%'><?=$this->orderInfo['order_number']?></td>
+    	<th style='width: 13%'>下单时间</th>
+    	<td colspan="4" style='width: 50%'><?= $this->orderInfo['add_time']?date('Y-m-d H:i',$this->orderInfo['add_time']):''; ?></td>
+    </tr>
+    <tr>
+    	<th>客户姓名</th>
+    	<td><?=$this->orderInfo['consignee']?></td>
+    	<th>店铺名称</th>
+    	<td colspan="4"><?=$this->orderInfo['comName']?></td>
+    </tr>
+   	<tr>
+    	<th>联系方式</th>
+    	<td><?=$this->orderInfo['tel']?></td>
+    	<th>客户地址</th>
+    	<td colspan="4"><?=$this->orderInfo['order_address']?></td>
+    </tr>
+    <tr>
+    	<th>订单备注</th>
+    	<td colspan="6" class='text-left' style='padding-left: 1em;'><?=$this->orderInfo['postscript']?></td>
+    </tr>
+    <tr>
+    	<th>序号</th>
+    	<th>商品名称</th>
+    	<th>规格</th>
+        <th style='width: 8%'>数量</th>
+    	<th style='width: 10%'>商品单价</th>
+    	<th style='width: 11%'>活动</th>
+    	<th style='width: 11%'>金额小计</th>
+    </tr>
+    <?php if ($this->orderInfo['goods_list']): ?>
+        <?php  $count=0.00; $goods_num=$gifts=0; foreach ($this->orderInfo['goods_list'] as $k => $v) : ?>
+            <tr>
+                <?php if ($v['activity_info']['type'] == 1): ?>
+                    <td rowspan="2" style='vertical-align:middle;'><?=$k+1?></td>
+                <?php else: ?>
+                    <td><?=$k+1?></td>
+                <?php endif; ?>
+                <td style="text-align: left;"><?=$v['goods_name']?></td>
+                <td><?=$v['standard']?></td>
+                <td style='vertical-align:middle;'><?=$v['goods_number']; $goods_num += $v['goods_number']; ?></td>
+                <td style='text-align:right; padding-right:0.5em; vertical-align:middle;'><?=$v['goods_money']?></td>
+                <?php if ($v['activity_info']['type'] == 1): ?>
+                    <td rowspan='2' style='vertical-align:middle;'>
+                <?php else: ?>
+                    <td>
+                <?php endif; ?>
+                    <?php if (!empty($v['activity_info']['name'])): ?>
+                        <?=$v['activity_info']['name']?>
+                    <?php else: ?>
+                        <center>无活动</center>
+                    <?php endif; ?>
+                </td>
+                <td style='text-align:right; padding-right:0.5em; vertical-align:middle;'>
+                    <?php $count += $v['goods_money']*$v['goods_number']; echo number_format($v['goods_money']*$v['goods_number'],2); ?>
+                </td>
+            </tr>
+            <?php if ($v['activity_info']['type'] == 1): ?>
+                <tr>
+                    <td style="text-align: left;"><?=$v['activity_info']['gifts_list']['goods_name']?></td>
+                    <td><?=$v['activity_info']['gifts_list']['goods_standard']?></td>
+                    <td><?php $gifts += $number = floor(($v['activity_info']['free_num']/$v['activity_info']['receiving_num'])*$v['goods_number']); echo $number; ?></td>
+                    <td style='text-align:right; padding-right:0.5em; vertical-align:middle;'>0.00</td>
+                    <td style='text-align:right; padding-right:0.5em; vertical-align:middle;'>0.00</td>
+                </tr>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
+     <?php if($this->orderInfo['giftInfo']['type'] == 1): ?>
+     <tr>
+         <th>满赠</th>
+         <th colspan="2">赠品名称</th>
+         <th colspan="4">赠品数量</th>
+     </tr>
+         <?php foreach($this->orderInfo['giftInfo']['gifts'] as $k => $gift): ?>
+         <tr>
+             <td><?=$k+1?></td>
+             <td colspan="2"><?=$gift['name']?></td>
+             <td colspan="4"><?=$gift['count']?></td>
+         </tr>
+             <?php endforeach; ?>
+     <?php endif; ?>
+     <?php if($this->orderInfo['giftInfo']['type'] == 0): ?>
+         <tr>
+             <td colspan="6">满减</td>
+             <td style='text-align:right; padding-right:0.5em; vertical-align:middle;'><?=number_format($this->orderInfo['giftInfo']['offcut'], 2)?></td>
+         </tr>
+     <?php endif; ?>
+     <?php if($this->orderInfo['giftInfo'] && $this->orderInfo['giftInfo']['type'] == 0): ?>
+     <?php $count -= $this->orderInfo['giftInfo']['offcut']; endif; ?>
+    <tr>
+    	<td>合计</td>
+    	<td colspan=2></td>
+        <td><?=$goods_num+$gifts?></td>
+        <td colspan=3 style='text-align:right; padding-right:0.5em'><?=number_format($count,2)?> 元</td>
+    </tr>
+<!--     <tr>
+    	<td style="text-align:right;" colspan="7">商品总金额：¥<?= $this->orderInfo['goods_amount'] ?> 元&nbsp;</td>
+    </tr>
+    <tr>
+    	<td style="text-align:right;" colspan="7">优惠券：<?= $this->coupon_amount ?> 元&nbsp;</td>
+    </tr>
+    <tr>
+    	<td style="text-align:right;" colspan="7">代金券：<?= $this->orderInfo['voucher']; ?> 元&nbsp;</td>
+    </tr>
+    <tr>
+    	<td style="text-align:right;" colspan="7">订单支付金额：¥<?= number_format($this->securities_amount,2); ?> 元&nbsp;</td>
+    </tr> -->
+    <tr>
+    	<th>经销商</th>
+    	<td colspan="2"><?= $this->orderInfo['warehouseName']; ?></td>
+        <th>电话</th>
+        <td colspan="3"><?= $this->orderInfo['seller_tel']; ?></td>
+    </tr>
+    <tr>
+        <th>配送员</th>
+        <td colspan="2"></td>
+        <th>收货人</th>
+        <td colspan="3"></td>
+    </tr>
+    <tr>
+    	<td colspan="7">专心 专注 专业 冷食B2B电商平台</td>
+    </tr>
+ </table>
+<script type="text/javascript">
+    $(function(){
+        $('#print').click(function(){
+            var url = '/orders/printnum',
+                oId = '<?=$this->orderInfo['order_id'];?>';
+            $.getJSON(url, {oId:oId}, function(data){
+                if(data.success){
+                    window.print();
+                }
+            })
+        })
+    })
+</script>

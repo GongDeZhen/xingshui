@@ -1,0 +1,141 @@
+html, body {-webkit-font-smoothing: antialiased}
+    #navbar-module {background-color: #1EA2D6; color: white; padding: 4px 6px 3px 6px; margin-left:0; margin-bottom:13px;}
+    .form-control, .btn {-webkit-box-shadow: none; box-shadow: none}
+    .navbar {border-bottom: 0px solid #f1f1f1; background-color: rgba(0, 0, 0, 0.9)}
+    #div-content {padding-top: 40px}
+    .div-single {margin-top: 40px;}
+    .dev-sidebar {padding: 0};
+    .dev-sidebar .nav {border-right: 1px solid #eee};
+    .dev-sidebar .nav>li>a {color: #333;}
+    .dev-sidebar .nav>li>a:link {color: #333;}
+    .dev-sidebar .nav>li>a:visited {color: #333;}
+    .dev-sidebar .nav>li.active>a {color: #000}
+
+/*     .dev-sidebar .nav>li>ul>li {padding-left: 16px;} */
+    .placeholder { color: #aaa; }
+
+    .colPicbox { overflow:hidden;}
+    .col-dl-6 > dl { margin:0 auto 15px; }
+    .col-dl-6 dt { position:relative; width:100%; border:1px solid #eee;}
+    .col-dl-6 .col-dl-6-Img {width:136px; height:89px; display:block; }
+    .col-dl-6 .col-dl-6-Img img {width:100%; height:89px;display:block;}
+    .col-dl-6-editbtn { position:absolute; font-size:12px; right:5px; top:5px; color:#999;}
+    .col-dl-6-editbtn:hover {color:#777;}
+    .col-dl-6 dd { text-align:center; line-height:25px; height:25px; overflow:hidden;font-size:14px; color:#333;}
+    .col-dl-6 dd a{color:#333;}
+    .col-dl-6 dd a:hover {color:#777;}
+    .col-dl-6 { padding-left:0px;}
+
+
+#main-nav {margin-left: 1px;}
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #4A515B;
+        background: #E9E9E9;
+        background: -moz-linear-gradient(top, #FAFAFA 0%, #E9E9E9 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FAFAFA), color-stop(100%,#E9E9E9));
+        background: -webkit-linear-gradient(top, #FAFAFA 0%,#E9E9E9 100%);
+        background: -o-linear-gradient(top, #FAFAFA 0%,#E9E9E9 100%);
+        background: -ms-linear-gradient(top, #FAFAFA 0%,#E9E9E9 100%);
+        background: linear-gradient(top, #FAFAFA 0%,#E9E9E9 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E9E9E9');
+        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E9E9E9')";
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+    #main-nav.nav-tabs.nav-stacked > li > a > span {color: #4A515B;}
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #FFF;
+        background: #3C4049;
+        background: -moz-linear-gradient(top, #4A515B 0%, #3C4049 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4A515B), color-stop(100%,#3C4049));
+        background: -webkit-linear-gradient(top, #4A515B 0%,#3C4049 100%);
+        background: -o-linear-gradient(top, #4A515B 0%,#3C4049 100%);
+        background: -ms-linear-gradient(top, #4A515B 0%,#3C4049 100%);
+        background: linear-gradient(top, #4A515B 0%,#3C4049 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4A515B', endColorstr='#3C4049');
+        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#4A515B', endColorstr='#3C4049')";
+        border-color: #2B2E33;
+    }
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover > span {color: #FFF;}
+    #main-nav.nav-tabs.nav-stacked > li {margin-bottom: 4px;}
+    /*定义二级菜单样式*/
+    .secondmenu a {font-size: 10px;color: #4A515B;text-align: center;}
+    .navbar-static-top {background-color: #212121;margin-bottom: 5px;}
+    .navbar-brand {background: url('') no-repeat 10px 8px;display: inline-block;vertical-align: middle;padding-left: 50px;color: #fff;}
+    /*代金券css*/
+
+    .bg-p{background: #b8b8b8;padding: 5px;}
+    .bg-g{background:#e0e0e0}
+    .mt-20{margin-top:30px;}
+    .mr-10{margin-left:10px;  }
+    .f-l{float: left!important;}
+    .mb-20{margin-bottom: 20px;}
+    .table tbody>tr>td {padding-left:0;}
+
+     /*代金券详情*/
+    a.icon-quetion{    background: url(img/question.png)no-repeat; width: 16px; height: 19px; display: inline-block; vertical-align: bottom; margin-right: 4px; background-position: 0px 2px;}
+    .check-width-p{width: 135px!important;padding: 0;}
+ label.radio {font-weight: lighter; width: 118px!important; margin: 0!important; padding: 0!important;}
+ .form-page .form-wrapper label{text-align: right; }
+ .chongzhi{padding: 5px 11px; border: 1px solid #2480c2; margin-left: 50px;}
+.bg-n{background-image: none!important;}
+.l-h-8{line-height: 8px;}
+
+ /*配送商详情*/
+
+
+.table-wrapper .table td.description{margin-left: 5px}
+/*免费领取*/
+.need{color: #f00;    margin-left: -90px;
+}
+.table tbody>tr>td {padding-left:0;}
+.kexuan ul{padding: 0}
+.kexuan ul li{list-style-type: none;}
+.caozuo input{margin-top: 5px;}
+.caozuo input,.caozuo button{margin-bottom: 5px;}
+ 
+ /*品牌活动css*/
+ .pic{width: 400px;height: 100px;background: #ccc;margin-top:15px; text-align: center;line-height: 100px;}
+
+/*新增优惠券样式*/
+/*.field-box label.title-content{ width:123px;}*/
+.form-wrapper input[type="text"] { width: 300px; }
+.field-box label.search-box { margin-top:13px;}
+.field-box select.plan4 {float:left; margin-top:-25px; margin-left:490px;}
+.field-box a.more { margin-top:-27px; margin-right:-115px; height:28px;}
+.field-box span.limit { float:right;margin-right: -115px;margin-top: -25px; }
+.field-box input.discount { float:right;width:150px;margin-right:120px; height:24px; }
+.field-box input.confirm { width:45px; height:27px; }
+.field-box input.discount span {margin-left:162px; width:650px; display:block; }
+.field-box .money-limit { margin-left:-15px;}
+.field-box .title-content .title-reg{ margin-left:-75px;}
+.field-box .member-level {margin-left:-110px; }
+/*.field-box .money-rab {margin-left:67px; }*/
+.field-box .area { margin-left: 120px;}
+#inlineCheckbox1 { margin-left:-67px;}
+#inlineCheckbox2 { margin-left:-50px;}
+#inlineCheckbox3 { margin-left:-63px;}
+.mr--5 { margin-right:-5px;}
+.text-left { text-align:left!important;}
+
+/*优惠券*/
+.coupon { margin-bottom:10px;}
+.coupon a.new-product { margin-left:-15px;}
+.ctrls span.time { margin-left:40px; padding-right:10px;}
+.fs-12 { font-size:12px;}
+.ml-120 { margin-left:120px;}
+
+/*广告管理*/
+.ctrls.list-content { height:40px; background:#b8b8b8; margin-top:45px;}
+.input-group.list-all { width:300px; margin:0px 30px;}
+.input-group.list-all .form-control { height:28px; font-size:13px;}
+.input-group-btn.list-all button.btn { height:28px; font-size:13px;}
+
+/*添加广告*/
+.mb-5 { margin-bottom: 5px;}
+.w-130 { width:130px;}
+.f-l { float:left;}
+tr.first th.all-check-th{padding-left: 0px;}

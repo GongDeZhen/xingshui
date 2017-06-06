@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代金券</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="/vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/css/ratchet.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/app.css">
+        <script type="text/javascript" src="/js/baidu_count.js"></script>
+    <script src="js/ratchet.min.js"></script>
+</head>
+<body class="bg-gray2">
+<header class="bar bar-nav bg-bule b-n">
+    <a href="/setacc/index" class="icon icon-goback pull-left"></a>
+
+    <h1 class="title c-white">我的优惠券</h1>
+</header>
+<div class="segmented-control top-nav">
+    <a class="control-item <?php if($type==0) echo 'active';?>" href="./syhquan?type=0">
+        线上优惠券
+    </a>
+    <a class="control-item <?php if($type==1) echo 'active';?>" href="./syhquan?type=1">
+        线下优惠券
+    </a>
+    <a class="control-item <?php if($type==3) echo 'active';?>" href="./syhquan?type=3">
+      代金券
+    </a>
+     <a class="control-item <?php if($type==2) echo 'active';?>" href="./syhquan?type=2">
+       不可用
+    </a>
+</div>
+<div class="content uncouple-box">
+<?php if(!empty($info)){?>
+    <?php foreach ($info as $k=>$v){ ?>
+	    <ul class="pl-0">
+            <li class="bg-white card-box">
+                <div class="use-box">
+                    <div class="row">
+                        <div class="col-xs-8 pr-0">
+                            <div class="coupon1-cont-box" style="background:none;">
+                                <h3 class="c-gray"><?=$v["name"]?></h3>
+                                <p>使用条件：<?php if(empty($v["goods_name"])){echo $v["name"];}else{echo $v["goods_name"];}?></p>
+                                <p>使用期限：<?= date("Y-m-d",$v['start_time'])?>-<?= date("Y-m-d",$v['end_time'])?></p>
+                            </div>
+                        </div>
+                        <div class="col-xs-4 pl-0">
+                            <div class="discount">
+                                <span style="font-size: 3.2em;"><?php echo mb_substr($v["type_num"],0,1,'utf-8')?></span>
+                                <span style="font-size: 1.2em;"><?php if(strpos($v["type_num"],'.')){echo mb_substr($v["type_num"],strpos($v["type_num"],'.'),10);}else{echo '.00';}echo $v["type_name"]?></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+	    </ul>
+	<?php }?>
+<?php }else{?>
+	    <p class="text-center c-gary1">
+	        没有更多可用券了
+	        <a class="c-orange ml-10" href="./syhquan?type=2">查看不可用优惠券&gt;&gt;</a>
+	    </p>
+<?php }?>
+</div>
+</body>
+</html>

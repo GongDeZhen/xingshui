@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>星水e购</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="/vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/css/ratchet.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/zepto/plugins/pgwmodal/pgwmodal.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/app.css">
+    <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/mycss.css" />
+      <script type="text/javascript" src="/js/baidu_count.js"></script>
+    <style type="text/css">
+        #pgwModal .pm-body{position: static;max-width: 0}
+        .pgwModal .pm-content{position: absolute;bottom: 0;left: 0;width: 100%;z-index: 10000;}
+        .pgwModal .pm-body{background: transparent;box-shadow: none;-webkit-box-shadow:none;}
+    </style>
+</head>
+<body>
+<header class="bar bar-nav bg-bule b-n">
+	<a href="/goods/list" class="icon icon-goback pull-left"></a>
+    <h1 class="title c-white">冰团e购</h1>
+</header>
+<nav class="bar bar-tab nav-bar">
+    <a class="tab-item active" href="/goods/list">
+        <span class="icon icon-market" style="background: url(../images/icon_shangcheng_hover.png) no-repeat center;background-size:24px 24px"></span>
+        <span class="tab-label">冰团商城</span>
+    </a>
+    <a class="tab-item shopcar2" href="/cart/index">
+        <span class="icon icon-shopcar1"></span>
+        <span class="tab-label">购物车</span>
+        <span class="icon-circle1" <?php if($count==0){?>style="background:000000"<?php }?>><?=$count?></span>
+    </a>
+    <a class="tab-item shopcar2" href="/setacc/index">
+        <span class="icon icon-mine"></span>
+        <span class="tab-label">我的账户</span>
+        <span class="icon-circle2"></span>
+    </a>
+</nav>
+<div class="content" style="padding-top:56px;">
+    <div class="slider">
+		<div class="slide" id="slider-list-box" style="width: 375px ; height: 187px">
+			<ul class="pgwSlider" id="slider-list" style="width: 375px ; height: 187px">
+			<?php if(!empty($adgoods)){ foreach($adgoods as $k => $v){?>
+				<li class="item">
+						<img src="<?=$v['bg_image']?>" alt="" style="max-height: 187px">
+					</a>
+				</li>
+			<?php }}else{?>
+			       <li class="item">
+					<a href="javascript:;">
+                    <img src="<?=Yaf_Registry::get('weixinurl')?>images/banner.jpg" alt="">
+                   	</a>
+			     </li>
+            <?php }?>
+			</ul>
+		</div>
+    </div>
+    <div class="goods-box container">
+        <div class="row goods_info">
+         <?php if(!empty($result)){?>
+         <?php foreach ($result as $k => $v){?>
+            <div class="col-xs-6 plr-8" style="padding-bottom:10px ">
+                <div class="goods1-box bg-white">
+                    <a href="/goods/info?id=<?=$v['goods_id']?>&activity_id=<?=$v['activity_id']?>">
+                        <img id="imgId" src="<?=$v['goods_thumb']?>" alt="" width="123" height="130">
+                        <div class="money-box" style="margin-top:20px;height: 45px">
+                                <h3 name='names' class='goods_name' id="goods_name"><?=$v['goods_name']?></h3>
+                                <input type="hidden" name="goods_id"  id="child_input" readonly value="<?=$v['goods_id']?>" />
+                        </div>
+                        <div class="money-box">
+                                <span name='<?=$v['all_price']?>' class="all_price price">￥<?=$v['all_price']?></span>
+                                <del id="city_price" name="<?=$v['city_price']?>">￥<?=$v['city_price']?></del>
+                                <input type="hidden" name="activity_id" id="activity_id" value="<?=$v['activity_id']?>" >
+                        </div>
+                        <div class="money-box">
+                            	<span class="amount" id="amount" value="<?=$v['goods_unit']?>" name="<?=$v['amount']?>">库存：<?=$v['amount']?><?=$v['goods_unit']?></span>
+                        </div>
+                    </a>
+                    <span class="editcard_sum_plus sum-plus clearfix">
+						<div class="fr">
+    						<a class="btn-cut fl decrease indexbtn_cut tx"  onclick="cnum($(this),0)" href="javascript:;">-</a>
+    						  <div class="editcardnum fl"><input type="text" class="child_input" name="num"  id="child_input" readonly value="0" /></div>
+    						<a class="btn-plus fl increase" href="javascript:;"  onclick="cnum($(this),0)" id='123' >+</a>
+						</div>
+					</span>
+                </div>
+            </div>
+           <?php }?>
+         <?php }?>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/vendor/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="/vendor/zepto/plugins/swipeslide.min.js"></script>
+
+<!-- <script type="text/javascript" src="/js/function.js"></script> -->
+<script type="text/javascript" src="/vendor/zepto/plugins/pgwmodal/pgwmodal.min.js"></script>
+<script src="/js/dropload.min.js"></script>
+<script type="text/javascript">
+ $(function(){
+    $("#modal_btn").click(function(){
+        $.pgwModal({
+            target: '#modalContent',
+            closable: false,
+            titleBar: false,
+        });
+    });
+    $("#modal_btn1").click(function(){
+        $.pgwModal({
+            target: '#modalContent',
+            closable: false,
+            titleBar: false,
+        });
+    });
+    $(document).bind('PgwModal::Open', function() {
+    // Your code when the modal is opened.
+        $(".goodsselect>li").on('click',function(){
+            $(this).addClass("active").siblings("li").removeClass("active");         
+            var str=$(".goodsselect>li.active>a").text();
+            $.pgwModal('close');
+        },false);
+    })
+ })
+function cnum(object,price){
+  var curPeople = Number(object.siblings().find("input[name='num']").val());//获取当前数量
+  var goods_id=object.parents('.editcard_sum_plus').siblings().find('input[name="goods_id"]').val();//商品id
+  var amount=object.parents('.goods1-box').find(".amount").attr('name');//库存
+  var type_h=0;
+  if(object.hasClass("decrease")){//点击减号
+      curPeople -= 1;
+      if(curPeople==1){
+    	  object.addClass("gray");
+       }
+		if(curPeople ==0){
+	         $.ajax({
+                 type: "POST",
+                 url: "/cart/editgoods",
+                 data: 'goods_id='+goods_id,
+                 dataType: "json",
+                 success: function(data){
+                         if(data.code == '1'){
+                            window.location.reload();
+                         }
+                 }
+	          });
+			if(object.hasClass("indexbtn_cut")){
+				object.hide();
+			}
+		}
+		object.siblings().find("input").attr('value',curPeople);
+		type_h=1;// 当前单击+号
+  }else if(object.hasClass("increase")){//点击加号
+      curPeople += 1;
+      if(curPeople > amount){
+          curPeople = amount;
+          alert('库存量'+amount);
+      }
+			if(curPeople > 0){
+				object.siblings().removeClass("gray");
+				object.siblings(".indexbtn_cut").show();
+			}
+			object.siblings().find("input").attr('value',curPeople);
+			type_h=2;// 当前单击+号
+  }
+  var number=new Array;
+  var result=0;
+  var price=object.parents('.editcard_sum_plus').siblings().find(".all_price").attr('name');//销售价格
+  var all_price=object.parents('.editcard_sum_plus').siblings().find("#city_price").attr('name');//市场价格
+  var names=object.parents('.editcard_sum_plus').siblings().find("h3").html();//商品名称
+  var num=object.siblings().find("input[name='num']").val();//商品数量
+  var type=object.parents('.goods1-box').find("#type").attr('value');//type
+  var actign=object.parents('.goods1-box').find("#activity_goods_name").attr('value');//活动商品名称
+  var goods_id=object.parents('.editcard_sum_plus').siblings().find('input[name="goods_id"]').val();//商品id
+  var activity_id=object.parents('.goods1-box').find("#activity_id").attr('value');//activity_id
+  if(activity_id!=''){activity_id=activity_id;}else{activity_id=0;};
+  var imgadd=object.parents('.goods1-box').find("#imgId").attr('src');//图片地址
+  var unit=object.parents('.goods1-box').find(".amount").attr('value');//规格
+  //var total=//商品的总的数量
+   	if(typeof(actign)=="undefined"){
+   		actign='';
+   	}
+   	var info={'state':1,'type_h':type_h,'names':names,'count':num,'id':goods_id,'price':price,'imgadd':imgadd,'unit':unit,'all_price':all_price,'type':type,'activityId':activity_id,'amount':amount,'actign':actign};
+    var arr=new Array();
+    //获取商品总数量
+	  $(".child_input").each(function(i){
+	    	number[i]=$(this).val();
+		    i++;
+	    })
+  	for(var k=0;k<number.length;k++){
+  		result+=parseInt(number[k]) ;
+	}
+	$('.icon-circle1').html(result+parseInt(<?=$count?>));
+	 var value=$('.icon-circle1').html();
+	if(value>0){
+    	$('.icon-circle1').css('background','#fb2727');
+	}
+      $.ajax({
+          type: "POST",
+          url: "/goods/getinfo",
+          dataType: "json",
+          data:{'info':info},
+          success: function(data){ 
+             //alert('11');
+           }
+         });
+  }
+ 
+</script>
+</body>
+</html>

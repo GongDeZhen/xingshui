@@ -1,0 +1,109 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.current{color:#000000;}
+th {text-align: center;}
+</style>
+
+ <div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="javascript:void(0)">账号管理</a></li>
+      <li class="active">账号列表</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a>账号列表</a></li>
+      <li role="presentation"><a href="/developer/signup">添加账号</a></li>
+    </ul>
+     <form class="form-inline" method="get" style="margin-top:20px;">
+         <div class="form-group">
+             <label>名称：</label>
+             <input type="text" class="form-control" name="name" id="name" placeholder="账号名称" value="<?= $this->get['name'] ?>">
+         </div>
+         <div class="form-group">
+             <label>角色：</label>
+             <select name="role" class='form-control' >
+                 <option value="0">全部</option>
+                 <?php if ($this->roleList): ?>
+                     <?php foreach ($this->roleList as $k => $v): ?>
+                         <option value='<?=$v['id']?>' <?= ($this->get['role'] == $v['id']) ? 'selected' : '' ; ?> ><?=$v['name']?></option>
+                     <?php endforeach; ?>
+                 <?php endif; ?>
+             </select>
+         </div>
+         <div class="form-group">
+             <label>公司：</label>
+             <select name="company_id" class='form-control' >
+                 <option value="0">全部</option>
+                 <?php foreach($this->getCompanyList as $k => $v){ ?>
+                     <option value="<?=$v['id']?>" <?= ($this->get['company_id'] == $v['id']) ? 'selected=selected' :'' ?>><?= $v['name']; ?></option>
+                 <?php } ?>
+             </select>
+         </div>
+         <button type="submit" class="btn btn-primary">搜索</button>
+     </form>
+    <br>
+    <div class="table-wrapper products-table section mt-20 mr-10" >
+        <div class="row">
+           <table class="table table-hover" style="text-align: center;">
+                <caption></caption>
+                <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>名称</th>
+                      <th>公司</th>
+                      <th>角色权限</th>
+                      <th>创建时间</th>
+                      <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($this->adm): ?>
+                        <?php foreach ($this->adm as $adm): ?>
+                            <?php if ($this->rbac == '*' ? true : ($adm['id'] == 1 ? false : true)): ?>
+                            <tr id='is_del_<?=$adm['id']?>'>
+                              <td class='col-md-1'><?=$adm['id']?></td>
+                              <td class='col-md-2'><?=$adm['name']?></td>
+                              <td class='col-md-3'><?=($adm['companyname'])? $adm['companyname'] : '未分配公司'; ?></td>
+                              <td class='col-md-2'><?=($adm['rolename'])? $adm['rolename'] : '未分配角色' ; ?></td>
+                              <td class='col-md-2'><?=date('Y-m-d H:i',$adm['create_time'])?></td>
+                              <td class='col-md-2'>
+                                <?php if ($this->rbac == '*' ? true : in_array('developer_update', $this->rbac['action'])): ?>
+                                    <a href="update?id=<?=$adm['id']?>"><span class="glyphicon glyphicon-pencil"></span> 编辑</a>
+                                <?php endif; ?>
+                                <?php if ($this->rbac == '*' ? true : in_array('developer_delete', $this->rbac['action'])): ?>
+                                    <a href="javascript:void(0)" onclick="if(confirm('操作不可恢复，确认删除么？')==false)return false;del(<?=$adm['id']?>)"><span class="glyphicon glyphicon-trash"></span> 删除</a>
+                                <?php endif; ?>
+                              </td>
+                            </tr>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+            <?php echo $this->paglist; ?>
+        </div>
+    </div> 
+</div>
+
+<script>
+function del(id)
+{
+    $.ajax({
+        type: "POST",
+        url: "delete",
+        dataType: "json",
+        data: "id="+id,
+        success: function(data){
+            if (data == 200) {
+                $("#is_del_"+id).remove();
+                $("#modal").append('<div class="col-md-3"></div><div class="col-md-6" style="margin-top: 60px"><div class="alert alert-success" role="alert"><p>删除成功</p></div></div><div class="col-md-3"></div>');
+                setTimeout(function(){$("#modal").modal("hide")},2000);
+            }
+            if (data == 400) {
+                alert('请重试');
+            }
+        }
+     });
+}
+</script>

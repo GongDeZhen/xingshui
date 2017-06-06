@@ -1,0 +1,117 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.current{color:#000000;}
+th {text-align: center;}
+</style>
+
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="JavaScript:void(0)">品牌管理</a></li>
+      <li class="active">品牌列表</li>
+    </ol>
+    <div class="ctrls list-content">
+        <form method="get">
+            <table class="table" style="background:#f5f5f5">
+                <tr>
+                    <td>
+                        <div class="input-group">
+                            <div class="input-group-addon">品牌名称</div>
+                                <input type="text" class="form-control" name='search_name' value='<?=$this->get['search_name']?>' style='width:13em' placeholder="搜索品牌">
+                        </div>
+                    </td>
+                    <td><input type="submit" placeholder="搜索"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a href="#">品牌列表</a></li>
+      <li role="presentation"><a href="/brand/add">添加品牌</a></li>
+    </ul>
+    <br>
+    <br>
+    <div class="row">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th class="col-xs-2">品牌名称</th>
+                <th class="col-md-4">品牌描述</th>
+                <th class="col-md-1">排序</th>
+                <th class="col-md-1">是否显示</th>
+                <th class="col-md-2">创建时间</th>
+                <th class="col-md-1">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach($this->list as $key=>$val) { ?>
+                <tr id="brand<?= $val['id']; ?>">
+                    <td class='text-center'><?= $val['name']; ?></td>
+                    <td class='text-center'><?= (!empty($val['describe'])?$val['describe']:'无') ?></td>
+                    <td class='text-center'><?= $val['order']; ?></td>
+                    <td class='text-center' id="is_show_<?=$val['id']?>" ><?=($val['is_show'] == 1)?"<span class='btn btn-default' id='is_show".$val['id']."' onclick='show(". $val['id'] .",".$val['is_show'].")'>已显示</span>":"<span class='btn btn-default' id='is_show".$val['id']."' onclick='show(". $val['id'] .",".$val['is_show'].")'>不显示</span>" ?></td>
+                    <td><?= date('Y-m-d H:i', $val['create_time'])?></td>
+                    <td>
+                        <ul class='list-inline text-center'>
+                            <li><a href="/brand/update?id=<?= $val['id']; ?>">编辑</a></li>
+                            <?php if ($this->rbac == '*' ? true :(in_array('brand_del', $this->rbac['action']))) :?>
+                                <li class="last"><a href='javascript:void(0)' onclick="if(confirm('确定要删除吗？')==false)return false; del(<?=$val['id']?>,1)">删除</a></li>
+                            <?php endif;?>
+                        </ul>
+                    </td>
+                </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+    </div>
+    <?=$this->paglist?>
+</div>
+
+<script type="text/javascript">
+function show(id,is_show)
+{
+	if ('<?php echo $this->rbac == '*' ? 'true' :(in_array('brand_upshow', $this->rbac['action']) ? 'true':'false')?>' == 'false') {
+	    alert('权限不足');
+	    return;
+	}
+    $.ajax({
+       type: "POST",
+       url: "upShow",
+       dataType: "json",
+       data: "id="+id+"&is_show="+is_show,
+       success: function(data){
+           if (data == 0) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-default' onclick='show("+id+" ,0)'>不显示</span>");alert('修改成功,品牌不显示');
+           } else if(data == 1) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-default' onclick='show("+id+" ,1)'>已显示</span>");alert('修改成功,品牌已显示');
+           } 
+           if (data == 400) {
+               alert('修改失败');
+           }
+       }
+    });
+}
+
+function del(id)
+{
+    $.ajax({
+     type: "POST",
+     url: "del",
+     dataType: "json",
+     data: "id="+id,
+     success: function(data){
+       if (data == 200) {
+         $("#brand"+id).remove();
+         $("#modal").append('<div class="col-md-3"></div><div class="col-md-6" style="margin-top: 60px"><div class="alert alert-success" role="alert"><p>删除成功</p></div></div><div class="col-md-3"></div>');
+         setTimeout(function(){$("#modal").modal("hide")},2000);
+       }
+       if (data == 400) {
+         alert('请重试');
+       }
+     }
+  });
+}
+</script>

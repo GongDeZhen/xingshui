@@ -1,0 +1,57 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.bs-example:after{content:"选择权限："}
+.bs-example{border-radius: 4px;}
+</style>
+<div class="col-md-10">
+    <br>
+    <?php
+      if ($this->errors != '') {
+        echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div>";
+      }
+    ?>
+    <br>
+    <div class="tab-content">
+        <h3>设置权限</h3>
+        <br>
+        <form action='roleupdate' method="POST" enctype="multipart/form-data" class="form-horizontal col-sm-12" style='padding-left: 6em;'>
+            <input type="hidden" name="id" value="<?= $this->info[0]['id']?>">
+            <div class="form-group col-sm-12">
+        		<label>角色权限:</label>
+                <div class="col-sm-3">
+                </div>
+            </div>
+            <div class="bs-example col-sm-12" data-example-id="simple-horizontal-form">
+            <?php if ($this->roleinfo): ?>
+                <?php foreach ($this->roleinfo as $k => $v): ?>
+                <label style='padding:4px'><input type="checkbox" name='permission[]' value="<?=$v['id']?>" checked disabled ><?=$v['name']?></label>
+                <?php endforeach; ?>
+            <?php else: ?>
+                暂无权限
+            <?php endif; ?>
+            </div>
+            <div class="form-group col-sm-12">
+                <label>用户可编辑权限:</label>
+                <div class="col-sm-3">
+                </div>
+            </div>
+            <div class="bs-example col-sm-12" data-example-id="simple-horizontal-form">
+                <?php if ($this->sheng_roleinfo): ?>
+                    <?php foreach ($this->sheng_roleinfo as $k => $v): ?>
+                        <label style='padding:4px'><input type="checkbox" name='permission[]' value="<?=$v['id']?>"  ><?=$v['name']?></label>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    暂无权限
+                <?php endif; ?>
+            </div>
+            <div class="form-group col-sm-12" style='padding:1em 0 0 0'>
+                  <button type="submit" class="btn btn-success">提交</button>
+            </div>
+        </form>
+    </div>
+</div>

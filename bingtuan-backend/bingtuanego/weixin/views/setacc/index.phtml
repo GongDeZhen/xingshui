@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="/vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/css/ratchet.min.css" />
+    <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/app.css">
+	<link rel="stylesheet" type="text/css" href="/css/mycss.css" />
+	    <script type="text/javascript" src="/js/baidu_count.js"></script>
+	<style type="text/css">
+        .icon-mine{
+	        background: url(../images/icon_my_hover.png) no-repeat center;
+        	background-size:24px 24px;
+        }
+    </style>
+</head>
+<body>
+<div class="contbody">
+<div class="usertop">
+	<div class="usertopdiv">
+
+		<dl class="usertopdl">
+			<img src="<?=$info['userInfo']["avatar"]?>" style="border-radius: 100px;">
+			<dt><?=$info['userInfo']['userName']?></dt>
+			<dd><?=$info['userInfo']["account"]?></dd>
+		</dl>
+		<a href="/message/qmessage?receiver=<?=$info["userInfo"]["user_type"]?>">
+		<div class="usermessage">
+			<span class="usermessagespan"></span>
+			<span class="usermessagenum csrd"     style="width:24px;height: 20px;"><?=$Num?></span>
+		</div>
+		</a>
+	</div>
+</div>
+<div class="userwrap">
+	<ul class="xl_det_ul xl_det_ultop">
+		<li class="xl_det_topli"><span class="li_firstIco"></span><span class="li_tit">我的订单</span><span class="li_txt_href">查看全部订单</span><span class="more"><a href="/cart/qstate">&gt;</a></span></li>
+		<li class="xl_det_topnavli">
+			<ul class="xl_nav_ul">
+				<li class="xl_nav_li fl">
+					<a href="/cart/qstate?status=<?php if($receiver==1 || $receiver==0){echo 1;}elseif($receiver==2){echo 2;}?>">
+					<div class="xl_nav_liinfo">
+						<span class="xlnavIco xlnavIco01" <?php if($receiver==1 || $receiver==0){?>style="background: url(../images/bt_nav05.png) left center no-repeat;background-size: 100% 100%;"<?php }?>></span>
+						<span class="xlnavnum csrd"><?php if($receiver==1 || $receiver==0){echo $info["noPayNum"];}elseif($receiver==2){echo $info["noSendNum"];}?></span>
+					</div>
+					<span class="xlnavtit"><?php if($receiver==1 || $receiver==0){ echo "待付款"; }elseif($receiver==2){echo "待发货";}?></span>
+					</a>
+				</li>
+                <li class="xl_nav_li fl">
+					<a href="/cart/qstate?status=<?php if($receiver==1 || $receiver==0){echo 2;}elseif($receiver==2){echo 3;}?>">
+					<div class="xl_nav_liinfo">
+						<span class="xlnavIco xlnavIco02"></span>
+						<span class="xlnavnum csrd"><?php if($receiver==1 || $receiver==0){echo $info["noSendNum"];}elseif($receiver==2){echo $info["noReciveNum"];}?></span>
+					</div>
+					<span class="xlnavtit"><?php if($receiver==1 || $receiver==0){ echo "待发货"; }elseif($receiver==2){echo "待收货";}?></span>
+					</a>
+				</li>
+                <li class="xl_nav_li fl">
+					<a href="/cart/qstate?status=<?php if($receiver==1 || $receiver==0){echo 3;}elseif($receiver==2){echo 4;}?>">
+					<div class="xl_nav_liinfo">
+						<span class="xlnavIco xlnavIco03"></span>
+						<span class="xlnavnum csrd"><?php if($receiver==1 || $receiver==0){echo $info["noReciveNum"];}elseif($receiver==2){echo $info["reciveNum"];}?></span>
+					</div>
+					<span class="xlnavtit"><?php if($receiver==1 || $receiver==0){ echo "待收货"; }elseif($receiver==2){echo "已收货";}?></span>
+					</a>
+				</li>
+                <li class="xl_nav_li fl">
+					<a href="/cart/qstate?status=<?php if($receiver==1 || $receiver==0){echo 4;}elseif($receiver==2){echo 5;}?>">
+					<div class="xl_nav_liinfo">
+						<span class="xlnavIco xlnavIco04"></span>
+						<span class="xlnavnum csrd"><?php if($receiver==1 || $receiver==0){echo $info["reciveNum"];}elseif($receiver==2){echo $info["deleteNum"];}?></span>
+					</div>
+					<span class="xlnavtit"><?php if($receiver==1 || $receiver==0){ echo "已收货"; }elseif($receiver==2){echo "已取消";}?></span>
+					</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	<ul class="xl_det_ul">
+		<li><span class="li_tit">我的收货地址</span><span class="more"><a href="/address/index">&gt;</a></span></li>
+		<li><span class="li_tit">我的优惠券</span><span class="more"><a href="/discount/syhquan">&gt;</a></span></li>
+		<li><span class="li_tit">个人设置</span><span class="more"><a href="/optionset/setlist">&gt;</a></span></li>
+		 <?php if($info["userInfo"]["user_type"] ==2){?>	
+		  <li><span class="li_tit">我的账单</span><span class="more"><a href="/bill/list">&gt;</a></span></li>
+		<?php }?>
+	</ul>
+	<ul class="xl_det_ul">
+		<li class='callbtnjs'><span class="li_tit ">客服电话</span><span class="li_txt_fr">400-661-0288</span></li>
+		<li><span class="li_tit">关于我们</span><span class="more"><a href="/auru/index">&gt;</a></span></li>
+	</ul>
+</div>
+</div>
+<nav class="bar bar-tab nav-bar">
+    <a class="tab-item active" href="/goods/list">
+        <span class="icon icon-market " ></span>
+        <span class="tab-label" style="color:#929292;">冰团商城</span>
+    </a>
+    <a class="tab-item shopcar2" href="/cart/index">
+        <span class="icon icon-shopcar1"></span>
+        <span class="tab-label">购物车</span>
+        <span class="icon-circle1"><?=$count?></span>
+    </a>
+    <a class="tab-item shopcar2" href="/setacc/index">
+        <span class="icon icon-mine"></span>
+        <span class="tab-label" style="color:#428bca;">我的账户</span>
+        <span class="icon-circle2"></span>
+    </a>
+</nav>
+<!-- 弹层 -->
+<div class="window-overlay tx callhidebox">
+	<div class="window-overlaybg"></div>
+	<div class="window">
+		<div class="mineditareadiv"><p class="mineditpro">确定拨打客服电话：400-661-0288吗？</p></div>
+		<div class="mineditbtn clearfix">
+			<a href="tel:+4006296379"><span class="editpabtn fl br1 submitinjuredbtn closehidebox">确定</span></a>
+			<a href="javascript:;"><span class="editpabtn fr injuredrestbtn closehidebox">取消</span></a>
+		</div>
+	</div>
+</div>
+</body>
+ <script type="text/javascript"> 
+/**个人中心拨打客服电话弹层**/
+$(document).on("click",".callbtnjs",function(){
+	$(".callhidebox").show();
+});
+$(document).on("click",".window-overlaybg,.closehidebox",function(){
+	$(".window-overlay").hide();
+});
+$(function(){
+	var len=$('.csrd').length;
+	for(var i=0;i<len;i++){
+	    var value=$($('.csrd')[i]).html();
+	    if(value==0){
+	    	$($('.csrd')[i]).css({"background":"000000","border":"000000"});
+	    	$($('.csrd')[i]).html('');
+	     }
+	}
+})
+$(document).ready(function() { 
+    var num=$('.icon-circle1').html();
+	 if(num==0){
+		 $('.icon-circle1').css('background','000000');
+	  }else{
+		  $('.icon-circle1').css('background','#fb2727');
+	  }
+}); 
+ </script> 
+</html>
+

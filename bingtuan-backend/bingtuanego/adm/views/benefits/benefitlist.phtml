@@ -1,0 +1,59 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<script>
+    laydate.skin('danlan')
+</script>
+<style>
+th {text-align: center;}
+td>div{width:29%;float:left;padding:0.3em}
+td>input{width:12%;}
+.current{color:red;}
+img{max-width:300px;max-height:300px;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">满减满赠</a></li>
+      <li class="active">规则列表</li>
+    </ol>
+    <table class="table table-hover" style="text-align: center;">
+    <caption></caption>
+    <thead>
+        <tr>
+            <th>省</th>
+            <th>市</th>
+            <th>仓库</th>
+            <th>类型</th>
+            <th>促销说明</th>
+            <th>图片</th>
+            <th>促销算法</th>
+            <th>生效最小值</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>详情</th>
+        </tr>
+    </thead>
+      <tbody>
+        <?php if ($this->benefit_list): ?>
+            <?php foreach ($this->benefit_list as $benefit): ?>
+                <tr>
+                    <td class="col-md-1"><?php echo $benefit['province']; ?></td>
+                    <td class="col-md-1"><?php echo $benefit['city']; ?></td>
+                    <td class="col-md-1"><?php echo $benefit['warehouse']; ?></td>
+                    <td class="col-md-1"><?php echo $benefit['type']; ?></td>
+                    <td class="col-md-1"><?php echo $benefit['disp']; ?></td>
+                    <td class="col-md-1"><img src="<?php echo $benefit['logo']; ?>"/></td>
+                    <td class="col-md-1"><?php echo $benefit['func']; ?></td>
+                    <td class="col-md-1"><?php echo $benefit['min_val']; ?></td>
+                    <td class="col-md-1"><?php echo $benefit['begin_at']; ?></td>
+                    <td class="col-md-1"><?php echo $benefit['end_at']; ?></td>
+                    <td class="col-md-1"><?php echo($benefit['benefit_info']); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+    <?php echo $this->paglist; ?>
+</div>

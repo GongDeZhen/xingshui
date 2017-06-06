@@ -1,0 +1,46 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.bs-example:after{content:"选择权限："}
+.bs-example{border-radius: 4px;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="javascript:void(0)" onclick='location.href=document.referrer;'>分公司列表</a></li>
+      <li class="active">设置权限</li>
+    </ol>
+    <ul class="nav nav-pills">
+	  <li role="presentation"><a href="javascript:void(0)" onclick='location.href=document.referrer;'>分公司列表</a></li>
+	        <li role="presentation" class="active"><a>设置权限</a></li>
+    </ul>
+    <br>
+    <?php
+      if ($this->errors != '') {
+        echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div>";
+      }
+    ?>
+    <br>
+    <div class="tab-content">
+        <h3>设置角色权限</h3>
+        <br>
+        <form action='roleupdate' method="POST" enctype="multipart/form-data" class="form-horizontal col-sm-12" style='padding-left: 6em;'>
+            <input type="hidden" name="company_id" value="<?= $this->info['company_id']?>">
+            <div class="bs-example col-sm-12" data-example-id="simple-horizontal-form">
+            <?php if ($this->info): ?>
+                <?php foreach ($this->info[2] as $k => $v): ?>
+                <label style='padding:4px'><input type="checkbox" name='permission[]' value="<?=$v['id']?>" <?php if (!empty($this->info[0]['permission']) && in_array($v['id'],$this->info[0]['permission'])): ?> checked <?php endif;?> ><?=$v['name']?></label>
+                <?php endforeach; ?>
+            <?php else: ?>
+                暂无权限
+            <?php endif; ?>
+            </div>
+            <div class="form-group col-sm-12" style='padding:1em 0 0 0'>
+                  <button type="submit" class="btn btn-success">提交</button>
+            </div>
+        </form>
+    </div>
+</div>

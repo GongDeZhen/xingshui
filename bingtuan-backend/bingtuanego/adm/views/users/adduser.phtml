@@ -1,0 +1,136 @@
+<script src="/js/thumbnails.js"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {
+	text-align: center;
+}
+
+.input-group {
+	float: left;
+	width: 40%;
+	padding: 0.2em;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+    -webkit-appearance: none !important;
+    margin: 0; 
+}
+input[type="number"]{-moz-appearance:textfield;}
+</style>
+<div class="col-md-10">
+	<ol class="breadcrumb">
+		<li>
+			<a href="/users/userlist">用户管理</a>
+		</li>
+		<li class="active">编辑详情</li>
+	</ol>
+	<ul class="nav nav-pills">
+		<li role="presentation">
+			<a href="/users/userlist">用户列表</a>
+		</li>
+		<li role="presentation" class="active">
+			<a>编辑详情</a>
+		</li>
+	</ul>
+	<br>
+	<div id="pad-wrapper" class="form-page" style="padding: 0">
+		<form method="post" id='ajaxform' action='javascript:void(0)'>
+			<table class="table table-bordered">
+				<thead></thead>
+				<tbody>
+					<tr class="active">
+						<td class='col-md-2 text-right' style='padding: 8px 0;'>公司/单位/店铺名称：</td>
+						<td class='col-md-4'>
+							<input class='form-control' type="text" value="<?=$this->userInfo['comName']?>" name="comName" />
+						</td>
+						<td class='col-md-2 text-right' style='padding: 8px 0;'>用户名：</td>
+						<td class='col-md-4'>
+							<input class='form-control' type="number" value="<?=$this->userInfo['account']?>" name="account" style='-moz-appearance:textfield;'/>
+						</td>
+					</tr>
+					<tr>
+						<td class='text-right' style='padding: 15px 0;'>经销商：</td>
+						<td colspan=3><?= $this->companyDealersList ?></td>
+					</tr>
+					<tr class="active">
+						<td class='text-right' style='padding: 8px 0;'>联系人：</td>
+						<td>
+							<input class='form-control' type="text" value="<?=$this->userInfo['userName']?>" name="userName" />
+						</td>
+						<td class='text-right' style='padding: 8px 0;'>联系电话：</td>
+						<td>
+							<input class='form-control' type="number" value="<?=$this->userInfo['telphone']?>" name="telphone" />
+						</td>
+					</tr>
+					<tr>
+						<td class='text-right' style='padding: 10px 0;'>用户地址：</td>
+						<td colspan=3>
+							<input class='form-control' type="text" value="<?=$this->userInfo['address']?>" name="address" />
+						</td>
+					</tr>
+					<tr class="active">
+						<td class='text-right' style='padding: 10px 0;'>邮箱：</td>
+						<td style='padding: 10px 8px;'>
+							<input class='form-control' type="email" value="<?=$this->userInfo['email']?>" name="email" />
+						</td>
+						<td class='text-right' style='padding: 8px 0;'>密码：</td>
+						<td>
+							<input class='form-control' type="number" value="<?=$this->userInfo['password']?>" name="password" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan=4 class='text-right'>
+							<input type="submit" class="btn btn-primary" value="提交注册">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+</div>
+<script>
+$(document).on('submit','#ajaxform',function(){
+	
+    var comName = $("input[name='comName']").val();
+    if (comName == '') {alert('公司/单位/店铺名称不能为空');return false;}
+    
+    var account = $("input[name='account']").val();
+    if (account == '' || account.length != 11) {alert('用户名不能为空');return false;}
+
+    var company = $("#company").val();
+    if(company == '0') {alert('请选择公司'); return false;}
+
+    var warehouse = $("#warehouse").val();
+    if (warehouse == '0') {alert('请选择经销商');return false;}
+    
+    var userName = $("input[name='userName']").val();
+    if (userName == '') {alert('联系人不能为空');return false;}
+    
+    var telphone = $("input[name='telphone']").val();
+    if (telphone == '' || telphone.length != 11) {alert('联系电话不能为空');return false;}
+    
+    var address = $("input[name='address']").val();
+    if (address == '') {alert('用户地址不能为空');return false;}
+    
+    var password = $("input[name='password']").val();
+    if (password == '') {alert('密码不能为空');return false;}
+
+    $.ajax({
+        type: "POST",
+        url: "adduser",
+        data: $("#ajaxform").serializeArray(),
+        dataType: "json",
+        success:function(data){
+            if (data.success == 1) {
+                alert(data.data);
+                window.location.href='/users/userlist';
+                return false;
+            } else {
+                alert(data.error);
+            }
+        }
+    });
+});
+</script>

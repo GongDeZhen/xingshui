@@ -1,0 +1,124 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.detail-view th {text-align: right;width: 160px;}
+th {text-align: center;}
+.thumbnail{margin-bottom: 0px;}
+.input-group[class*="col-"] {float:left}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="purchaseList">订单管理</a></li>
+      <li class="active">进货单详情</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="purchaseList">进货单列表</a></li>
+	  <li role="presentation" class="active"><a href="javascript:void(0)">进货单详情</a></li>
+    </ul>
+    <br>
+	<div class="tab-content">
+		<table class="detail-view table table-striped table-condensed" id="yw0">
+			<tbody>
+				<tr class="odd"><th>订单号</th><td><?=$this->order_info['order_number']?></td></tr>
+				<tr class="odd"><th>商品总价</th><td><?= $this->order_info['goods_amount']?> 元</td></tr>
+				<tr class="even"><th>订单状态</th><td><?= $this->order_info['status']?></td></tr>
+				<tr class="even"><th>配送方式</th><td><?= $this->order_info['shipping_name']?></td></tr>
+				<?php if ($this->order_info['return_reason']): ?>
+				    <tr class="odd"><th>退货原因</th><td><?= $this->order_info['return_reason']?></td></tr>
+				<?php endif;?>
+				<tr class="even"><th>下单时间</th><td><?=date('Y-m-d H:i:s',$this->order_info['add_time'])?></td></tr>
+				<tr><th class='text-right'>发货时间</th><td class='text-left'><?=($this->order_info['shipments_time'])?date('Y-m-d H:i:s',$this->order_info['shipments_time']):'未发货'?></td></tr>
+			</tbody>
+		</table>
+		
+		<table class="table table-bordered">
+            <tr>
+              <td colspan='4' class='text-center'>收货人信息</td>
+            </tr>
+            <tr>
+              <th class='text-right col-md-2'>收货人</th>
+              <td class='text-left col-md-4'><?=$this->order_info['consignee']?></td>
+              <th class='text-right col-md-2'>手机号</th>
+              <td class='text-left col-md-4'><?= $this->order_info['seller_tel']?></td>
+            </tr>
+            <tr>
+              <th class='text-right' style='width:8em'>收货地址</th>
+              <td class='text-left' colspan='3'><?= $this->order_info['seller_address']?></td>
+            </tr>
+        </table>
+	</div>
+		<table class="table table-bordered" style="text-align: center;">
+                <tr>
+                    <td colspan='6' class='text-center'>商品信息</td>
+                </tr>
+                <tr>
+                  <th>商品名称</th>
+                  <th>数量</th>
+        		  <th>进货价</th>
+        		  <th>活动</th>
+        		  <th>活动赠品</th>
+        		  <th>小计</th>
+                </tr>
+                <?php if ($this->order_info['goods_list']): ?>
+                    <?php  $count=0.00;  foreach ($this->order_info['goods_list'] as $k) : ?>
+                        <tr>
+                          <td class='col-md-2'><a href="/goods/goodsInfo?goods_id=<?=$k['goods_id']?>&invid=<?=$k['goods_area_id']?>"><?=$k['goods_name']?></a></td>
+                          <td class='col-md-1'><?=$k['goods_number']?></td>
+                		  <td class='col-md-1'><?=$k['inventory']?></td>
+                		  <td class='col-md-1'>
+                		  <?php if (!empty($k['activity_info'])): ?>
+                		          <?=$k['activity_info']['act_name']?>
+            		        <?php else: ?>
+                                <center>无活动信息</center>
+                            <?php endif; ?>
+                		  </td>
+                		  <td class='col-md-1'>
+                		    <?php if (isset($k['activity_info']['type']) && $k['activity_goods']['type'] == 1): ?>
+                		          <a class='col-md-12' class="collapsed" role="button" data-toggle="collapse" href="#collapseListGroup<?=$k['goods_id']?>" aria-expanded="false" aria-controls="collapseListGroup<?=$k['goods_id']?>">活动信息</a>
+                		    <?php else: ?>
+                                <center>无赠品信息</center>
+                            <?php endif; ?>
+                		  </td>
+                		  <td class='col-md-2'><?php $count += $money = (number_format($k['inventory']*$k['goods_number'],2) > 0) ? number_format($k['inventory']*$k['goods_number'],2):0.00; echo number_format($money,2).' 元'; ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan='6' style='padding:0px;border-top:0px' class='col-md-12'>
+                                <div id="collapseListGroup<?=$k['goods_id']?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading<?=$k['goods_id']?>" aria-expanded="false" style="height: 0px;">
+                                    <table class="table table-bordered">
+                                      <thead>
+                                        <tr>
+                                          <th>商品名</th>
+                                          <th>数量</th>
+                                          <th>商品图</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                      <?php  foreach ($k['activity_info']['gifts_list'] as $key) : ?>
+                                        <tr>
+                                          <td class='col-md-4'><?=$key['goods_name']?></td>
+                                          <td class='col-md-4'><?=$key['goods_num']?></td>
+                                          <td class='col-md-6 col-md-offset-3'>
+                                              <div class='col-md-12'>
+                                                <a href="<?=$key['goods_thumb']?>" class="thumbnail"><img src="<?=$key['goods_thumb']?>" alt="..." style='height:5em;width:5em;'></a>
+                                              </div>
+                                          </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                      </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <tr>
+                        <th colspan='5' class='text-right'>合计：</th>
+                        <td><?=number_format($count,2)?> 元</td>
+                    </tr>
+                <?php endif; ?>
+        </table>
+	</div>
+</div>
+<script>
+$("#up").uploadPreview({ Img: "ImgPr", Width: 120, Height: 120, ImgType: ["gif", "jpeg", "jpg", "bmp", "png"], Callback: function () { }});
+</script>

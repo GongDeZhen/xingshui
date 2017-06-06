@@ -1,0 +1,64 @@
+<script src="/js/thumbnails.js"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+/* .input-group[class*="col-"]{float: left;padding: 0.2em;} */
+form>div>div{float:left;width:20%;padding: 0.2em;}
+.current {color:#000000;}
+</style>
+ <div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="javascript:void(0)">用户管理</a></li>
+      <li class="active">配送商列表</li>
+    </ol>
+    <hr>
+    <form method="get">
+        <div class="col-md-12" style="background:#f5f5f5;padding: 0.6em;">
+                <?=$this->jiliancaidan?>
+                <div class="input-group">
+                    <div class="input-group-addon">姓名</div>
+                    <input class="form-control" type="text" name="keyword"  placeholder="搜索姓名">
+                </div>
+                <div class="input-group col-md-1">
+                <button type="submit" class="btn btn-primary" >搜索</button>
+            </div>
+                
+        </div>
+    </form>
+      <br> <br> <br>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="col-md-1">ID</th>
+                <th class="col-md-3"><span class="line"></span>店铺名</th>
+                <th class="col-md-1"><span class="line"></span>姓名</th>
+                <th class="col-md-1"><span class="line"></span>手机</th>
+                <th class="col-md-3"><span class="line"></span>地区</th>
+                <th class="col-md-2"><span class="line"></span>注册时间</th>
+                <th class="col-md-1"><span class="line"></span>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if ($this->list){?>
+                <?php foreach($this->list as $key => $item) { ?>
+                <tr class="text-center" id="brand-item-<?= $item['id']; ?>">
+                    <td><span class="line"></span><?= $item['id']; ?></td>
+                    <td><span class="line"></span><?= $item['shop_name']; ?></td>
+                    <td><span class="line"></span> <?= $item['real_name']; ?></td>
+                    <td><span class="line"></span> <?= $item['username']; ?></td>
+                    <td><span class="line"></span> <?= $item['province']; ?> <?= $item['city']; ?> <?= $item['area']; ?></td>
+                    <td><span class="line"></span> <?=date('Y-m-d ',$item['create_time'])?></td>
+                    <td>
+                       <ul class="list-unstyled">
+                        <li><a href="/users/shopdetail?id=<?= $item['id']; ?>">编辑详细</a></li>
+                       </ul>
+                    </td>
+                </tr>
+                <?php }?>
+            <?php }?>
+        </tbody>
+    </table>
+    <?=$this->pagebar; ?>
+</div>

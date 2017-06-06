@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>购物车</title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="<?=Yaf_Registry::get('weixinurl')?>vendor/bootstrapv3/css/bs-col-sys.min.css" />
+    <link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>vendor/css/ratchet.min.css" />
+	<link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>css/app.css">
+	<link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>css/mycss.css" />
+	<link rel="stylesheet" type="text/css" href="<?=Yaf_Registry::get('weixinurl')?>css/swiper.min.css" />
+	<script type="text/javascript"src="/js/jquery-1.8.3.min.js"></script>
+      <script type="text/javascript" src="/js/baidu_count.js"></script>
+ <script type="text/javascript" src="/js/function.js"></script>
+	<style>
+        .goods_name{
+            text-overflow:ellipsis;
+            white-space:nowrap; 
+            overflow:hidden; 
+        }
+        .icon-shopcar1{
+	        background: url(../images/icon_gouwuche_hover.png) no-repeat center;
+        	background-size:24px 24px;
+        }
+        .productinfocentermr_0 { margin-right: 0px;}
+        .proml_60 { margin-left:55px; height: 20px; line-height: 20px; overflow: hidden;text-overflow:ellipsis; white-space:nowrap;}
+    </style>
+</head>
+<body class="addressbody">
+<div class="cardcontbody whitebg">
+	<header class="bar bar-nav bg-bule b-n">
+        <?php if(!empty($goods_info)){?><a href="./edit" class=" pull-right edit">编辑</a><?php }?>
+		<h1 class="title c-white">购物车</h1>
+	</header>
+	<div class="productlistbox mt-56" id="productlistbox">
+	<?php if(!empty($goods_info)){foreach($goods_info as $k => $v) {?>
+    	<div class="productinfo clearfix">
+    		<img src="<?=$v['imgadd']?>" class="productinfopic" width="123" height="130"/>
+    		<div class="productinfodiv">
+    			<span class="editcard_sum_plus sum-plus fr">
+    				<a class="btn-cut fl decreases getprirce" href="javascript:;" onclick="cnum(this)">-</a>
+    				<div class="editcardnum fl "><input type="text" class="child_input"  id="input" name="num" readonly value="<?php if(isset($v['count'])){echo $v['count'];}else{echo "1";}?>" /><span class="fl"><?php if(!empty($v["unit"])){echo $v["unit"];}else{echo '个';}?></span></div>
+    				<a class="btn-plus fl increases getprirce" href="javascript:;" onclick="cnum(this)">+</a>
+    				<input type="hidden"  id="activityId" name="activityId" value="<?=$v['activityId']?>">
+    				<input type="hidden"  id="goods_id" name="goods_id" value="<?=$v['id']?>">
+    				<input type="hidden"  id="img" name="img" value="<?=$v['imgadd']?>">
+    				<input type="hidden"  class='amount' id="amount" name="amount" value="<?=$v['amount']?>">
+    				<input type="hidden"  class='receiving_num' id="receiving_num" name="receiving_num" value="<?php if(isset($v['receiving_num']) && !empty($v['receiving_num'])){echo $v['receiving_num'];}/*=$v['receiving_num']*/?>">
+    				<input type="hidden"  class='free_num' id="free_num" name="free_num" value="<?php if (isset($v['free_num']) && !empty($v['free_num'])){echo $v['free_num'];}?>">
+    				<input type="hidden" name="total" id="total" class="total" value="<?php echo (float)$v['price']*(float)$v['count']?>"> 
+    			</span>
+    			<div class="productinfocenter productinfocentermr_0">
+    				<dl class="productdl">
+    					<dt class='goods_name'><?php if(mb_strlen($v['names'],'utf-8')>19){echo mb_substr($v['names'],0,8,'utf-8')."...";}else{echo $v['names'];}?></dt>
+    					<dd><span class="redfont" name='<?=$v['price']?>'>￥<?=$v['price']?></span><span class="grayfont" name='<?=$v['all_price']?>'><?php if(isset($v['all_price'])){echo '￥'.$v['all_price'];}else{echo " ";}?></span></dd>
+					    <?php if(isset($v['type']) && $v['type'] ==1){?>
+					         <dd style="display:none" class="shows"><span class="redbg fl type redpanleft" name="<?=$v['type']?>">买<?=$v['receiving_num']?>赠<?=$v['free_num']?></span><div class="proml_60"><p class="sendtips"><?=$v['actign']?><span class="active_num"> x1</span></p></div></dd>
+					   <?php }else{ ?>
+					        <dd><span class='type shows' name='<?php if(isset($v['type'])){echo $v['type'];}else{echo "0";}?>'></span><p class='sendtips fl'><span class="active_num"> </span></p></dd>
+					   <?php }?>
+    				</dl>
+    			</div>
+    		</div>
+    	</div> 
+    	<?php }?>
+    </div>
+	<div class="bottomprice cardprice">
+		<div class="bottompricediv">
+			<dl class="bottompricedl fl">
+				<dt>合计 :  <span class="redfont tprice">0.00</span>元</dt>
+				<dd><span class="cardpricetxt">未包含优惠券</span></dd>
+			</dl>
+			<?php if($auditType==0 || $auditType==1 ){?>
+			 <a herf='javascript:;'><span onclick='javascript:alert("您的资料正在审核中,暂时还不能购买商品")' class="bottompricebtn Not_auditejs fr">结算</span></a>
+			<?php }else{?>
+			 <a href="/cart/billing" ><span class="bottompricebtn Not_auditejs fr">结算</span></a>
+			<?php }?>
+		</div>
+	</div>
+    <?php }else{?>
+        <div class="content-box text-center mt-120" >
+          <img src="/images/car-bule.png" width="75px" height="75px" class="mb-20" style="display:inline"/>
+          <a href="/goods/list">
+          <p class="fs-17 c-gary1">购物车空空如也<br>去挑几件好货吧!</p>
+          <button class="btn btn-block c-white bg-bule b-n btn-public mb-20 f-n mt-50">知道了，去购物！</button>
+          </a>
+         </div>
+    <?php }?>
+</div>
+<nav class="bar bar-tab nav-bar">
+    <a class="tab-item active" href="/goods/list">
+        <span class="icon icon-market"></span>
+        <span class="tab-label" style="color:#929292;">冰团商城</span>
+    </a>
+    <a class="tab-item shopcar2" href="/cart/index">
+        <span class="icon icon-shopcar1"></span>
+        <span class="tab-label" style="color:#428bca;">购物车</span>
+        <span class="icon-circle1"></span>
+    </a>
+    <a class="tab-item shopcar2" href="/setacc/index">
+        <span class="icon icon-mine"></span>
+        <span class="tab-label">我的账户</span>
+        <span class="icon-circle2"></span>
+    </a>
+</nav>
+<!--弹层-->
+<!-- <div class="window-overlay tx Not_auditedhidebox"> -->
+<!-- 	<div class="window-overlaybg"></div> -->
+<!-- 	<div class="window"> -->
+<!-- 		<div class="mineditareadiv"><p class="mineditpro">抱歉，您的资料正在审核暂不能购买</p></div> -->
+<!-- 		<div class="mineditbtn clearfix"> -->
+<!-- 			<a href="#"><span class="editpabtn knowbtn submitinjuredbtn closehidebox">我知道了</span></a> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- </div> -->
+</body>
+<script type="text/javascript">
+function cnum(object){
+   var pnum=0;
+   var responseurl="/goods/getinfo";
+   var num=$(object).siblings('.editcardnum').children('.child_input').val();//数量
+   var price=$(object).parent('.editcard_sum_plus').siblings('.productinfocenter').find('.redfont').attr('name');//价格
+   var all_price=$(object).parent('.editcard_sum_plus').siblings('.productinfocenter').find(".grayfont").attr('name');//市场价格
+   var names= $(object).parent('.editcard_sum_plus').siblings('.productinfocenter').find('dt').html();//名称
+   var activity_id= $(object).siblings('#activityId').attr('value');//商品活动ID
+   var type=$(object).parent('.editcard_sum_plus').siblings('.productinfocenter').find('.type').attr('name');
+   var goods_id= $(object).siblings('#goods_id').attr('value');//商品ID
+   var amount= $(object).siblings('#amount').attr('value');//商品库存
+   var imgadd= $(object).siblings('#img').attr('value');//商品图片
+   //修改商品的数量
+   if($(object).hasClass("decreases")){//点击减号
+  	 num=Number(num)-1;
+       if(num <= 0)
+       {
+    	   responseurl="/cart/editgoods";
+    	   num=0;
+       }else if(num == 1)
+       {
+          $(object).addClass("gray");
+       }
+	 $(object).siblings().find("input").attr('value',num);
+   }else if($(object).hasClass("increases")){//点击加号
+       num = Number(num)+1;
+       if(num > amount){
+      	 num = amount;
+      	 alert('库存量为'+amount);
+		   return false;
+       }
+		if(num > 0){
+			$(object).siblings().removeClass("gray");
+			$(object).siblings(".indexbtn_cut").show();
+		}
+		$(object).siblings().find("input").attr('value',num);
+   }
+   var nptotal=num*price;//计算所有价钱
+   $(object).siblings('.total').attr('value',nptotal);//设置所有价钱
+   //商品信息
+   var info={'state':'2','names':names,'count':num,'id':goods_id,'price':price,'imgadd':imgadd,'all_price':all_price,'type':type,'activityId':activity_id};
+   $.ajax({
+       type: "POST",
+       url: responseurl,
+       dataType: "json",
+       data:{'info':info,'goods_id':goods_id},
+       success: function(data){ 
+           if(data.code==200){
+        	  $(object).parents('.productinfo').remove();
+        	  if(!$(".clearfix").hasClass("productinfo")){
+      		    location.reload();
+      		  }
+            }
+        }
+      });
+	upnupr();
+}
+
+ //获取商品总数量
+ function upnupr(){
+	var totals=new Array();
+	var nums=0;
+	var tprice=0;
+	var goods_num=new Array;
+	var  receiving_num=new Array;
+	var len=$('.child_input').length;
+	var active_num=0;
+	var free_num=new Array();
+	for(var i=0;i<len;i++){
+		goods_num[i]=$($('.child_input')[i]).val();
+		if(goods_num[i]==1){
+		   $($('.child_input')[i]).parent('.editcardnum').siblings('.decreases').addClass("gray");
+	    }
+       receiving_num[i]=$($('.receiving_num')[i]).val();
+       free_num[i]=$($('.free_num')[i]).val();
+       if(receiving_num[i]!=0){
+      	    if( parseInt(goods_num[i]) >= parseInt(receiving_num[i]) ){
+    			$($('.shows')[i]).show(); 
+    			active_num= Math.floor(parseInt(goods_num[i])/parseInt(receiving_num[i])*parseInt(free_num[i]));
+        		if(active_num==0){
+    				active_num=1;
+        		}
+    			$($('.active_num')[i]).html('x'+active_num);
+      	    }else{
+      	    	$($('.shows')[i]).hide(); 
+   	    	
+          	}
+        }
+	}
+ 	 $('.total,.child_input').each(function(i){
+  		totals[i]=$(this).val();
+  	 });
+ 	for(var i=0;i<totals.length;i++){
+		  if(i%2==0){
+			  nums+=Number(totals[i]);
+		   }else if(i%2!=0){
+			  tprice+=Number(totals[i]);
+		   }
+	 }
+ 	$('.icon-circle1').html(nums);
+	//设置显示总数量和价钱
+	 if(nums==0){
+		 $('.icon-circle1').css('background','000000');
+	  }else{
+		  $('.icon-circle1').css('background','#fb2727');
+	  }
+	 $('.tprice').html(tprice.toFixed(2));	  
+}
+
+//加载商品总数量和总价格
+ $(document).ready(function(){ 
+	 upnupr();
+ });
+ </script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,101 @@
+<script src="/js/thumbnails.js"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<style>
+.current{color:#000000;}
+.thumbnail{margin-bottom: 0px;}
+tr{border-top: 1px solid #ddd;text-align: center;}
+th {text-align: center;}
+.table>tbody>tr>td>.input-group {float: left;padding: 0.2em;width:23%}
+</style>
+<script>
+laydate.skin('danlan')
+</script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml') ?>
+</nav>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+        <li><a href="#">商品管理</a></li>
+        <li class="active">价格限定</li>
+    </ol>
+    <hr>
+    <?php if ($this->error): ?>
+        <div class="alert alert-warning" role="alert"><?=$this->error?></div>
+    <?php endif; ?>
+    <div>
+        <form action="" method="post">
+            <table class="table" style="background:#f5f5f5">
+                <tr>
+                    <td>
+                        <div class="input-group" style='width: 18em'>
+                            <div class="input-group-addon">公司</div>
+                            <select name="company_id" class='form-control' >
+                                <option value="0">全部</option>
+                                <?php foreach($this->getCompanyList as $k => $v){ ?>
+                                    <option value="<?=$v['id']?>" <?= ($this->get['company_id'] == $v['id']) ? 'selected=selected' :'' ?>><?= $v['name']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="input-group col-md-3" style='width: 18em'>
+                            <div class="input-group-addon">品牌</div>
+                            <select name="brand" class='form-control'>
+                                <option value="0">请选择</option>
+                                <?php foreach($this->getBrand as $bv){ ?>
+                                    <option value="<?php echo $bv['id']; ?>" <?= ($this->get['brand'] == $bv['id']) ? 'selected=selected' :'' ?>><?php echo $bv['name']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div>
+                            <span style="font-size: 9px; color:red;">&nbsp;&nbsp;添加后所选公司下所有该品牌的商品将无法修改价格!</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group col-md-1" style='width:0;float: right;'>
+                            <input type="submit" class='btn btn-primary' placeholder="添加" value="添加">
+                        <div>
+                    </td>
+                </tr>
+            </table>
+
+    </div>
+    <table class="table table-hover">
+        <caption></caption>
+        <thead>
+        <tr>
+            <th>公司</th>
+            <th>限定价格品牌</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if ($this->list): ?>
+            <?php foreach ($this->list as $k=>$v): ?>
+                <tr id='is_del_1'>
+                    <td class='col-md-2'><?=$v["cname"]?></td>
+                    <td class='col-md-2'><?=$v["bname"]?></td>
+                    <td class='col-md-2'><a href="javascript:void(0);" onclick="del('<?=$v['id']?>')"> 删除 </a></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+    <?php echo $this->paglist; ?>
+</div>
+
+<script>
+
+    function del(id){
+        if(!confirm('确认删除此条记录?')){
+            return false;
+        }
+        $.getJSON('delNochange', {id:id}, function (data) {
+            if(data.success == 1){
+                alert('删除成功');
+                location.reload();
+            }else{
+                alert('删除失败');
+            }
+        })
+    }
+
+</script>

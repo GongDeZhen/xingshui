@@ -1,0 +1,89 @@
+<?php include(dirname(__FILE__) . '/../sys/coupons_com1.phtml')?>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+</style>
+ <div class="col-md-10">
+    <h4>免费限领</h4>
+    <hr>
+    <a href="/activityfree/detail" class="btn-flat gray " style="margin-bottom:20px ">
+        <span>+</span>新增活动
+    </a>
+    <div class="col-md-12">
+      <div class="row ctrls bg-p">
+           <?php include(dirname(__FILE__) . '/../sys/search-form.phtml'); ?>
+      </div>
+    </div>
+    <div class="table-wrapper products-table section mt-20 mr-10" >
+                
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <?php foreach($this->listShowFields as $field => $value) { ?>
+                            <th class="col-md-<?= $value['len']; ?> text-left">
+                                <?= $value['name']; ?>
+                            </th>
+                        <?php } ?>
+                        <th class="col-md-3 text-left f-l w-130">
+                            <span class="line"></span>操作
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="list-body">
+                    <?php if($this->list) { ?>
+                    <?php foreach($this->list as $key => $item) { ?>
+                    <tr class="first" id="free-item-<?= $item['id']; ?>">
+                        <?php foreach($this->listShowFields as $field => $value) { ?>
+                           <td class="description ">
+                           <?php 
+                            switch($value['type']) { 
+                                case 'link':
+                                    echo '<input type="checkbox" class="checkbox" data-id="' . $item['id'] . '">' . '<a href="/' . $this->_modelEnName . '/detail?id=' . $item['id'] . '" class="name"> ' . $item[$field] . '</a>';
+                                break;
+                                case 'tiny':
+                                    $fieldMapName   = $field . '_map';
+                                    $fieldMap       = $this->$fieldMapName;
+                                    echo $fieldMap[$item[$field]]['name'];
+                                break;
+                                case 'date':
+                                    echo date('Y-m-d', $item[$field]);
+                                break;
+                                default:
+                                    echo $item[$field];
+                                break;
+                            }?>
+                            </td>
+                        <?php } ?>
+                        <td>
+                            <ul class="actions f-l">
+                                <li><a href="/activityfree/detail?id=<?= $item['id']; ?>">编辑</a></li>
+                                <li class="last">
+                                    <a href="###" class="item-del" data-model="free" data-id="<?= $item['id']; ?>">删除</a>
+                                </li>
+                                <li class="last"><a class="order-btn" data-model="free" data-id="<?= $item['id']; ?>" href="###">置顶</a></li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <?php } ?>
+                    <tr class="first">
+                        <th colspan="1" class="all-check-th"><input type="checkbox" id="all-checked">全选/反选</th>
+                        <th colspan="1">
+                            <select id="mult-operate" data-model="free">
+                                <option>无</option>
+                                <option value="delete">删除</option>
+                            </select>
+                        </th>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+            <?= $this->pagesList; ?>
+        </div>
+    </div> 
+  </div>
+  
+ <?php include(dirname(__FILE__) . '/../sys/plugins.phtml')?>
+ <script type="text/javascript" src="<?php echo $this->cdnUrl . '/js/amd/activity.js'; ?>"></script>

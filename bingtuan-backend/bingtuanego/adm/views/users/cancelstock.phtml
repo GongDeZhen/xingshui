@@ -1,0 +1,120 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: right;background-color: #f9f9f9;}
+td>div{float:left;width:25%}
+#allmap{height:300px;width:560px;}
+#r-result{width:100%; font-size:14px;}
+</style>
+<!-- 品牌活动（新建）详情 -->
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="/users/userlist">用户管理</a></li>
+      <li class="active">编辑详情</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="/users/userlist">用户列表</a></li>
+	  <li role="presentation" class="active"><a>用户审核</a></li>
+    </ul>
+    <br>
+<?php
+if ($this->errors != '') {
+    echo "<br><div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div><br>";
+}
+?>
+    <form action="/users/cancelStock" method="post">
+      <input type='hidden' name='id' value='<?=$this->info['id']?>'>
+      <div class="input-group col-md-12">
+          <div class="input-group col-md-5" style='float: left'>
+              <div class="input-group-addon">用户类型</div>
+              <select name="user_type" class='form-control col-md-3' onchange='updateUserType()' id='user_type'>
+                  <option value=''>请选择</option>
+                  <?php if ($this->rbac == '*' ? true :(in_array('users_online', $this->rbac['action']))) :?>
+                    <option value='1' <?= ($this->info['user_type'] == 1) ? 'selected=selected' :'' ?>>在线支付</option>
+                  <?php endif;?>
+                  <?php if ($this->rbac == '*' ? true :(in_array('users_offline', $this->rbac['action']))) :?>
+                    <option value='2' <?= ($this->info['user_type'] == 2) ? 'selected=selected' :'' ?>>后支付</option>
+                  <?php endif;?>
+              </select>
+          </div>
+          <div class="input-group col-md-5" style='float: left'>
+              <div class="input-group-addon">审核状态</div>
+              <select name="auditType" class='form-control col-md-3' onchange='updateAuditType()' id='auditType'>
+                  <option value=''>请选择</option>
+                  <option value='1' <?= ($this->info['auditType'] == 1) ? 'selected=selected' :'' ?>>审核不通过</option>
+                  <option value='2' <?= ($this->info['auditType'] == 2) ? 'selected=selected' :'' ?>>审核通过</option>
+              </select>
+          </div>
+      </div>
+      <div id='auditTypeParent'>
+         <?php if ($this->info['auditType'] == 1):?>
+            <textarea class="form-control" rows="6" style="resize:none;margin-top: 20px;" name="auditContent" placeholder="请输入审核不过原因"><?=$this->info['auditContent']?></textarea>
+         <?php endif;?>
+         <?php if ($this->info['auditType'] == 2 && $this->info['user_type'] == 2):?>
+             <div class="input-group col-md-12" style="margin-top: 20px;margin-bottom: 20px;">
+                <div class="input-group col-md-4" style='float: left'><div class="input-group-addon">还款规则</div>
+                    <select name="refundRules" class="form-control col-md-3">
+                        <option value="1" <?= ($this->info['refundRules'] == 1) ? 'selected=selected' :'' ?>>1月</option>
+                        <option value="2" <?= ($this->info['refundRules'] == 2) ? 'selected=selected' :'' ?>>3月</option>
+                        <option value="3" <?= ($this->info['refundRules'] == 3) ? 'selected=selected' :'' ?>>6月</option>
+                        <option value="4" <?= ($this->info['refundRules'] == 4) ? 'selected=selected' :'' ?>>12月</option>
+                    </select>
+                </div>
+                <div class="input-group col-md-4" style='float: left'>
+                    <div class="input-group-addon">还款日</div>
+                    <select name="refundTime" class="form-control col-md-3">
+                        <option value="1" <?= ($this->info['refundTime'] == 1) ? 'selected=selected' :'' ?>>1号</option>
+                        <option value="2" <?= ($this->info['refundTime'] == 2) ? 'selected=selected' :'' ?>>10号</option>
+                        <option value="3" <?= ($this->info['refundTime'] == 3) ? 'selected=selected' :'' ?>>20号</option>
+                    </select>
+                </div>
+                <div class="input-group col-md-4" style='float: left'>
+                    <div class="input-group-addon">金额上限</div>
+                    <input type="text" class="form-control" name="refundMoney" value="<?= ($this->info['refundMoney']) ? $this->info['refundMoney'] : 50000 ?>">
+                </div>
+             </div>
+         <?php endif;?>
+      </div>
+      <div class="modal-footer" style='margin-top: 20px;'>
+        <input type="submit" class="btn btn-primary" value='提交审核'>
+      </div>
+    </form>
+</div>
+<script>
+function updateAuditType() {
+    var status = $('#auditType').val();
+    var type = $('#user_type').val();
+    
+    var htmlNull = $('#auditTypeParent').html('');
+    if (status == 1) {
+    	htmlNull;
+    	$('#auditTypeParent').append('<textarea class="form-control" rows="6" style="resize:none;margin-top: 20px;" name="auditContent" placeholder="请输入审核不过原因"></textarea>');
+    } else if (status == 2) {
+    	htmlNull;
+    	if (type == 2) {
+	        $('#auditTypeParent').append('<div class="input-group col-md-12" style="margin-top: 20px;margin-bottom: 20px;"><div class="input-group col-md-4" style="float: left"><div class="input-group-addon">还款规则</div><select name="refundRules" class="form-control col-md-3"><option value="1">1月</option><option value="2">3月</option><option value="3">6月</option><option value="4">12月</option></select></div><div class="input-group col-md-4" style="float: left"><div class="input-group-addon">还款日</div><select name="refundTime" class="form-control col-md-3"><option value="1">1号</option><option value="2">10号</option><option value="3">20号</option></select></div><div class="input-group col-md-4" style="float: left"><div class="input-group-addon">金额上限</div><input type="text" class="form-control" name="refundMoney" value="50000"></div></div>');
+    	}
+    }
+}
+
+function updateUserType() { 
+    var type = $('#user_type').val();
+    var status = $('#auditType').val();
+    console.log(type);
+    var htmlNull = $('#auditTypeParent').html('');
+    if (status == 1) {
+    	$('#auditType').val(1);
+    	htmlNull;
+    	$('#auditTypeParent').append('<textarea class="form-control" rows="6" style="resize:none;margin-top: 20px;" name="auditContent" placeholder="请输入审核不过原因"></textarea>');
+    } else if (status == 2) {
+    	htmlNull;
+    	if (type == 2) {
+    		$('#auditTypeParent').append('<div class="input-group col-md-12" style="margin-top: 20px;margin-bottom: 20px;"><div class="input-group col-md-4" style="float: left"><div class="input-group-addon">还款规则</div><select name="refundRules" class="form-control col-md-3"><option value="1">1月</option><option value="2">3月</option><option value="3">6月</option><option value="4">12月</option></select></div><div class="input-group col-md-4" style="float: left"><div class="input-group-addon">还款日</div><select name="refundTime" class="form-control col-md-3"><option value="1">1号</option><option value="2">10号</option><option value="3">20号</option></select></div><div class="input-group col-md-4" style="float: left"><div class="input-group-addon">金额上限</div><input type="text" class="form-control" name="refundMoney" value="50000"></div></div>');
+    	}
+    }
+}
+</script>

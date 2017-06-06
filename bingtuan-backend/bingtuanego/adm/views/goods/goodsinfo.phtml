@@ -1,0 +1,190 @@
+<script src="/js/ajaxfileupload.js"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.detail-view th {text-align: right;width: 160px;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">商品管理</a></li>
+      <li class="active">商品详情</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="list">商品列表</a></li>
+	  <li role="presentation" class="active"><a href="#	">商品详情</a></li>
+      <li role="presentation"><a href="add">添加商品</a></li>
+    </ul>
+    <br>
+	<div id="yw3" class="tabs-right">
+	<ul id="yw4" class="nav nav-tabs">
+		<li class="active"><a data-toggle="tab" href="#yw3_tab_1" aria-expanded="true">商品信息</a></li>
+		<li class=""><a data-toggle="tab" href="#yw3_tab_2" aria-expanded="false">图文详情</a></li>
+		<li class=""><a data-toggle="tab" href="#yw3_tab_3" aria-expanded="false">商图轮播图</a></li>
+	</ul>
+	<div class="tab-content">
+		<div id="yw3_tab_1" class="tab-pane fade active in">
+			<div id="yw1" class="grid-view">
+				<table class="detail-view table table-striped table-condensed" id="yw0">
+					<tbody>
+						<tr class="even"><th>商品名称</th><td><?= $this->goods_info['goods_name']?></td></tr>
+						<tr class="odd"><th>商品库存</th><td><?= $this->goods_info['amount']?></td></tr>
+						<tr class="even"><th>商品的重量</th><td><?= $this->goods_info['goods_weight']?> Kg</td></tr>
+						<tr class="odd"><th>市场价</th><td><?= $this->goods_info['city_price']?>元</td></tr>
+						<tr class="even"><th>销售价</th><td><?= $this->goods_info['all_price']?>元</td></tr>
+						<tr class="odd"><th>进货价</th><td><?= $this->goods_info['stock_price']?>元</td></tr>
+						<tr class="even"><th>上下架</th><td><?php if($this->goods_info['is_show'] == 1):?>上架<?php else: ?>下架<?php endif; ?></td></tr>
+						<tr class="odd"><th>品类</th><td><?= $this->goods_info['goods_type']?></td></tr>
+						<tr class="even"><th>品牌</th><td><?= $this->goods_info['brand_id']?></td></tr>
+						<tr class="odd"><th>包装</th><td><?= $this->goods_info['packaging']?></td></tr>
+						<tr class="even"><th>产地</th><td><?= $this->goods_info['origin']?></td></tr>
+						<tr class="odd"><th>省份</th><td><?= $this->goods_info['province']?></td></tr>
+						<tr class="odd"><th>商品列图</th><td>
+							<div class="col-xs-6 col-md-3">
+								<!--上传图片开始 -->
+								<div class="col-xs-12" id='uploadImg'>
+								   <img id="goods_images" src="<?php echo (!empty($this->goods_info['goods_img'])?$this->goods_info['goods_img']:'/img/uploadButton.png') ?>" style="height:100px;width:100px;position:absolute; border-radius: 3px;" alt='加载中...'/>
+								  <input type="file" onclick='uploadPreview()' id="goods_img" name="goods_img" style="padding-left: 0px; opacity: 0;height: 100px;width: 100px;"/>
+								  <button type="button" onclick="ajaxFileUpload(<?=$this->goods_info['id']?>,'','/goods/upGoodsImg','goods_img')" class="btn btn-primary" style="width: 100px;">上传图片</button>
+								</div>
+								<!--上传图片结束-->
+                            </div>
+						</td></tr>
+						<tr class="even"><th>创建时间</th><td><?= $this->goods_info['create_time']?></td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div id="yw3_tab_2" class="tab-pane fade in">
+		    <?php if (!empty($this->goods_info['desc_img'])): ?>
+			<?php  foreach ($this->goods_info['desc_img'] as $k=>$v) { ?>
+				<div class="col-xs-6 col-md-3" style='margin-bottom:1em' id="ImgPr_<?=$k?>">
+					<div class="text-center col-xs-12">
+					    <img src='<?=$v?>' class='desc_img img-thumbnail' style='height:10em; width:10em' alt='加载中...'/>
+						<button type="button" class="btn btn-danger col-xs-12" onclick="if(confirm('确定要删除吗？')==false)return false; ajaxFileUpload(<?=$this->goods_info['id']?>,<?=$k?>,'/goods/delImg','goods_desc_img')">删除</button>
+					</div>
+				</div>
+			<?php } ?>
+			<?php endif; ?>
+			<!--上传图片开始 -->
+			<div class="col-xs-12" id='uploadImg' style='padding-left: 2em;'>
+        	   <img id="img_path" src='/img/uploadButton.png' style="height:100px;width:100px;position:absolute; border-radius: 3px;" />
+		      <input type="file" onclick='uploadPreview()' id="desc_img" name="desc_img" style="padding-left: 0px; opacity: 0;height: 100px;width: 100px;"/>
+		      <button type="button" onclick="ajaxFileUpload(<?=$this->goods_info['id']?>,'','/goods/uploadImg','desc_img')" class="btn btn-primary" style="width: 100px;">上传图片</button>
+		    </div>
+        	<!--上传图片结束-->
+		</div>
+		<div id="yw3_tab_3" class="tab-pane fade in">
+		    <?php if (!empty($this->goods_info['images'])): ?>
+			<?php  foreach ($this->goods_info['images'] as $k=>$v) { ?>
+				<div class="col-xs-6 col-md-3" style='margin-bottom:1em' id="Img_<?=$k?>">
+					<div class="text-center col-xs-12">
+					    <img src='<?=$v?>' class='good_images img-thumbnail' style='height:10em; width:10em' alt='加载中...'/>
+						<button type="button" class="btn btn-danger col-xs-12" onclick="if(confirm('确定要删除吗？')==false)return false; ajaxFileUpload(<?=$this->goods_info['id']?>,<?=$k?>,'/goods/delImg','original_img')">删除</button>
+					</div>
+				</div>
+			<?php } ?>
+			<?php endif; ?>
+			<!--上传图片开始 -->
+			<div class="col-xs-12" id='uploadImg' style='padding-left: 2em;'>
+        	   <img id="images_path" src='/img/uploadButton.png' style="height:100px;width:100px;position:absolute; border-radius: 3px;" />
+		      <input type="file" onclick='uploadPreview()' id="images" name="images" style="padding-left: 0px; opacity: 0;height: 100px;width: 100px;"/>
+		      <button type="button" onclick="ajaxFileUpload(<?=$this->goods_info['id']?>,'','/goods/uploadImages','images')" class="btn btn-primary" style="width: 100px;">上传图片</button>
+		    </div>
+        	<!--上传图片结束-->
+		</div>
+	</div>
+</div>
+<!-- 弹出层  开始 -->
+<div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="color:#000">
+        <div class="modal-content" style="margin-top: 100px;">
+            <div class="text-center" style="height: 80px; padding-top: 25px;padding: 25px 0 0 0;">
+                <h4 id="error_message"></h4>
+            </div>
+            <div class="text-center" id="buttom" style="border-top:1px solid #C2C2C2;height:41px; line-height:40px">
+               <div data-dismiss="modal" style="font-size:24px;" >确定</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bs-example-modal-sm" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="color:#000">
+        <div class="modal-content" style="margin-top: 100px;">
+            <div class="text-center" style="height: 80px; padding: 10px 0 0 0;">
+                <h3 id="error_message2"></h3>
+            </div>
+            <div class="text-center" style="border-top:1px solid #C2C2C2;height:41px; line-height:40px" id="buttom2">
+               
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 弹出层  结束 -->
+
+<div class="modal fade bs-example-modal-sm" id="myModal_loading" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+	   <div class="col-xs-2 col-xs-offset-5" style="margin-top: 50%;">
+	   </div>
+	</div>
+</div>
+<script>
+function uploadPreview(){	
+    $("#desc_img").uploadPreview({ Img: "img_path", Width: 120, Height: 120});
+    $("#images").uploadPreview({ Img: "images_path", Width: 120, Height: 120});
+	$("#goods_img").uploadPreview({ Img: "goods_images", Width: 120, Height: 120});
+}
+
+if ($('.desc_img').length >= 8) {
+	$("#uploadImg").attr("style","display:none;padding-left: 2em;");
+}
+if ($('.good_images').length >= 8) {
+	$("#uploadImg").attr("style","display:none;padding-left: 2em;");
+}
+var url = '';
+function ajaxFileUpload(id,img,url,name) {
+	$.ajaxFileUpload({
+		url: url,
+		type: 'post',
+		secureuri: false, //一般设置为false
+		fileElementId: name, // 上传文件的id、name属性名
+		dataType: 'json', //返回值类型，一般设置为json、application/json
+		data:{id:id,img:img,name:name},//一同上传的数据  
+		success : function (data, status){
+			$('#myModal_loading').modal('hide');
+			if (data == 'null') {
+				$('#error_message').html('请选择上传图片');
+				$('#buttom').html('<div data-dismiss="modal" style="font-size:24px;">确定</div>');
+				$('#myModal').modal({backdrop: 'static', keyboard: false});
+				return;
+			}
+			if (data == 'del') {
+				$('#error_message').html('删除成功');
+				$('#buttom').html('<div data-dismiss="modal" style="font-size:24px;">确定</div>');
+				$('#myModal').modal({backdrop: 'static', keyboard: false});
+				$("#uploadImg").attr("style","padding-left: 2em;");
+				$("#Img_"+img).remove();
+			}
+			if (data == '200') {
+				$('#error_message').html('上传成功');
+				$('#buttom').html('<div data-dismiss="modal" style="font-size:24px;" onclick="window.location.reload();">确定</div>');
+				$('#myModal').modal({backdrop: 'static', keyboard: false});
+			} 
+			if (data == '400') {
+				$('#error_message').html('上传失败');
+				$('#buttom').html('<div data-dismiss="modal" style="font-size:24px;">确定</div>');
+				$('#myModal').modal({backdrop: 'static', keyboard: false});
+				return;
+			}
+		},
+		error: function(data, status, e){
+			$('#myModal_loading').modal('hide');
+			$('#error_message').html('失败！');
+			$('#buttom').html('<div data-dismiss="modal" style="font-size:24px;">确定</div>');
+			$('#myModal').modal({backdrop: 'static', keyboard: false});
+			return;
+		}
+	});
+	return false;
+}
+</script>

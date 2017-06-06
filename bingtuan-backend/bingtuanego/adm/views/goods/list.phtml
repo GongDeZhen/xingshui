@@ -1,0 +1,562 @@
+<script src="/js/thumbnails.js"></script>
+<script type="text/javascript" src="/js/bootstrap3-typeahead.min.js"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<style>
+.current{color:#000000;}
+.thumbnail{margin-bottom: 0px;}
+tr{border-top: 1px solid #ddd;text-align: center;}
+th {text-align: center;}
+.table>tbody>tr>td>.input-group {float: left;padding: 0.2em;width:23%}
+</style>
+<script>
+    laydate.skin('danlan')
+</script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">商品管理</a></li>
+      <li class="active">商品列表</li>
+    </ol>
+    <div>
+        <form action="" method="get" id='ajaxForm'>
+        <table class="table" style="background:#f5f5f5">
+            <tr>
+                <td>
+                    <div class="input-group" style='width: 20em'>
+                        <div class="input-group-addon">公司</div>
+                        <select name="company_id" class='form-control'>
+                            <?php if($this->rbac == '*'): ?>
+                                <option value="0">全部</option>
+                            <?php endif; ?>
+                            <?php foreach($this->getCompanyList as $k => $v){ ?>
+                                    <option value="<?=$v['id']?>" <?= ($this->get['company_id'] == $v['id']) ? 'selected=selected' :'' ?>><?= $v['name']; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="input-group" style='width: 18em'>
+                        <div class="input-group-addon">时间</div>
+                        <input type="text" class='form-control' style='width: 8em;' placeholder="开始时间" onclick="laydate()" name="ktime" value='<?= $this->get['ktime']; ?>'>
+                        <input class='form-control' style='width: 8em;' type="text" placeholder="结束时间" onclick="laydate()" name="gtime" value='<?= $this->get['gtime']; ?>'>
+                    </div>
+                    <div class="input-group" style='width: 18em'>
+                        <div class="input-group-addon">价格</div>
+                        <input type="text" class='form-control' style='width: 8em;' placeholder="下限-价格" name="minprice" value='<?= $this->get['minprice']; ?>'>
+                        <input type="text" class='form-control' style='width: 8em;' placeholder="上限-价格" name="maxprice" value='<?= $this->get['maxprice']; ?>'>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+              <td>
+                  <div class="input-group col-md-3">
+                    <div class="input-group-addon">品牌</div>
+                      <input type="hidden" name="brand" value="<?php echo $this->get['brand']; ?>">
+                      <input type="text" class="form-control typeahead dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown"
+                             data-provide="typeahead" style="width:150px;" value="<?php echo $this->brands[$this->get['brand']]; ?>">
+                      <span class="caret" style="position:absolute; left:148px; bottom:15px;"></span>
+                      <ul class="dropdown-menu dropdown-menu-right" role="menu" id="dropdown1" aria-labelledby="dropdownMenu2"
+                          style="width:150px; height:300px; overflow: auto;">
+                          <?php foreach ($this->getBrand as $key): ?>
+                              <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:void(0);"
+                                                         data-id="<?= $key['id'] ?>"><?= $key['name'] ?></a></li>
+                          <?php endforeach; ?>
+                      </ul>
+
+                  </div>
+                  <div class="input-group col-md-3">
+                    <div class="input-group-addon">品类</div>
+                    <select name="goods_type" class='form-control'>
+                        <option value="0">请选择</option>
+                        <?php foreach($this->get_goods_type as $gv){ ?>
+                            <option value="<?php echo $gv['id']; ?>" <?= ($this->get['goods_type'] == $gv['id']) ? 'selected=selected' :'' ?> ><?php echo $gv['name']; ?></option>
+                        <?php } ?>
+                    </select>
+                  </div>
+                  <div class="input-group col-md-3">
+                    <div class="input-group-addon">优惠劵</div>
+                    <select name="coupons" class='form-control'>
+                          <option value="0">请选择</option>
+                          <?php foreach($this->coupons as $v){ ?>
+                          <option value="<?php echo $v['id']; ?>" <?= ($this->get['coupons'] == $v['id']) ? 'selected=selected' :'' ?>><?php echo $v['name']; ?></option>
+                          <?php } ?>
+                      </select>
+                  </div>
+                  <div class="input-group col-md-5">
+                    <div class="input-group-addon">促销活动</div>
+                      <select name="activity" class='form-control'>
+                          <option value="0">请选择</option>
+                          <?php foreach($this->activity as $v){ ?>
+                          <option value="<?php echo $v['id']; ?>" <?= ($this->get['activity'] == $v['id']) ? 'selected=selected' :'' ?>><?php echo $v['name']; ?></option>
+                          <?php } ?>
+                      </select>
+                  </div>
+                  <div class="input-group col-md-5">
+                    <div class="input-group-addon">搜索商品</div>
+                    <input type="text" class='form-control' style='width: 15em;' placeholder="商品名称" name="goods_name" value='<?= $this->get['goods_name']; ?>'>
+                  </div>
+                <div class="input-group col-md-1" style='width:0;float: right;'><input type="submit" class='btn btn-primary' placeholder="搜索"><div></td>
+            </tr>
+        </table>
+        
+    </div>
+    <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a href="#">商品列表</a></li>
+      <li role="presentation"><a href="/goods/add">添加商品</a></li>
+    </ul>
+    <table class="table table-hover">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>名称</th>
+          <th>规格</th>
+          <th>预览图</th>
+          <th><span onclick="sort('amount','<?= !isset($_GET['amount']) ? 'desc' : ($_GET['amount'] == 'desc' ? 'asc' : 'desc') ?>')">库存  <span class='glyphicon glyphicon-chevron-<?=($_GET['amount'] == 'desc') ? 'up':'down'?>' style='top: 4px;'></span></span></th>
+          <th>活动</th>
+          <th>品牌</th>
+          <th>品类</th>
+          <th>参考价</th>
+          <th>销售价</th>
+          <th>活动价</th>
+          <th><span onclick="sort('is_show','<?= !isset($_GET['is_show']) ? 'desc' : ($_GET['is_show'] == 'desc' ? 'asc' : 'desc') ?>')">上架<span class='glyphicon glyphicon-chevron-<?=($_GET['is_show'] == 'desc') ? 'up':'down'?>' style='top: 4px;'></span></span></th>
+          <th>操作</th>
+        </tr>
+    </thead>
+      <tbody>
+          <?php if ($this->goods_list): ?>
+            <?php foreach ($this->goods_list as $goods): ?>
+            <tr id='is_del_<?=$goods['id']?>'>
+              <td class='col-md-2'><?=$goods['goods_name']?></td>
+              <td class='col-md-1'><?=$goods['standard']?></td>
+              <td class='col-md-2'>
+                  <div class='col-md-11'>
+                    <a href="<?=$goods['goods_img']?>" class="thumbnail" target='_blank'>
+                        <img src="<?=$goods['goods_thumb']?>" alt="加载中..." style='height:5em;'>
+                    </a>
+                  </div>
+              </td>
+              <?php if ($this->rbac == '*' ? true :(in_array('goods_upamount', $this->rbac['action']))) :?>
+                <!--  子公司操作传pid  -->
+                <?php if($this->user['company_id']>'0' && $this->user['company_id'] !='1'){?>
+                      <?php  if($goods['pid'] == '0'){?>
+                            <td class='col-md-1' id='<?=$goods['id']?>' name="<?=$goods['cid']?>" value='<?=$goods['amount'] ?>' ><span class='paybian'><?=$goods['amount']?></span></td>
+                      <?php  }else{?>
+                           <td class='col-md-1' id='<?=$goods['id']?>' name="<?=$goods['cid']?>" value='<?=$goods['amount']?>'><span class='paybian'><?=$goods['amount']?></span></td>
+                      <?php  }?>
+                <?php }else{?>
+                    <td class='col-md-1' id='<?=$goods['id']?>'name="<?=$goods['cid']?>" value='<?=$goods['amount']?>'><span class='paybian'><?=$goods['amount']?></span></td>
+                <?php }?>
+               <!--  子公司操作传pid  -->
+              <?php else: ?>
+                <td class='col-md-1'><?=$goods['amount']?></td>
+              <?php endif; ?>
+              <td class='col-md-1'>
+                  <?php 
+                      if ($goods['activity_type'] == 1) {
+                          echo '<a href="/activitygift/update?id='.$goods['activity_id'].'">'.$goods['activity'].'</a>';
+                      } elseif ($goods['activity_type'] == 2) {
+                          echo '<a href="/activitylimittime/update?id='.$goods['activity_id'].'">'.$goods['activity'].'</a>';
+                      } elseif ($goods['activity_type'] == 3) {
+                          echo '<a href="/activitybrand/update?id='.$goods['activity_id'].'">'.$goods['activity'].'</a>';
+                      } else {
+                          echo '无';
+                      }
+                  ?>
+              </td>
+              <td class='col-md-1'>
+                <?php if ($this->getBrand): ?>
+                    <?php foreach ($this->getBrand as $k => $v) : ?>
+                        <?php if ($v['id'] == $goods['brand_id']) :?>
+                            <?= $v['name']?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+              </td>
+              <td class='col-md-1'>
+                 <?php if ($this->get_goods_type): ?>
+                    <?php foreach ($this->get_goods_type as $k => $v) : ?>
+                        <?php if ($v['id'] == $goods['goods_type']) :?>
+                            <?= $v['name']?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+              </td>
+              <?php if ($this->rbac == '*' ? true :(in_array('goods_upcityprice', $this->rbac['action']))) :?>
+              <!--  子公司操作传pid  -->
+                  <?php if($this->user['company_id']>'0' && $this->user['company_id'] !='1'){?>
+                      <?php  if($goods['pid'] == '0'){?>
+                            <td class='col-md-1' id='city_price_<?=$goods['id']?>' name="<?=$goods['cid']?>" value='<?=$goods['city_price']?>'><span class='city_price' datatype="<?=$goods['nochange']?>"><?=$goods['city_price']?></span></td>
+                      <?php  }else{?>
+                           <td class='col-md-1' id='city_price_<?=$goods['id']?>' name="<?=$goods['cid']?>" value='<?=$goods['city_price']?>'><span class='city_price' datatype="<?=$goods['nochange']?>"><?=$goods['city_price']?></span></td>
+                      <?php  }?>
+                  <?php }else{?>
+                        <td class='col-md-1' id='city_price_<?=$goods['id']?>' name="<?=$goods['cid']?>" value='<?=$goods['city_price']?>'><span class='city_price' datatype="<?=$goods['nochange']?>"><?=$goods['city_price']?></span></td>
+                  <?php }?>
+                    <!--  子公司操作传pid  -->
+              <?php else: ?>
+                <td class='col-md-1'><?=$goods['city_price']?></td>
+              <?php endif; ?>
+              <?php if ($this->rbac == '*' ? true :(in_array('goods_upallprice', $this->rbac['action']))) :?>
+                    <!--  子公司操作传pid  -->
+                    <?php if($this->user['company_id']>'0' && $this->user['company_id'] !='1'){?>
+                          <?php  if($goods['pid'] == '0'){?>
+                               <td class='col-md-1' id='price-<?=$goods['id']?>' name="<?=$goods['cid']?>" value='<?=$goods['all_price']?>'><span class='price' datatype="<?=$goods['nochange']?>"><?=$goods['all_price']?></span></td>
+                          <?php  }else{?>
+                               <td class='col-md-1' id='price-<?=$goods['id']?>' name="<?=$goods['cid']?>" value='<?=$goods['all_price']?>'><span class='price' datatype="<?=$goods['nochange']?>"><?=$goods['all_price']?></span></td>
+                          <?php  }?>
+                    <?php }else{?>
+                        <td class='col-md-1' id='price-<?=$goods['id']?>' name="<?=$goods['cid']?>" value='<?=$goods['all_price']?>'><span class='price' datatype="<?=$goods['nochange']?>"><?=$goods['all_price']?></span></td>
+                    <?php }?>
+                    <!--  子公司操作传pid  -->
+		       <td class='col-md-1'><?php echo (isset($goods['activity_price']) && !empty($goods['activity_price']) && $goods['activity_price'] != '0') ? $goods['activity_price'] : '无 ' ?></td>
+              <?php else: ?>
+		          <td class='col-md-1'><?php echo (isset($goods['activity_price']) && !empty($goods['activity_price']) && $goods['activity_price'] != '0') ? $goods['activity_price'] : '无' ?></td>
+                <td class='col-md-1'><?=$goods['all_price']?></td>
+              <?php endif; ?>
+                    <!--  子公司操作传pid  -->
+                <td class='col-md-1' id="is_show_<?=$goods['id']?>" ><?=  ($goods['is_show'] == 1)?"<span class='btn btn-default' id='is_show_".$goods['id']."' onclick='show(". $goods['id'] .",".$goods['is_show'].",".$goods['cid'].")'>已上架</span>":"<span class='btn btn-default' id='is_show_".$goods['id']."' onclick='show(". $goods['id'] .",".$goods['is_show'].",".$goods['cid'].")'>下架</span>" ?></td>
+                <!--
+                <?php if(($this->user['company_id']>'0' && $this->user['company_id'] !='1')){?>
+                        <?php  if($goods['pid'] == '0'){?>
+                                <td class='col-md-1' id="is_show_<?=$goods['id']?>" ><?=  ($goods['is_show'] == 1)?"<span class='btn btn-default' id='is_show_".$goods['id']."' onclick='show(". $goods['id'] .",".$goods['is_show'].",".$goods['cid'].")'>已上架</span>":"<span class='btn btn-default' id='is_show_".$goods['id']."' onclick='show(". $goods['id'] .",".$goods['is_show'].",".$goods['cid'].")'>下架</span>" ?></td>
+                          <?php  }else{?>
+                                <td class='col-md-1' id="is_show_<?=$goods['pid']?>" ><?=  ($goods['is_show'] == 1)?"<span class='btn btn-default' id='is_show_".$goods['pid']."' onclick='show(". $goods['pid'] .",".$goods['is_show'].",".$goods['cid'].")'>已上架</span>":"<span class='btn btn-default' id='is_show_".$goods['pid']."' onclick='show(". $goods['pid'] .",".$goods['is_show'].",".$goods['cid'].")'>下架</span>" ?></td>
+                          <?php  }?>
+                    <?php }else{?>
+                        <?php if($_GET['company_id']==1){ ?>
+                        <td class='col-md-1' id="is_show_<?=$goods['id']?>" ><?=  ($goods['is_show'] == 1)?"<span class='btn btn-default' id='is_show_".$goods['id']."' onclick='show(". $goods['id'] .",".$goods['is_show'].",".$goods['cid'].")'>已上架</span>":"<span class='btn btn-default' id='is_show_".$goods['id']."' onclick='show(". $goods['id'] .",".$goods['is_show'].",".$goods['cid'].")'>下架</span>" ?></td>
+                        <?php }else{ ?>
+                            <td class='col-md-1'>&nbsp;</td>
+                        <?php }?>
+                <?php }?>
+                -->
+                    <!-- 子公司操作传pid  -->
+              <td class='col-md-1'>
+                  <!--如果还未在子公司有相关商品-->
+                  <?php if(($this->user['company_id']>'0' && $user['company_id'] == '1')){?>
+                      <?php echo 222; die;?>
+                      <?php if($_GET['company_id']>0){?>
+                          <?php if($_GET['company_id']==1){?>
+                              <a class='col-md-12' onClick="return confirm('确定编辑？该操作将影响所有经销商商品信息！')"; href="update?id=<?php echo $goods['id'] ?>&pid=<?php echo $goods['pid'] ?>&right_nav=yw3_tab_1">编辑</a>
+                              <?php if ($this->rbac == '*' ? true :(in_array('goods_delete', $this->rbac['action']))) :?>
+                                  <a class='col-md-12' href='javascript:void(0)' onclick="if(confirm('确定要删除吗？')==false)return false; del(<?=$goods['id']?>,1, <?=$goods['cid']?>)" >删除</a>
+                              <?php endif;?>
+                          <?php }else{?>
+                              <?php if($goods['pid']==0){ ?>
+                                  请先上架
+                              <?php }else{?>
+                                  <a class='col-md-12' href="update?id=<?php echo $goods['id'] ?>&pid=<?php echo $goods['pid'] ?>&right_nav=yw3_tab_1">编辑</a>
+                                  <?php if ($this->rbac == '*' ? true :(in_array('goods_delete', $this->rbac['action']))) :?>
+                                      <a class='col-md-12' href='javascript:void(0)' onclick="if(confirm('确定要删除吗？')==false)return false; del(<?=$goods['id']?>,1, <?=$goods['cid']?>)" >删除</a>
+                                  <?php endif;?>
+                              <?php }?>
+                          <?php }?>
+                      <?php }else{?>
+                          <a class='col-md-12' onClick="return confirm('确定编辑？该操作将影响所有经销商商品信息！')"; href="update?id=<?php echo $goods['id'] ?>&pid=<?php echo $goods['pid'] ?>&right_nav=yw3_tab_1">编辑</a>
+                          <?php if ($this->rbac == '*' ? true :(in_array('goods_delete', $this->rbac['action']))) :?>
+                              <a class='col-md-12' href='javascript:void(0)' onclick="if(confirm('确定要删除吗？')==false)return false; del(<?=$goods['id']?>,1, <?=$goods['cid']?>)" >删除</a>
+                          <?php endif;?>
+                      <?php }?>
+                  <?php }else{?>
+                      <?php if($goods['cid'] != 1 && $goods['pid']==0){ ?>
+                          请先上架
+                      <?php }else{?>
+                          <a class='col-md-12' href="update?id=<?php echo $goods['id'] ?>&pid=<?php echo $goods['pid'] ?>&right_nav=yw3_tab_1">编辑</a>
+                          <?php if ($this->rbac == '*' ? true :(in_array('goods_delete', $this->rbac['action']))) :?>
+                              <a class='col-md-12' href='javascript:void(0)' onclick="if(confirm('确定要删除吗？')==false)return false; del(<?=$goods['id']?>,1, <?=$goods['cid']?>)" >删除</a>
+                          <?php endif;?>
+                      <?php }?>
+                  <?php }?>
+
+              </td>
+            </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
+      </tbody>
+    </table>
+    </form>
+    <?php echo $this->paglist; ?>
+</div>
+
+<script>
+//===================公司=======================
+$('select[name="company_id"]').change(function(){
+    var cid = $('select[name="company_id"]').val();
+    var coupons = $('select[name="coupons"]');
+    var activity = $('select[name="activity"]');
+    
+    $.ajax({
+        type: "POST",
+        url: "selectList",
+        dataType: "json",
+        data: "cid="+cid,
+        success: function(data){
+            if (data.data == '') {
+                coupons.empty();
+                coupons.append('<option value="0">请选择</option>');
+                activity.empty();
+                activity.append('<option value="0">请选择</option>');
+            } else {
+                coupons.empty();
+                coupons.append('<option value="0">请选择</option>'+data.data[0]);
+                activity.empty();
+                activity.append('<option value="0">请选择</option>'+data.data[1]);
+            }
+        }
+     });
+});
+//============上下架========================
+function show(id,is_show,cid)
+{
+	if ('<?php echo $this->rbac == '*' ? 'true' :(in_array('goods_upshow', $this->rbac['action']) ? 'true':'false')?>' == 'false') {
+	    alert('权限不足');
+	    return;
+	}
+    $.ajax({
+       type: "POST",
+       url: "upShow",
+       dataType: "json",
+       data: "id="+id+"&is_show="+is_show+"&cid="+cid,
+       success: function(data){
+           if (data == 1) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-default' id='is_show_"+id+"' onclick='show("+id+" ,1, "+cid+")'>已上架</span>");alert('上架成功');
+               location.reload();
+           } else if(data == 0) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-default' id='is_show_"+id+"' onclick='show("+id+" ,0, "+cid+")'>下架</span>");alert('下架成功');
+               location.reload();
+           } 
+           if (data == 400) {
+               alert('失败');
+           }
+           window.location.reload();
+       }
+    });
+}
+//=========================假删除商品====================
+function del(id,is_delete, cid)
+{
+    $.ajax({
+        type: "POST",
+        url: "delete",
+        dataType: "json",
+        data: "id="+id+"&is_delete="+is_delete+"&cid="+cid,
+        success: function(data){
+            if (data == 200) {
+                $("#is_del_"+id).remove();
+                $("#modal").append('<div class="col-md-3"></div><div class="col-md-6" style="margin-top: 60px"><div class="alert alert-success" role="alert"><p>删除成功</p></div></div><div class="col-md-3"></div>');
+                setTimeout(function(){$("#modal").modal("hide")},2000);
+            }
+            if (data == 400) {
+                alert('请重试');
+            }
+        }
+     });
+}
+//===================排序================================
+function sort(name, state)
+{
+	if (name == 'amount') {
+		if (<?= $this->get['amount'] ? 'true' : 'false' ?> == false) {
+			window.location.href="list?"+$("#ajaxForm").serialize()+'&amount=desc&is_show=<?=($this->get['is_show'] ? $this->get['is_show'] : '')?>';
+		} else {
+			window.location.href="list?"+$("#ajaxForm").serialize()+'&amount='+state+'&is_show=<?=($this->get['is_show'] ? $this->get['is_show'] : '')?>';
+		}
+	}
+	if (name == 'is_show') {
+		if (<?= $this->get['amount'] ? 'true' : 'false' ?> == false) {
+			window.location.href="list?"+$("#ajaxForm").serialize()+'&amount=desc&is_show=<?=($this->get['is_show'] ? $this->get['is_show'] : '')?>';
+		} else {
+			window.location.href="list?"+$("#ajaxForm").serialize()+'&amount=<?=($this->get['amount'] ? $this->get['amount'] : '')?>&is_show='+state;
+		}
+	}
+}
+// ================修改库存===============
+$(document).on('click','.paybian',function(){
+    if(!confirm('是否修改库存?')){
+        return false;
+    }
+	var id = $(this).parent().attr('id');
+	var cid = $(this).parent().attr('name');
+    var val = $.trim($('#'+id).attr('value'));
+    var tpl = '<input type="text" value="'+val+'" style="width: 65px;">';
+    $(this).removeClass('.paybian');
+    $('#'+id).empty();
+    $('#'+id).append(tpl).find('input').blur(function(){
+        var id = $(this).parent().attr('id');
+        var cid = $(this).parent().attr('name');
+        var val = $(this).val();
+        $.ajax({
+            type: "POST",
+            url: "upAmount",
+            dataType: "json",
+            data: "id="+id+"&amount="+val+"&cid="+cid,
+            success: function(data){
+                if (data.success == 1) {
+                    $('#'+id).empty();
+                    $('#'+id).append(val);
+                } else {
+                    alert(data.error);
+                }
+                window.location.reload();
+            }
+        });
+    });
+});
+
+//================修改价格===============
+$(document).on('click','.price',function(){
+    var isChange = $(this).attr('datatype');
+    if(isChange == '1'){
+        return false;
+    }
+    if(!confirm('是否修改价格?')){
+        return false;
+    }
+	var id = $(this).parent().attr('id');
+    var val = $('#'+id).attr('value');
+    var cid = $(this).parent().attr('name');
+//     return false;
+    var tpl = '<input type="text" value="'+val+'" style="width: 60px;">';
+    $('#'+id).empty();
+    $('#'+id).append(tpl).find('input').blur(function(){
+        var id = $(this).parent().attr('id');
+        var val = $(this).val();
+        $.ajax({
+            type: "POST",
+            url: "upAllPrice",
+            dataType: "json",
+            data: "id="+id+"&price="+val+"&cid="+cid,
+            success: function(data){
+                if (data.success == 1) {
+                    $('#'+id).empty();
+                    $('#'+id).append(val);
+                } else {
+                    alert(data.error);
+                }
+                window.location.reload();
+            }
+        });
+    });
+});
+function priceBlur(newId) {
+	$('input').blur(function(){
+		var id = $(this).parent().attr('id');
+        var newId = id.substring(id.lastIndexOf('-')+1);
+	    var val = $(this).val();
+	    $.ajax({
+	        type: "POST",
+	        url: "upAllPrice",
+	        dataType: "json",
+	        data: "id="+newId+"&price="+val,
+	        success: function(data){
+	            if (data.success == 1) {
+	                 $('#'+id).empty();
+	                 $('#'+id).append(val);
+	                 alert(data.data);
+	            } else {
+	            	 alert(data.error);
+		        }
+	            window.location.reload();
+	        }
+	     });
+	});
+}
+//================修改参考价格===============
+$(document).on('click','.city_price',function(){
+    var isChange = $(this).attr('datatype');
+    if(isChange == '1'){
+        return false;
+    }
+    if(!confirm('是否修改参考价?')){
+        return false;
+    }
+	var id = $(this).parent().attr('id');
+    var val = $('#'+id).attr('value');
+    var cid = $(this).parent().attr('name');
+//     return false;
+    var tpl = '<input type="text" value="'+val+'" style="width: 60px;">';
+    $('#'+id).empty();
+    $('#'+id).append(tpl).find('input').blur(function(){
+        var id = $(this).parent().attr('id');
+        var val = $(this).val();
+        $.ajax({
+            type: "POST",
+            url: "upCityPrice",
+            dataType: "json",
+            data: "id="+id+"&price="+val+"&cid="+cid,
+            success: function(data){
+                if (data.success == 1) {
+                    $('#'+id).empty();
+                    $('#'+id).append(val);
+                } else {
+                    alert(data.error);
+                }
+                window.location.reload();
+            }
+        });
+    });
+});
+function cityPriceBlur(newId) {
+	$('input').blur(function(){
+		var id = $(this).parent().attr('id');
+        var newId = id.substring(id.lastIndexOf('_')+1);
+	    var val = $(this).val();
+	    $.ajax({
+	        type: "POST",
+	        url: "upCityPrice",
+	        dataType: "json",
+	        data: "id="+newId+"&price="+val,
+	        success: function(data){
+	            if (data.success == 1) {
+	                 $('#'+id).empty();
+	                 $('#'+id).append(val);
+	                 alert(data.data);
+	            } else {
+	            	 alert(data.error);
+		        }
+	            window.location.reload(); 
+	        }
+	     });
+	});
+}
+
+$(function(){
+    $('#dropdownMenu2').typeahead({
+        source: <?php echo $this->brandNames; ?>
+    });
+
+    $('#dropdownMenu2').keyup(function(){
+        $('#dropdown1').addClass('hidden');
+    })
+
+    $('#dropdownMenu2').click(function(){
+        $('#dropdown1').removeClass('hidden');
+    })
+
+    $('#dropdownMenu2').change(function(){
+        var id = $("input[name='brand']").val();
+        if(id != '' || id != undefined){
+            $("input[name='brand']").val('')
+        }
+        var brandName = $(this).val();
+        console.log(brandName)
+        var brandList = <?php echo $this->brandList; ?>;
+        console.log(brandList)
+        for(var i = 0; i < brandList.length; i++){
+            if(brandList[i].name == brandName){
+                $("input[name='brand']").val(brandList[i].id);
+            }
+        }
+    })
+
+    $('#dropdown1 li a').click(function(){
+        var brandId = $(this).attr('data-id'),
+            brandName = $(this).text();
+        $("input[name='brand']").val(brandId);
+        $('#dropdownMenu2').val(brandName);
+        $('#dropdown1').addClass('hidden');
+    })
+})
+</script>

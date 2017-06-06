@@ -1,0 +1,107 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+    th {text-align: center;}
+</style>
+<div class="col-md-10">
+    <h4>配送商结算</h4>
+    <div class="col-lg-6">
+        <form method="get">
+            <div class="input-group">
+                <input type="text" name="name" class="form-control" id="input-name"
+                       placeholder="配送商/手机/结算流水号" /> <span class="input-group-btn">
+    				<button class="btn btn-default" type="submit">搜索</button>
+    			</span>
+            </div>
+        </form>
+    </div>
+    <table class="table table-hover text-center">
+        <caption></caption>
+        <thead>
+        <tr>
+            <th>配送商名称</th>
+            <th>手机号</th>
+            <th>结算流水单号</th>
+            <th>订单总金额</th>
+            <th>可取最大金额</th>
+            <th>提现金额</th>
+            <th>上次提现日期</th>
+            <th>本次提现日期</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if ($this->cash_list): ?>
+            <?php foreach ($this->cash_list as $data): ?>
+                <tr id='is_del_<?=$goods['id']?>'>
+                    <td class='col-xs-1'><?=$data['sell_name']?></td>
+                    <td class='col-xs-1'><?=$data['phone']?></td>
+                    <td class='col-xs-2'><?=$data['serial_num']?></td>
+                    <td class='col-xs-1'><?=$data['total_money']?></td>
+                    <td class='col-xs-1'><?=$data['advisable_money']?></td>
+                    <td class='col-xs-1'><?=$data['withdrawal_money']?></td>
+                    <td class='col-xs-1'><?php
+                        if($data['up_cash_time']) echo date('Y-m-d',$data['up_cash_time']);
+                    ?></td>
+                    <td class="col-xs-1"><?=date('Y-m-d',$data['dtime'])?></td>
+                    <td class='col-xs-1 cashtype-<?php echo $data['id']; ?>'>
+                        <?php
+                        switch($data['type']):
+                            case'1':
+                                echo '已提现';
+                            break;
+                            case'2':
+                                echo '拒绝提现';
+                            break;
+                            default:
+                                echo '未打款';
+                            break;
+                        endswitch;
+                        ?>
+                    </td>
+                    <td class='col-xs-3 caozuo'>
+                        <?php if($data['type']==0){ ?>
+                        <a class='col-xs-12 dakuan' cashid="<?php echo $data['id']; ?>" href="/cash/haveMoney?id=<?php echo $data['id'] ?>">打款</a>
+                        <a class='col-xs-12 jujue' cashid="<?php echo $data['id']; ?>" href="/cash/refuseCash?id=<?php echo $data['id']; ?>">拒绝打款</a>
+                        <?php } ?>
+                        <a class='col-xs-12' href="/cash/checkDetails?caid=<?php echo $data['id']; ?>" >查看明细</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+    <?=$this->pagebar?>
+</div>
+<script>
+    $(document).on('click','.caozuo .jujue',function(){
+        var cash_href = $(this).attr('href');
+        var cashid = $(this).attr('cashid');
+        $.get(cash_href,function(ev){
+            if(ev){
+                $('.cashtype-'+cashid).html('拒绝提现');
+                $('.caozuo a:eq(0)').hide();
+                $('.caozuo a:eq(1)').hide();
+            }else{
+                alert('已拒绝！');
+            }
+        });
+        return false;
+    });
+    $(document).on('click','.caozuo .dakuan',function(){
+        var cash_href = $(this).attr('href');
+        var cashid = $(this).attr('cashid');
+        $.get(cash_href,function(ev){
+            if(ev){
+                $('.cashtype-'+cashid).html('已打款');
+                $('.caozuo a:eq(0)').hide();
+                $('.caozuo a:eq(1)').hide();
+            }else{
+                alert('打款失败');
+            }
+        });
+        return false;
+    });
+</script>

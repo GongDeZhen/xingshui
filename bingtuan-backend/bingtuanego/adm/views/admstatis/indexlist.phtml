@@ -1,0 +1,321 @@
+<script src="/js/thumbnails.js"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<style>
+.current{color:#000000;}
+.thumbnail{margin-bottom: 0px;}
+tr{border-top: 1px solid #ddd;text-align: center;}
+th {text-align: center;}
+.table>tbody>tr>td>.input-group {float: left;padding: 0.2em;width:23%}
+</style>
+<script>
+    laydate.skin('danlan')
+</script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <h1>实时统计</h1>
+    <table class="table table-hover">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>日期</th>
+          <th>总流水</th>
+          <th>总订单数</th>
+          <th>终端店总数</th>
+          <th>总下单终端数</th>
+          <th>活跃终端数</th>
+          <th>终端店转化率</th>
+          <th>终端店活跃度</th>
+          <th>总复购率</th>
+          <th>客单价</th>
+        </tr>
+    </thead>
+      <tbody>
+        <tr>
+          <?php if ($this->info): ?>
+              <td class='col-md-2'><?php echo date('Y-m-d',time()); ?></td>
+              <td class='col-md-2'><?=$this->info['total_money'] ?></td>
+              <td class='col-md-2'><?=$this->info['total_order'] ?></td>
+              <td class='col-md-1'><?=$this->info['ucount']?></td>
+              <td class='col-md-1'><?=$this->info['ucounts']?></td>
+              <td class='col-md-1'><?=$this->info['active_ucount']?></td>
+              <td class='col-md-1'><?=round((float)(($this->info['ucounts']/$this->info['ucount'])*100),2).'%'?></td>
+              <td class='col-md-1'><?=round((float)(($this->info["active_ucount"]/$this->info['ucount'])*100),2).'%'?></td>
+              <td class='col-md-1'><?=round((float)($this->info["total_order"]/$this->info['active_ucount']),2)?></td>
+              <td class='col-md-1'><?=round((float)($this->info["total_money"]/$this->info['total_order']),2)?></td>
+         <?php endif;?>
+            </tr>
+      </tbody>
+    </table>
+        <table class="table table-hover">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>日期</th>
+          <th>当日总流水</th>
+          <th>当日总订单数</th>
+          <th>当日活跃终端数</th>
+          <th>当日活跃度</th>
+          <th>当日客单价</th>
+        </tr>
+    </thead>
+      <tbody>
+        <tr>
+          <?php if ($this->info_1): ?>
+              <td class='col-md-2'><?php echo date('Y-m-d',time()); ?></td>
+              <td class='col-md-2'><?php echo (isset($this->info_1['total_money']) && !empty($this->info_1['total_money'])) ? $this->info_1['total_money'] : 0 ?></td>
+              <td class='col-md-2'><?=$this->info_1['total_order'] ?></td>
+              <td class='col-md-1'><?=$this->info_1['active_ucount']?></td>
+              <td class='col-md-1'><?=round((float)(($this->info_1["active_ucount"]/$this->info_1['ucount'])*100),2).'%'?></td>
+              <td class='col-md-1'><?php echo (isset($this->info_1['total_money']) && !empty($this->info_1['total_money'])) ? round((float)($this->info_1['total_money']/$this->info_1['total_order']),2) : 0 ?></td>
+         <?php endif;?>
+            </tr>
+      </tbody>
+    </table>
+    <table class="table table-hover">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>日期</th>
+          <th>7日总流水</th>
+          <th>7日总订单数</th>
+          <th>7日活跃终端数</th>
+          <th>7日活跃度</th>
+          <th>7日客单价</th>
+          <th>7日复购率</th>
+        </tr>
+    </thead>
+      <tbody>
+        <tr>
+          <?php if ($this->info_2): ?>
+              <td class='col-md-2'><?php echo  date('Y-m-d', strtotime('-6 days')).'--'.date('Y-m-d',time()); ?></td>
+              <td class='col-md-2'><?php echo (isset($this->info_2['total_money']) && !empty($this->info_2['total_money'])) ? $this->info_2['total_money'] : 0 ?></td>
+              <td class='col-md-2'><?=$this->info_2['total_order'] ?></td>
+              <td class='col-md-1'><?=$this->info_2['active_ucount']?></td>
+              <td class='col-md-1'><?=round((float)(($this->info_2["active_ucount"]/$this->info_2['ucount'])*100),2).'%'?></td>
+              <td class='col-md-1'><?php echo (isset($this->info_2['total_money']) && !empty($this->info_2['total_money'])) ? round((float)(($this->info_2['total_money']/$this->info_2['total_order'])),2): 0 ?></td>
+              <td class='col-md-1'><?php echo (isset($this->info_2['total_money']) && !empty($this->info_2['total_money'])) ? round((float)(($this->info_2["total_order"]/$this->info_2['active_ucount'])),2) : '0' ?></td>
+         <?php endif;?>
+            </tr>
+      </tbody>
+    </table>
+      <table class="table table-hover">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>日期</th>
+          <th>30日总流水</th>
+          <th>30日总订单数</th>
+          <th>30日活跃终端数</th>
+          <th>30日活跃度</th>
+          <th>30日客单价</th>
+          <th>30日复购率</th>
+        </tr>
+    </thead>
+      <tbody>
+        <tr>
+          <?php if ($this->info_3): ?>
+             <td class='col-md-2'><?php echo date('Y-m-d',strtotime('-29 days')).'--'.date('Y-m-d',time()); ?></td>
+              <td class='col-md-2'><?php echo (isset($this->info_3['total_money']) && !empty($this->info_3['total_money'])) ? $this->info_3['total_money'] : 0 ?></td>
+              <td class='col-md-2'><?=$this->info_3['total_order'] ?></td>
+              <td class='col-md-1'><?=$this->info_3['active_ucount']?></td>
+              <td class='col-md-1'><?=round((float)(($this->info_3["active_ucount"]/$this->info['ucount'])*100),2).'%'?></td>
+              <td class='col-md-1'><?php echo (isset($this->info_3['total_money']) && !empty($this->info_3['total_money'])) ? round((float)(($this->info_3['total_money']/$this->info_3['total_order'])),2) : 0 ?></td>
+              <td class='col-md-1'><?php echo (isset($this->info_3['total_money']) && !empty($this->info_3['total_money'])) ? round((float)(($this->info_3["total_order"]/$this->info_3['active_ucount'])),2) : '0' ?></td>
+         <?php endif;?>
+            </tr>
+      </tbody>
+    </table>
+</div>
+
+<script>
+//===================公司=======================
+$('select[name="company_id"]').change(function(){
+    var cid = $('select[name="company_id"]').val();
+    var coupons = $('select[name="coupons"]');
+    var activity = $('select[name="activity"]');
+    
+    $.ajax({
+        type: "POST",
+        url: "selectList",
+        dataType: "json",
+        data: "cid="+cid,
+        success: function(data){
+            if (data.data == '') {
+                coupons.empty();
+                coupons.append('<option value="0">请选择</option>');
+                activity.empty();
+                activity.append('<option value="0">请选择</option>');
+            } else {
+                coupons.empty();
+                coupons.append('<option value="0">请选择</option>'+data.data[0]);
+                activity.empty();
+                activity.append('<option value="0">请选择</option>'+data.data[1]);
+            }
+        }
+     });
+});
+//============上下架========================
+function show(id,is_show)
+{
+    if ('<?php echo $this->rbac == '*' ? 'true' :(in_array('goods_upshow', $this->rbac['action']) ? 'true':'false')?>' == 'false') {
+        alert('权限不足');
+        return;
+    }
+    
+    $.ajax({
+       type: "POST",
+       url: "upShow",
+       dataType: "json",
+       data: "id="+id+"&is_show="+is_show,
+       success: function(data){
+           if (data == 1) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-default' onclick='show("+id+" ,1)'>已上架</span>");alert('上架成功');
+           } else if(data == 0) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-default' onclick='show("+id+" ,0)'>下架</span>");alert('下架成功');
+           } 
+           if (data == 400) {
+               alert('失败');
+           }
+       }
+    });
+}
+//=========================假删除商品====================
+function del(id,is_delete)
+{
+    $.ajax({
+        type: "POST",
+        url: "delete",
+        dataType: "json",
+        data: "id="+id+"&is_delete="+is_delete,
+        success: function(data){
+            if (data == 200) {
+                $("#is_del_"+id).remove();
+                $("#modal").append('<div class="col-md-3"></div><div class="col-md-6" style="margin-top: 60px"><div class="alert alert-success" role="alert"><p>删除成功</p></div></div><div class="col-md-3"></div>');
+                setTimeout(function(){$("#modal").modal("hide")},2000);
+            }
+            if (data == 400) {
+                alert('请重试');
+            }
+        }
+     });
+}
+//===================排序================================
+function sort(name, state)
+{
+    if (name == 'amount') {
+        if (<?= $this->get['amount'] ? 'true' : 'false' ?> == false) {
+            window.location.href="list?"+$("#ajaxForm").serialize()+'&amount=desc&is_show=<?=($this->get['is_show'] ? $this->get['is_show'] : '')?>';
+        } else {
+            window.location.href="list?"+$("#ajaxForm").serialize()+'&amount='+state+'&is_show=<?=($this->get['is_show'] ? $this->get['is_show'] : '')?>';
+        }
+    }
+    if (name == 'is_show') {
+        if (<?= $this->get['amount'] ? 'true' : 'false' ?> == false) {
+            window.location.href="list?"+$("#ajaxForm").serialize()+'&amount=desc&is_show=<?=($this->get['is_show'] ? $this->get['is_show'] : '')?>';
+        } else {
+            window.location.href="list?"+$("#ajaxForm").serialize()+'&amount=<?=($this->get['amount'] ? $this->get['amount'] : '')?>&is_show='+state;
+        }
+    }
+}
+// ================修改库存===============
+$(document).on('click','.paybian',function(){
+    var id = $(this).parent().attr('id');
+    var val = $('#'+id).attr('value');
+    var tpl = '<input type="text" onclick="amountBlur()" value="'+val+'" style="width: 65px;">';
+    $('#'+id).empty();
+    $('#'+id).append(tpl);
+});
+function amountBlur() {
+    $('input').blur(function(){
+        var id = $(this).parent().attr('id');
+        var val = $(this).val();
+        
+        $.ajax({
+            type: "POST",
+            url: "upAmount",
+            dataType: "json",
+            data: "id="+id+"&amount="+val,
+            success: function(data){
+                if (data.success == 1) {
+                     $('#'+id).empty();
+                     $('#'+id).append(val);
+                     alert(data.data);
+                } else {
+                     alert(data.error);
+                }
+                window.location.reload();
+            }
+         });
+    });
+}
+
+//================修改价格===============
+$(document).on('click','.price',function(){
+    var id = $(this).parent().attr('id');
+    var val = $('#'+id).attr('value');
+    var tpl = '<input type="text" onclick="priceBlur()" value="'+val+'" style="width: 60px;">';
+    $('#'+id).empty();
+    $('#'+id).append(tpl);
+});
+function priceBlur() {
+    
+    $('input').blur(function(){
+        var id = $(this).parent().attr('id');
+        var val = $(this).val();
+        $.ajax({
+            type: "POST",
+            url: "upAllPrice",
+            dataType: "json",
+            data: "id="+id+"&price="+val,
+            success: function(data){
+                if (data.success == 1) {
+                     $('#'+id).empty();
+                     $('#'+id).append(val);
+                     alert(data.data);
+                } else {
+                     alert(data.error);
+                }
+                window.location.reload(); 
+            }
+         });
+    });
+}
+
+//================修改参考价格===============
+$(document).on('click','.city_price',function(){
+    var id = $(this).parent().attr('id');
+    var val = $('#'+id).attr('value');
+    var tpl = '<input type="text" onclick="cityPriceBlur()" value="'+val+'" style="width: 60px;">';
+    $('#'+id).empty();
+    $('#'+id).append(tpl);
+});
+function cityPriceBlur() {
+    $('input').blur(function(){
+        var id = $(this).parent().attr('id');
+        var val = $(this).val();
+     
+        $.ajax({
+            type: "POST",
+            url: "upCityPrice",
+            dataType: "json",
+            data: "id="+id+"&price="+val,
+            success: function(data){
+                 console.log(data);
+                return false;
+                if (data.success == 1) {
+                     $('#'+id).empty();
+                     $('#'+id).append(val);
+                     alert(data.data);
+                } else {
+                     alert(data.error);
+                }
+                //window.location.reload(); 
+            }
+         });
+    });
+}
+</script>

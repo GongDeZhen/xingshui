@@ -1,0 +1,287 @@
+ <?php include(dirname(__FILE__) . '/../sys/header.phtml')?>
+     <script type="text/javascript" src="/js/baidu_count.js"></script>
+     <style>
+     	.goods-pic { height: 85px;}
+     	.goods-pic img { display:none;}
+     	.goods-pic img:nth-child(1),.goods-pic img:nth-child(2),.goods-pic img:nth-child(3),.goods-pic img:nth-child(4){display: block;float: left;}
+
+     </style>
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="/setacc/index" class="icon icon-goback pull-left"></a>
+		<h1 class="title c-white">全部订单</h1>
+	</header>
+	<div class="segmented-control top-nav">
+		<a class="control-item <?php if($type==0) echo 'active' ?>" href="/cart/qstate?status=0">
+		   		全部
+		</a>
+		<?php if($receiver==1){?>
+		<a class="control-item <?php if($type==1) echo 'active' ?>" href="/cart/qstate?status=1">
+		    	待付款
+		</a>
+		<?php }?>
+		<a class="control-item <?php if($type==2) echo 'active' ?>" href="/cart/qstate?status=2">
+		    	待发货
+		</a>
+		<a class="control-item <?php if($type==3) echo 'active'?>" href="/cart/qstate?status=3">
+		    	待收货
+		</a>
+		<a class="control-item <?php if($type==4) echo 'active'?>" href="/cart/qstate?status=4">
+		    	已收货
+		</a>
+	</div>
+	<div class="content pt-0 bg-gray2 dingdan" >
+		<ul class="table-view dingdan-item">
+		  <?php if($info!=0){ foreach($this->info as $k => $v){ ?>
+			  <?php if(isset($v['goods_list']) && !empty($v['goods_list'])){?>
+    			<li class="table-view-cell  ">
+    			  	<div class="order-status clearfix">
+    			  		<span class="pull-left">订单号<small class="number" name="<?=$v['order_number']?>"><?=$v['order_number']?></small></span>
+    			  		<span class="pull-right c-bule">
+    			  		 <?=$v['status'] ?>
+    			  		</span>
+    			  	</div>
+    			    <a class="navigate-right" href="./info?id=<?=$v['id']?>">
+    				     <div class="goods-pic">
+    				        <?php foreach( $v["goods_list"] as $k => $val){ ?>
+    				    	   <img class="media-object pull-left" src="<?=$val['goods_thumb']?>" >
+    				    	  <?php }?>
+    				    	<span  class="ellipsis" >...</span>
+    				    </div>
+    			     	<div class="pull-right goods-des">
+    			     		<span class="goods-num">共<?=$v['goods_num']?>件商品</span>
+    			     		<span>合计:</span>
+    			     		<span class="price" name="<?=$v["pay_money"]?>">￥<?=$v["pay_money"]?></span>
+    			     	</div>
+    			    </a>
+    			    <div class="order-btn-box clearfix">
+            		   <?php if($v['status_num']==1){?>
+            		       <button class="btn bg-bule c-white b-bule pull-right mr-10 bottompricebtnjs2" onclick="qorder(this,<?=$v['id']?>,1)">立即支付</button>
+            		       <button id="dorder" class="btn  bg-white c-bule b-bule pull-right" onclick="JavaScript:if(confirm('是否要取关闭交易')) qorder(this,<?=$v['id']?>,2);return false;">关闭交易</button>
+            		  <?php }elseif($v['status_num']==2){?>
+            		        <button class="btn bg-bule c-white b-bule pull-right mr-10" onclick="JavaScript:if(confirm('是否要取消该订单')) qorder(this,<?=$v['id']?>,7);return false;">取消订单</button>
+            		        <button id="dorder" class="btn  bg-white c-bule b-bule pull-right" onclick="qorder(this,<?=$v['id']?>,3)">提醒发货</button>
+            		  <?php }elseif($v['status_num']==3){?>
+            		          <button class="btn bg-bule c-white b-bule pull-right mr-10" onclick="JavaScript:if(confirm('是否要取消该订单')) qorder(this,<?=$v['id']?>,7);return false;">取消订单</button>
+            		          <button id="dorder" class="btn  bg-white c-bule b-bule pull-right" onclick="qorder(this,<?=$v['id']?>,4)">立即签收</button>
+            		  <?php }elseif($v['status_num']==4 || $v['status_num']==5){?>
+            		           <button id="dorder" class="btn  bg-white c-bule b-bule pull-right" onclick="JavaScript:if(confirm('是否要删除该订单')) qorder(this,<?=$v['id']?>,5);return false;">删除订单</button>
+            		  <?php }elseif($v['status_num']==5||$v['status_num']==6){?>
+            		           <button class="btn bg-bule c-white b-bule pull-right mr-10" onclick="JavaScript:if(confirm('是否要删除该订单')) qorder(this,<?=$v['id']?>,5);return false;">删除订单</button>
+            		           <a href="/cart/info?id=<?=$v['id']?>">
+            		              <button id="dorder" class="btn  bg-white c-bule b-bule pull-right">查看详情</button>
+            		           </a>
+            		  <?php }?>
+    			  	</div>
+    			</li>
+				  <?php }?>
+			<?php }}else{?>
+                <div class="content-box text-center mt-120" >
+
+                  <p class="fs-17 c-gary1">你最近没有消息</p>
+                 </div>
+			<?php }?>
+		</ul>
+	</div>
+</body>
+<!-- 支付弹层 -->
+<div class="window-overlay tx zhezhaohidebox ">
+	<div class="window-overlaybg"></div>
+	<div class="window">
+		<img src="/images/loading.gif" />
+	</div>
+</div>
+
+<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>/vendor/js/zepto.min.js"></script>
+<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>/js/tjp.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+$(document).on("click",".window-overlaybg",function(){
+	$(".zhezhaohidebox").hide();
+});
+$(document).on("click",".bottompricebtnjs2",function(){
+
+});
+wx.config({
+	debug: false,
+	appId: "<?=$this->jsdata['appId']?>", //测试号ID
+	timestamp: "<?=$this->jsdata['timestamp']?>", //戳
+	nonceStr: "<?=$this->jsdata['nonceStr']?>", //随机串
+	signature: "<?=$this->jsdata['signature']?>", //签名
+	jsApiList: ['chooseWXPay'] //接口列表
+});
+
+function hideBox(){
+	$(".zhezhaohidebox").hide();
+}
+
+
+$(function(){
+	var counter = 1;
+	// 每页展示4个
+	var num =10;
+	var pageStart = 0,pageEnd = 0;
+
+	// dropload
+	$('.content').dropload({
+		scrollArea : window,
+		domUp : {
+			domClass   : 'dropload-up',
+			domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+			domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+			domLoad    : '<div class="dropload-load"><span class="loading"></span>加载中...</div>'
+		},
+		domDown : {
+			domClass   : 'dropload-down red',
+			domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+			domLoad    : '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
+			domNoData  : '<div class="dropload-noData">没有更多的商品</div>'
+		},
+		loadUpFn : function(me){
+			$.ajax({
+				type: 'GET',
+				url: '/goods/locad?type=1',
+				dataType: 'json',
+				success: function(data){
+					var result = '';
+					if(data.code==1){
+						window.location.href='/cart/qstate'
+					}else{
+						alert('加载失败')
+					}
+					// 为了测试，延迟1秒加载
+					setTimeout(function(){
+//                         $('.goods_info').html(result);
+						// 每次数据加载完，必须重置
+						me.resetload();
+						// 重置索引值，重新拼接more.json数据
+						counter = 0;
+						// 解锁
+						me.unlock();
+						me.noData(false);
+					},1000);
+				},
+				error: function(xhr, type){
+					alert('Ajax error!');
+					// 即使加载出错，也得重置
+					me.resetload();
+				}
+			});
+		},
+		threshold : 50
+	});
+});
+
+
+
+
+
+function qorder(obj,id,type)
+{
+	$(".zhezhaohidebox").show();
+	$(".zhezhaohidebox").show();
+	var ordernum=$(obj).parent('.order-btn-box').siblings('.order-status').find('.number').attr('name');//订单号
+	var paymoney=$(obj).parent('.order-btn-box').siblings('.navigate-right').find('.price').attr('name');//支付金额
+	var orderid=$(obj).attr('name');//订单id
+    $.ajax({
+       type: "POST",
+       url: "qorder",
+       dataType: "json",
+       async: true,
+       data: "id="+id+"&type="+type,
+       success: function(data){
+           //alert(data.type);
+          if(data.type==1){
+              pay_money(ordernum,paymoney,id);
+              setTimeout(hideBox,"4000");
+             }else if(data.type==2){
+         	    alert(data.message.data);
+          	    location.reload();
+             }else if(data.type==3){
+         	    if(data.message.success==1){
+       	    	     alert(data.message.data);
+       	    		$(".zhezhaohidebox").hide();
+             	  }else{
+              		 alert(data.message.error);
+              		$(".zhezhaohidebox").hide();
+                   }
+             }else if(data.type==4){
+            	 alert('签收成功');
+            	 location.reload();
+             }else if(data.type==5){
+            	 alert('订单删除成功');
+            	 $(obj).parents('.table-view-cell').empty();
+            	$(".zhezhaohidebox").hide();
+            	location.reload();
+             }else if(data.type==7){
+            	 alert('取消订单，进入审核');
+            	 location.reload();
+             }else{
+         	     alert('未知类型');
+          	    location.reload();
+             }
+       }
+    });
+}
+//结算订单
+function pay_money(ordernum,money,id){
+	$.ajax({
+	    type:'POST',
+	    url:'/cart/paymoney',
+	    data:'order_number='+ordernum+"&pay_money="+money+'&orid='+id,
+	    dataType:'json',
+	    success : function(msg){
+	    	result = msg;
+	    	if(result.success==101){
+	    		alert(result.data);
+	    		window.location.href="/login/login";
+	    		return false;
+	        }
+	    	if(result.success==102){
+	    		alert(result.data);
+	    		window.location.href="/cart/index";
+	    		return false;
+	        }
+	        if(result.success == 1){
+	            var $orid = id;
+		    	var a = JSON.stringify(msg);
+	            wx.chooseWXPay({
+	            	appId: result.data.appId,
+	                timestamp: result.data.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+	                nonceStr: result.data.nonceStr, // 支付签名随机串，不长于 32 位
+	                package: result.data.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+	                signType: result.data.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+	                paySign: result.data.paySign, // 支付签名
+	                success: function (res) {
+	                    var str = JSON.stringify(res);
+	                    // 支付成功后的回调函数
+	                    if(res.errMsg == "chooseWXPay:ok"){
+	                    	$.ajax({
+	                        	url : '/cart/setstatus',
+	                        	type : 'post',
+	                        	data : {'oid':$orid},
+	                         	success : function(tes){
+										window.location.href = '/cart/qstate?status=2';
+										location.reload();
+		                           }
+	                    	})
+	                    }else{
+	                        //$.post( '/goods/cancelOrder',{'id': $orid},function( delres ) {
+	                            alert("支付失败！");
+	                            window.location.href = '/cart/qstate?status=1';
+	                       // },'json' )
+	                    }
+	                }
+	            });
+	        }else{
+ 	            alert( result.error );
+	        }
+	    },
+	    error : function(msg){
+			alert("取消支付");
+			console.log('error');
+			console.log(msg);
+	    }
+	});
+}
+ </script>
+ <?php include(dirname(__FILE__) . '/../sys/header.phtml')?>

@@ -1,0 +1,99 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+.bs-example:after {content:"选择权限："}
+.bs-example {border-radius: 4px;}
+.alert-css {width: 24%;border-radius: 3px;padding-left: 11px;padding-right: 11px;margin-left:1px;margin-right:1px;position: relative;min-height: 1px;}
+</style>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="rolelist">角色管理</a></li>
+      <li class="active">编辑角色</li>
+    </ol>
+    <ul class="nav nav-pills">
+	  <li role="presentation"><a href="rolelist">角色列表</a></li>
+	        <li role="presentation" class="active"><a>编辑角色</a></li>
+    </ul>
+    <br>
+    <?php
+      if ($this->errors != '') {
+        echo "<div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div>";
+      }
+    ?>
+    <br>
+    <div class="tab-content">
+        <h3>设置角色权限</h3>
+        <br>
+        <form action='roleupdate' method="POST" enctype="multipart/form-data" class="form-horizontal col-sm-12" style='padding-left: 6em;'>
+            <input type="hidden" name="id" value="<?= $this->ID?>">
+            <div class="form-group col-md-12">
+                <label class="col-md-1 control-label" style='padding-left:0;padding-right:0;text-align: left'>角色名<span class='s'> *</span></label>
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name='name' value='<?=$this->name?>'><span></span>
+                </div>
+            </div>
+            <div class="bs-example col-md-12" data-example-id="simple-horizontal-form" id="permission">
+                <?php if ($this->roleinfo): ?>
+                    <?php foreach ($this->roleinfo as $k => $v): ?>
+                        <label class='<?= (in_array($v['id'],$this->default) ? 'alert-css alert-info' : 'alert-css'); ?>'>
+                            <input type="checkbox" name='permission[]' value="<?=$v['id']?>" <?= (in_array($v['id'],$this->default) ? 'checked' : ''); ?> ><?=$v['name']?>
+                        </label>
+                    <?php endforeach; ?>
+                <?php else: ?>暂无权限
+                <?php endif; ?>
+            </div>
+            <input class='btn btn-default' type="button" value="全选" onclick="CheckAll()" style='float:left'/><br />
+            <input class='btn btn-default' type="button" value="不选" onclick="UnCheck()" style='float:left'/><br />
+            <input class='btn btn-default' type="button" value="反选" onclick="othercheck()" style='float:left'/><br />
+            <div class="form-group col-md-2 text-right" style='float:right'>
+                  <button type="submit" class="btn btn-success">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+var CheckBox = $('input[name="permission[]"]');
+ 
+//全选
+function CheckAll(){
+    for(i=0;i<CheckBox.length;i++){
+        CheckBox[i].checked=true;
+        CheckBox.parent().addClass('alert-info');
+    };
+};
+ 
+//不选
+function UnCheck(){
+    for(i=0;i<CheckBox.length;i++){
+        CheckBox[i].checked=false;
+        CheckBox.parent().removeClass('alert-info');
+    };
+};
+//反选
+function othercheck(){
+    for(i=0;i<CheckBox.length;i++){
+        if(CheckBox[i].checked==true){
+             CheckBox[i].checked=false;
+             $('.alert-css').eq(i).removeClass('alert-info');
+        } else {
+            CheckBox[i].checked=true;
+            $('.alert-css').eq(i).addClass('alert-info');
+        }
+    }
+};
+
+$('input[name="permission[]"]').change(function(){
+	if ($(this).parent().attr('class') == 'alert-css') {
+		$(this).parent().addClass('alert-info');
+	} else {
+		$(this).parent().removeClass('alert-info');
+	}
+});
+
+</script>

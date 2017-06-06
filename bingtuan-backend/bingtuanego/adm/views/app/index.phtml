@@ -1,0 +1,53 @@
+<script src="/js/ajaxfileupload.js"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <h4>应用版本</h4>
+    <hr>
+    <?php if ($this->error): ?>
+    <div class="alert alert-warning" role="alert"><?=$this->error?></div>
+    <?php endif; ?>
+      
+    <form action='javascript:void(0)'>
+        <?php include(dirname(__FILE__) . '/form_app.phtml')?>
+        <br><br>
+        <button class="btn btn-danger" onclick='ajaxFileUpload(<?=$this->info['id']?>)' >更新应用版本</button>
+    </form>
+</div>
+<script>
+function ajaxFileUpload(id) {
+    var name = $('input[name="name"]').val();
+    if(!name){ alert('应用版本不能为空');return false;}
+    var code = $('input[name="code"]').val();
+    if(!code){ alert('Code不能为空');return false;}
+    var details = $('#details').val();
+    if(details == ''){ alert('应用简介不能为空');return false;}
+
+	$.ajaxFileUpload({
+		url: 'index',
+		type: 'post',
+		secureuri: false, //一般设置为false
+		fileElementId: ['hash'], // 上传文件的id、name属性名
+		dataType: 'json', //返回值类型，一般设置为json、application/json
+		data:{id:id,name:name,code:code,details:details},//一同上传的数据  
+		success : function (data){
+			if (data == 200) {
+			    alert('应用包更新成功');
+			    location.replace(location) 
+			    return false;
+			} else if (data == 400) {
+				alert('应用包更新失败');
+				return false;
+			} else if (data == 500) {
+				alert('应用包错误,请重新上传');
+				return false;
+			}
+		},
+		error: function(data, status, e){
+			console.log(e);
+			return false;
+		}
+	});
+}
+</script>

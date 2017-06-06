@@ -1,0 +1,63 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: right;background-color: #f9f9f9;}
+td>div{float:left;width:25%}
+#allmap{height:300px;width:560px;}
+#r-result{width:100%; font-size:14px;}
+</style>
+<!-- 品牌活动（新建）详情 -->
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="/users/userlist">用户管理</a></li>
+      <li class="active">拉黑设置</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="/users/userlist">用户列表</a></li>
+	  <li role="presentation" class="active"><a>用户拉黑</a></li>
+    </ul>
+    <br>
+<?php
+if ($this->errors != '') {
+    echo "<br><div class='alert alert-danger alert-dismissible' role='alert'>
+          <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+      <strong>{$this->errors}</strong>
+        </div><br>";
+}
+?>
+    <form action="/users/blacklist" method="post">
+      <input type='hidden' name='id' value='<?=$_GET['id']?>'>
+      <div class="input-group col-md-12">
+          <div class="input-group col-md-5" style='float: left'>
+              <div class="input-group-addon">拉黑原因</div>
+              <select name="blackType" class='form-control col-md-3' onchange='updateAuditType()' id='blackType'>
+                  <option value=''>请选择</option>
+                  <option value='1' <?= ($this->info['blackType'] == 1) ? 'selected=selected' :'' ?>>终端店多账号</option>
+                  <option value='2' <?= ($this->info['blackType'] == 2) ? 'selected=selected' :'' ?>>超配送范围</option>
+                  <option value='3' <?= ($this->info['blackType'] == 3) ? 'selected=selected' :'' ?>>非真实终端店</option>
+                  <option value='4' <?= ($this->info['blackType'] == 4) ? 'selected=selected' :'' ?>>其他</option>
+              </select>
+          </div>
+      </div>
+      <div id='auditTypeParent'>
+         <?php if ($this->info['blackType'] !='' ):?>
+            <textarea class="form-control" rows="6" style="resize:none;margin-top: 20px;" name="remarks" placeholder="备注">备注</textarea>
+         <?php endif;?>
+      </div>
+      <div class="modal-footer" style='margin-top: 20px;'>
+        <input type="submit" class="btn btn-primary" value='提交审核'>
+      </div>
+    </form>
+</div>
+<script>
+function updateAuditType() {
+    var status = $('#blackType').val();
+    var type = $('#user_type').val();
+    var htmlNull = $('#auditTypeParent').html('');
+    if (status != '') {
+    	htmlNull;
+    	$('#auditTypeParent').append('<textarea class="form-control" rows="6" style="resize:none;margin-top: 20px;" name="remarks" placeholder="拉黑备注"></textarea>');
+    }
+}
+</script>

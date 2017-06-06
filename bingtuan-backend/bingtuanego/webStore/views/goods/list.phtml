@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>冰团e购</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="/vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/css/atchet.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/zepto/plugins/pgwmodal/pgwmodal.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/app.css">
+    <link rel="stylesheet" type="text/css" href="/css/swiper.min.css" />
+	<link rel="stylesheet" type="text/css" href="/css/mycss.css" />
+        <script type="text/javascript" src="/js/baidu_count.js"></script>
+    <style type="text/css">
+        #pgwModal .pm-body{position: static;max-width: 0}
+        .pgwModal .pm-content{position: absolute;bottom: 0;left: 0;width: 100%;z-index: 10000;height:50%;overflow:auto}
+        .pgwModal .pm-body{background: transparent;box-shadow: none;-webkit-box-shadow:none;}
+        .dropload-refresh,.dropload-update,.dropload-load,.dropload-noData{
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+        }
+        .pgwModal .pm-close{ display:none !important;}
+        .pgwModal .pm-title {display:none !important;}
+        .goods_name{
+         /*width:80%;*/
+         height: 32px;
+        overflow : hidden;
+        /*text-overflow: ellipsis;*/
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+       -webkit-box-orient: vertical;
+        font-size: 14px;
+        /*-o-text-overflow:ellipsis;*/
+        /*white-space:nowrap;*/
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<header class="bar bar-nav bg-bule b-n">
+    <a href="./search" class="icon icon-search2 pull-right"></a>
+    <h1 class="title c-white">冰团e购</h1>
+</header>
+<nav class="bar bar-tab nav-bar">
+    <a class="tab-item active" href="/goods/list">
+        <span class="icon icon-market" style="background: url(../images/icon_shangcheng_hover.png) no-repeat center;background-size:24px 24px"></span>
+        <span class="tab-label">冰团商城</span>
+    </a>
+    <a class="tab-item shopcar2" href="/cart/index">
+        <span class="icon icon-shopcar1"></span>
+        <span class="tab-label">购物车</span>
+        <span class="icon-circle1" <?php if($count==0){?>style="background:000000"<?php }?>><?=$count?></span>
+    </a>
+    <a class="tab-item shopcar2" href="/setacc/index">
+        <span class="icon icon-mine"></span>
+        <span class="tab-label">我的账户</span>
+        <span class="icon-circle2"></span>
+    </a>
+</nav>
+<div class="content" style="padding-top:56px;">
+<?php if(!empty($adgoods)){?>
+      <div class="swiper-container">
+		<div class="swiper-wrapper">
+		<?php foreach($adgoods as $k => $v){?>
+			<div class="swiper-slide">
+			 <a href="<?php if($v['type']==1){?>http://<?=$v['url'];}else if($v['type']==2){?>/goods/getactiviey?id=<?=$v['id'];}else{echo "";}?>" target="_self">
+			     <img src="<?=$v['image']?>" style="width:100%;max-height:187px" />
+			  </a>
+			</div>  
+		<?php }?>
+		</div>
+		<div class="swiper-pagination"></div>
+	</div>
+<?php }?>
+    <div class="table-box ptb-15 container">
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="limit-list text-center">
+                    <a href="/goods/scare?activity=2&activity_type=2">
+                    <span class="limit">
+                        <i class="icon-clock"></i>
+                    </span>
+                        <span class="limit-buy">限时抢购</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="limit-list text-center">
+                     <a href="/goods/scare?activity=1&activity_type=3">
+                    <span class="limit" style="background:#53b930;">
+                        <i class="icon-buy"></i>
+                    </span>
+                        <span class="limit-buy">买就送</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="limit-list text-center">
+                     <a href="/goods/scare?activity=3&activity_type=4">
+                    <span class="limit" style="background:#3baae4;">
+                        <i class="icon-brand"></i>
+                    </span>
+                        <span class="limit-buy">品牌活动</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="segmented-control all-sort mt-0">
+        <a class="control-item <?php if($stastu==0)  echo 'active' ?>" href="/goods/list?stastu=0" >
+            全部
+        </a>
+        <a class="control-item <?php if($stastu==1)  echo 'active' ?>" href="javascript:;"  id="modal_btn1">
+            <?php echo $bname;?>
+            <i class="icon-up1"></i>
+        </a>
+        <a class="control-item <?php if($stastu==2) echo 'active' ?>" href="javascript:;" id="modal_btn">
+            <?php echo $tname;?>
+            <i class="icon-up1"></i>
+        </a>
+    </div>
+    <div class="goods-box container" id="#rev">
+        <div class="row goods_info">
+            <?php if (isset($result) && !empty($result)) {?>
+            <?php foreach ($result as $k => $v){?>
+                <div class="col-xs-6 plr-8" style="padding-bottom:10px ">
+                    <div class="goods1-box bg-white">
+                        <a href="/goods/info?id=<?=$v['goods_id']?>&activity_id=<?=$v['activity_goods']['activity_id']?>">
+                           <?php if(isset($v['activity_goods']['type'])){ if($v['activity_goods']['type']==1){?>
+                                <span class="qianggou qiangouMax greenactive"><?=$v['activity_goods']['name']?><br /><?=$v['activity_goods']['activity_time']?></span>
+                           <?php }else if($v['activity_goods']['type']==2){?>
+                                <span class="qianggou qiangouMax"><?=$v['activity_goods']['name']?><br /><?=$v['activity_goods']['activity_time']?></span>
+                           <?php }elseif($v['activity_goods']['type']==3){?>
+                                <span class="qianggou blueactive">品牌活动</span>
+                           <?php }}?>
+                           <img id="imgId" src="<?=$v['goods_thumb']?>" alt="" width="123" height="130">
+                            <div class="money-box" style="margin-top:20px;">
+                                <h3 name='names' class='goods_name' id="goods_name" style="margin-right:0px;"><?=$v['goods_name']?></h3>
+                                <input type="hidden" name="goods_id"  id="child_input" readonly value="<?=$v['goods_id']?>" />
+                            </div>
+                            <div class="money-box">
+                                
+                                <span name='<?=$v['all_price']?>' class="all_price price">￥
+                                     <?php if(!empty($v['activity_goods'])){if($v['activity_goods']['type']==1){echo $v['all_price'];}else if($v['activity_goods']['type']==2|| $v['activity_goods']['type']==3){echo $v['activity_goods']['activity_price'];}}else{echo $v['all_price'];}?>
+                                </span>
+                                <del id="city_price" name="<?=$v['city_price']?>">￥<?=$v['city_price']?></del>
+                                <input type="hidden" name="type" id="type" value="<?=$v['activity_goods']['type']?>" />
+                                <input type="hidden" name="activity_id" id="activity_id" value="<?=$v['activity_goods']['activity_id']?>" >
+                               <?php if($v['activity_goods']['type']==1){?>
+                                    <input type="hidden" name="activity_goods_name" id="activity_goods_name" value="<?=$v['activity_goods']['gifts_list']['goods_name']?>" >
+                                <?php }?>
+                                   <input type="hidden" name="<?=$v['activity_goods']['free_num']?>" id="receiving_num" calss="<?=$v['activity_goods']['free_num']?>" value="<?=$v['activity_goods']['receiving_num']?>" >
+                            </div>
+                            <div class="money-box">
+                            	<span class="amount" id="amount" value="<?=$v['goods_unit']?>" name="<?=$v['amount']?>">库存：<?=$v['amount']?><?=$v['goods_unit']?></span>
+                            </div>
+                        </a>
+                        <span class="editcard_sum_plus sum-plus clearfix">
+    						<div class="fr">
+    						<a class="btn-cut fl decrease indexbtn_cut tx"  onclick="cnum($(this),0)" href="javascript:;" <?php if(!isset($good_info[$v['goods_id']]['count']) || $good_info[$v['goods_id']]['count']==0){ echo "style='display:none'";} else{echo "style='display:inline'";}?>>-</a>
+    						  <div class="editcardnum fl"><input type="text" class="child_input" name="num"  id="child_input" readonly value="<?php echo isset($good_info[$v['goods_id']]['count'])?$good_info[$v['goods_id']]['count']:0;?>" /></div>
+    						<a class="btn-plus fl increase" href="javascript:;"  onclick="cnum($(this),0)" id='123' >+</a>
+    						</div>
+    					</span>
+                    </div>
+                </div>
+            <?php }?>
+            <?php }?>
+        </div>
+    </div>
+</div>
+<div id="modalContent1" style="display: none; bottom: 0;left: 0;"> 
+        <ul class="goodsselect" >
+             <li ><a href="/goods/list?activity=<?=$activity?>">全部</a></li>
+            <?php foreach($brand as $k => $v){ ?>
+               <li ><a href="/goods/list?bid=<?=$v['id']?>&tid=<?=$tid?>&activity=<?=$activity?>&bname=<?=$v['name']?>&tname=<?=$tname?>&stastu=1"><?=$v['name']?></a></li>
+            <?php  }?>
+        </ul>
+</div>
+<div id="modalContent" style="display: none; bottom: 0;left: 0;"> 
+        <ul class="goodsselect" >
+            <li ><a href="/goods/list?activity="<?=$activity?>">全部</a></li>
+            <?php foreach($tplist as $k => $v){ ?>
+                <li ><a href="/goods/list?bid=<?=$bid?>&tid=<?=$v['id']?>&activity=<?=$activity?>&bname=<?=$bname?>&tname=<?=$v['name']?>&stastu=2"><?=$v['name']?></a></li>
+            <?php  }?>
+        </ul>
+</div>
+<script type="text/javascript" src="/vendor/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="/vendor/zepto/plugins/swipeslide.min.js"></script>
+<script type="text/javascript" src="/js/ly.js"></script>
+<!-- <script type="text/javascript" src="/js/function.js"></script> -->
+<script type="text/javascript" src="/vendor/zepto/plugins/pgwmodal/pgwmodal.min.js"></script>
+<script type="text/javascript" src="/js/dropload.min.js"></script>
+<script type="text/javascript" src="/js/swiper.min.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+    var data = $("#goods_name").text();
+    if(!data){
+        window.location='/login/logout';
+    }
+
+}
+var swiper = new Swiper('.swiper-container', {
+	pagination: '.swiper-pagination',
+	paginationClickable: true,
+	autoplay: 10000
+});
+//======================================================
+$(function(){
+    var counter = 1;
+    // 每页展示4个
+    var num =10;
+    var pageStart = 0,pageEnd = 0;
+
+    // dropload
+    $('.content').dropload({
+        scrollArea : window,
+        domUp : {
+            domClass   : 'dropload-up',
+            domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+            domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+            domLoad    : '<div class="dropload-load"><span class="loading"></span>加载中...</div>'
+        },
+        domDown : {
+            domClass   : 'dropload-down red',
+            domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+            domLoad    : '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
+            domNoData  : '<div class="dropload-noData">没有更多的商品</div>'
+        },
+        loadUpFn : function(me){
+            $.ajax({
+                type: 'GET',
+                url: '/goods/locad?type=1',
+                dataType: 'json',
+                success: function(data){
+                    var result = '';
+                    if(data.code==1){
+                        
+                        window.location.href='/goods/list?bname=<?=$bname?>&tname=<?=$tname?>&tid=<?=$tid?>&bid=<?=$bid?>'
+                     }else{
+                 	    alert('加载失败')
+                    }
+                    // 为了测试，延迟1秒加载
+                     setTimeout(function(){
+//                         $('.goods_info').html(result);
+                         // 每次数据加载完，必须重置
+                         me.resetload();
+                         // 重置索引值，重新拼接more.json数据
+                         counter = 0;
+                         // 解锁
+                         me.unlock();
+                         me.noData(false);
+                     },1000);
+                },
+                error: function(xhr, type){
+                    alert('Ajax error!');
+                    // 即使加载出错，也得重置
+                    me.resetload();
+                }
+            });
+        },
+        loadDownFn : function(me){
+            $.ajax({
+                type: 'post',
+                url: '/goods/locad?activity=<?=$activity?>',
+                dataType: 'json',
+                data:'bid=<?=$bid?>&tid=<?=$tid?>',
+                success: function(data){
+                    var result = '';	
+                    counter++;
+                    pageEnd = num * counter;
+                    pageStart = pageEnd - num;
+                    if((pageEnd-data.goods_info.length)%10!=0 && (pageEnd-data.goods_info.length)>0){
+                    	pageEnd=data.goods_info.length;
+	                }
+                    if(data.goods_info.length<=4){
+                        return false;
+                    }
+                    for(var i =pageStart; i < pageEnd; i++){
+                        //判断活动iD是否为空
+                        if(data.goods_info[i].activity_goods==null){
+                        	activity_goods='';
+                        	activity_goods_type='';
+                        	activity_goods_name='';
+                        	activity_name='';
+                        	receiving_num='';
+                        	activity_goods_eceiving_num=''
+                        	free_num='';
+                         }else{
+                        	 activity_goods=data.goods_info[i].activity_goods.activity_id;//活动id 
+                        	 activity_goods_type=data.goods_info[i].activity_goods.type;//活动类型
+                        	 activity_goods_name=data.goods_info[i].activity_goods.gifts_list.goods_name;
+                        	 activity_goods_eceiving_num=data.goods_info[i].activity_goods.name;
+                        	 activity_name=data.goods_info[i].activity_goods.gifts_list.goods_name;;
+                        	 receiving_num=eceiving_num=data.goods_info[i].activity_goods.receiving_num;
+                        	 free_num=data.goods_info[i].activity_goods.free_num;
+                        }
+                        //商品价格
+                		if(!activity_goods_type==''){
+            				if(activity_goods_type==1){
+            					var all_price=data.goods_info[i].all_price
+            				}else if(activity_goods_type==2 || activity_goods_type==3){
+            					var all_price=data.goods_info[i].activity_goods.activity_price;
+            				}
+                		}else{
+                			var all_price=data.goods_info[i].all_price
+                		}
+                        result +='<div class="col-xs-6 plr-8" style="padding-bottom:10px ">';
+                        result +='<div class="goods1-box bg-white">';
+                        result +='<a href="/goods/info?id='+data.goods_info[i].goods_id+'&activity_id='+activity_goods+'">';
+                        if(data.goods_info[i].activity_goods!=null){
+                            if(activity_goods_type==1){
+                        result +='<span class="qianggou qiangouMax greenactive">'+data.goods_info[i].activity_goods.name+'<br />'+data.goods_info[i].activity_goods.activity_time+'</span>';
+                             }else if(activity_goods_type==2){
+                        result +='<span class="qianggou qiangouMax">'+data.goods_info[i].activity_goods.name+'<br />'+data.goods_info[i].activity_goods.activity_time+'</span>';
+                              }else{
+                        result +='<span class="qianggou blueactive">品牌活动</span>';
+                              }
+                        }
+                        result +='<img id="imgId" src="'+data.goods_info[i].goods_thumb+'" alt="" width="123" height="130">';
+                        result +='<div class="money-box" style="margin-top:20px;">';
+                        result +='<h3 name="names" class="goods_name" id="goods_name" style="margin-right:0px;">'+data.goods_info[i].goods_name+'</h3>';
+                        result +='<input type="hidden" name="goods_id"  id="child_input" readonly value="'+data.goods_info[i].goods_id+'" />';
+                        result +='</div>';
+                        result +='<div class="money-box">';
+                        result +='<span name="'+all_price+'" class="all_price price">￥'+all_price+'</span>';
+                        result +='<del id="city_price" name="'+data.goods_info[i].city_price+'">￥'+data.goods_info[i].city_price+'</del>';
+                        result +='<input type="hidden" name="type" id="type" value="'+activity_goods_type+'" />';
+                        result +='<input type="hidden" name="activity_id" id="activity_id" value="'+activity_goods+'" >';
+                        result +='<input type="hidden" name="activity_goods_name" id="activity_goods_name" value="'+activity_goods_name+'" >';
+                        result +='<input type="hidden" name="'+free_num+'" id="receiving_num" calss="'+free_num+'" value="'+activity_goods_eceiving_num+'" >';
+                        result +='</div>';
+                        result +='<div class="money-box">';
+                        result +='<span class="amount" id="amount" value="'+data.goods_info[i].goods_unit+'" name="'+data.goods_info[i].amount+'">库存：'+data.goods_info[i].amount+data.goods_info[i].goods_unit+'</span>';
+                        result +='</div>';
+                        result +='</a>';
+                        result +='<span class="editcard_sum_plus sum-plus clearfix">';
+                        result +='<div class="fr">';
+                        result +='<a class="btn-cut fl decrease indexbtn_cut tx"  onclick="cnum($(this),0)" href="javascript:;">-</a>';
+                        result +='<div class="editcardnum fl"><input type="text" class="child_input" name="num"  id="child_input" readonly value="0" /></div>';
+                        result +='<a class="btn-plus fl increase" href="javascript:;" onclick="cnum($(this),0)" id="123" >+</a>';
+                        result +='</div>';
+                        result +='</span>';
+                        result +='</div>';
+                        result +='</div>';
+                        if((i + 1) >= data.goods_info.length){
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                            break;
+                        }
+                    }
+
+                    // 为了测试，延迟1秒加载
+                    setTimeout(function(){
+                        $('.goods_info').append(result);
+                        // 每次数据加载完，必须重置
+                        me.resetload();
+                    },1000);
+                },
+                error: function(xhr, type){
+                    alert('Ajax error!');
+                    // 即使加载出错，也得重置
+                    me.resetload();
+                }
+            });
+        },
+        threshold : 50
+    });
+});
+//-----------------------------------------------------------
+$(function(){
+    $("#modal_btn").click(function(){
+        $.pgwModal({
+            target: '#modalContent',
+            closable: true,
+            titleBar: true,
+        });
+    });
+    $("#modal_btn1").click(function(){
+        $.pgwModal({
+            target: '#modalContent1',
+            closable: true,
+            titleBar: true,
+        });
+    });
+    $(document).bind('PgwModal::Open', function() {
+    // Your code when the modal is opened.
+        $(".goodsselect>li").on('click',function(){
+            $(this).addClass("active").siblings("li").removeClass("active");         
+            var str=$(".goodsselect>li.active>a").text();
+            $.pgwModal('close');
+        },false);
+    })
+ })
+
+<!-- ------------------------------------------------------------------------------------------------------------------ -->
+function cnum(object,price){
+var auditType = <?php echo $auditType?>;
+    var flag = 0;
+  var curPeople = Number(object.siblings().find("input[name='num']").val());//获取当前数量
+  var goods_id=object.parents('.editcard_sum_plus').siblings().find('input[name="goods_id"]').val();//商品id
+  var amount=object.parents('.goods1-box').find(".amount").attr('name');//库存
+  var type=0;//判断当单击的类型（+ or -）
+  if(object.hasClass("decrease")){//点击减号
+      flag = -1;
+      curPeople -= 1;
+      if(curPeople==1){
+    	  object.addClass("gray");
+       }
+		if(curPeople ==0){
+	         $.ajax({
+                 type: "POST",
+                 url: "/cart/editgoods",
+                 data: 'goods_id='+goods_id,
+                 dataType: "json",
+                 success: function(data){
+                         if(data.code == '1'){
+                            window.location.reload();
+                         }
+                 }
+	          });
+			if(object.hasClass("indexbtn_cut")){
+				object.hide();
+			}
+
+		}
+		object.siblings().find("input").attr('value',curPeople);
+		type_h=1;// 当前单击-号
+
+  }else if(object.hasClass("increase")){//点击加号
+      flag = 1;
+      curPeople += 1;
+      if(auditType != 2)
+            {
+                alert('您的账号正在审核中，不能购买商品');
+                return false;
+            }
+      if(curPeople > amount){
+          curPeople = amount;
+          alert('库存量为'+amount);
+          return false;
+      }
+      $('.icon-circle1').css('background','#fb2727');
+			if(curPeople > 0){
+				object.siblings().removeClass("gray");
+				object.siblings(".indexbtn_cut").show();
+			}
+			object.siblings().find("input").attr('value',curPeople);
+			type_h=2;// 当前单击+号
+  }
+  var number=new Array;
+  var result=0;
+  var price=object.parents('.editcard_sum_plus').siblings().find(".all_price").attr('name');//销售价格
+  var all_price=object.parents('.editcard_sum_plus').siblings().find("#city_price").attr('name');//市场价格
+  var names=object.parents('.editcard_sum_plus').siblings().find("h3").html();//商品名称
+  var num=object.siblings().find("input[name='num']").val();//商品数量
+  var type=object.parents('.goods1-box').find("#type").attr('value');//type
+  var actign=object.parents('.goods1-box').find("#activity_goods_name").attr('value');//活动商品名称
+  var receiving_num=object.parents('.goods1-box').find("#receiving_num").attr('value');//买送数量
+  var free_num=object.parents('.goods1-box').find("#receiving_num").attr('name');//送的数量
+  var goods_id=object.parents('.editcard_sum_plus').siblings().find('input[name="goods_id"]').val();//商品id
+  var activity_id=object.parents('.goods1-box').find("#activity_id").attr('value');//activity_id
+  if(activity_id!=''){activity_id=activity_id;}else{activity_id=0;};
+  var imgadd=object.parents('.goods1-box').find("#imgId").attr('src');//图片地址
+  var amount=object.parents('.goods1-box').find(".amount").attr('name');//库存
+  var unit=object.parents('.goods1-box').find(".amount").attr('value');//规格
+   	if(typeof(actign)=="undefined"){
+   		actign='';
+   	}
+   	var info={'free_num':free_num,'receiving_num':receiving_num,'type_h':type_h,'state':'1','names':names,'count':num,'id':goods_id,'price':price,'imgadd':imgadd,'unit':unit,'all_price':all_price,'type':type,'activityId':activity_id,'amount':amount,'actign':actign};
+    var arr=new Array();
+    //获取商品总数量
+	  $(".child_input").each(function(i){
+	    	number[i]=$(this).val();
+		    i++;
+	    })
+    /*
+     for(var k=0;k<number.length;k++){
+     result+=parseInt(number[k]) ;
+     }
+     */
+    result = $('.icon-circle1').html();
+
+    result = parseInt(result) + flag;
+    if(result==0){
+        $('.icon-circle1').css('background','000000');
+    }
+	$('.icon-circle1').html(result);
+      if(num>0){
+          $.ajax({
+              type: "POST",
+              url: "/goods/getinfo",
+              dataType: "json",
+              data:{'info':info},
+              success: function(data){
+                  //alert('11');
+              }
+          });
+      }
+  }
+//加载商品总数量和总价格
+$(document).ready(function(){ 
+		$('.icon-circle1').html(<?=$count?>);
+});
+</script>
+</body>
+</html>

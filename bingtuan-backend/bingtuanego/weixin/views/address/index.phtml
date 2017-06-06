@@ -1,0 +1,31 @@
+ <?php include(dirname(__FILE__) . '/../sys/header.phtml')?>
+     <script type="text/javascript" src="/js/baidu_count.js"></script>
+<div class="contbody whitebg">
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="<?php if($url=='/cart/billing'){echo "/cart/billing";}else{echo "/setacc/index";}?>" class="icon icon-goback pull-left"></a>
+		<a href="./add" class=" pull-right edit">添加地址</a>
+		<h1 class="title c-white">收货地址</h1>
+	</header>
+	<div class="mt-56">
+		<ul class="xl_det_ul addressinfoul">
+		  <?php if($info){ foreach($this->info as $k => $v){ ?>
+    			<li class="addressinfoli">
+    				<dl class="addressperson_dl fl">
+    					<dt><?=$v['user_name']?></dt>
+    					<dd class="li_tit"><?=$v['phone']?></dd>
+    					<dd class="clearfix">
+    						<div class="address_ddbox clearfix">
+    						<span class="address_ddIco fl"></span>
+    						<div class="address_ddprodiv">
+    							<p class="address_ddpro"><?=$v['add']?></p>
+    						</div>
+    						</div>
+    					</dd>
+    				</dl>
+    				<span class="more"><a href="<?=$url?>?tid=<?=$k?>&id=<?=$v["id"]?>&account=<?=$v['phone']?>&address=<?=$v["address"]?>&name=<?=$v['user_name']?>&province_id=<?=$v["province_id"]?>&city_id=<?=$v["city_id"]?>&area_id=<?=$v["area_id"]?>">&gt;</a></span>
+    			</li>
+    		<?php }}?>
+		</ul>
+	</div>
+</div>
+  <?php include(dirname(__FILE__) . '/../sys/footer.phtml')?>

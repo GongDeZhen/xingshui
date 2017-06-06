@@ -1,0 +1,17 @@
+
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <h4>冰团后台管理</h4>
+    <hr>
+    <?php if ($this->developer): ?>
+		当前用户：<?= $this->developer['name']?>
+		<br>
+		现在时间为：<?= date('Y年m月d日 H时i分s秒')?>
+    <?php endif; ?>
+</div>
+
+<style>
+.table tbody>tr>td {padding-left:0;}
+</style>

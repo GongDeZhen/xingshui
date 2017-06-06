@@ -1,0 +1,54 @@
+ <?php include(dirname(__FILE__) . '/../sys/header.phtml')?>
+     <script type="text/javascript" src="/js/baidu_count.js"></script>
+<div class="contbody whitebg">
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="/cart/billing" class="icon icon-goback pull-left"></a>
+		 <a href="/address/add" class=" pull-right edit">添加地址</a>
+		<h1 class="title c-white">收货地址</h1>
+	</header>
+	<div class="mt-56">
+		<ul class="xl_det_ul addressinfoul">
+		  <?php foreach($this->info as $k => $v){ ?>
+    			<li class="addressinfoli">
+    				<dl class="addressperson_dl fl">
+    					<dt><?=$v['user_name']?></dt>
+    					<dd class="li_tit"><?=$v['phone']?></dd>
+    					<dd class="clearfix">
+    						<div class="address_ddbox clearfix">
+    						<span class="address_ddIco fl"></span>
+    						<div class="address_ddprodiv">
+    							<p class="address_ddpro"><?=$v['add']?></p>
+    						</div>
+    						</div>
+    					</dd>
+    					<input type="hidden" name="add_id"  id="add_id" class="add_id" value="<?=$v['id']?>" />
+    				</dl>
+    				<span class="more"><a href="javascript:;" class="addinfo">&gt;</a></span>
+    			</li>
+    		<?php }?>
+		</ul>
+	</div>
+</div>
+<script>
+   $(".addinfo").on('click',function(){
+	    var username=$(this).parents('.addressinfoli').find('dt').html();
+	    var phone=$(this).parents('.addressinfoli').find('dd').html();
+	    var address_id=$(this).parents('.addressinfoli').find('.add_id').val();
+	    var address=$(this).parents('.addressinfoli').find('.address_ddpro').html();
+	    var info={'username':username,'phone':phone,'address_id':address_id,'address':address};
+	    $.ajax({
+	    	type:'POST',
+	    	url:'/cart/setcookie',
+	    	dataType:'json',
+	    	data:{'info':info,'type':3},
+	        success:function(data){
+        	   if(data.code==1){
+        		   window.location.href="/cart/billing";
+	        	}else{
+	        		 alert('选择地址失败');
+		        }
+			}
+	    });
+   })
+</script>
+<?php include(dirname(__FILE__) . '/../sys/footer.phtml')?>

@@ -1,0 +1,139 @@
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<script>
+    laydate.skin('danlan')
+</script>
+<style>
+    th {text-align: center;}
+    td>div{width:29%;float:left;padding:0.3em}
+    td>input{width:12%;}
+</style>
+<div class="col-md-10">
+<div class="">
+    <h1>实时统计</h1>
+<table class="table table-hover" style="text-align: center;">
+    <caption></caption>
+    <thead>
+    <tr>
+        <th>日期</th>
+        <th>今日总销售额</th>
+        <th>今日成交订单数</th>
+        <th>终端店总数</th>
+        <th>终端店转化率</th>
+        <th>今日成交终端店数量</th>
+        <th>客单价</th>
+        <th>上线天数</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php if ($this->developer): ?>
+        <?php foreach ($this->developer as $info): ?>
+            <tr>
+                <td class='col-md-2'><?=$info['date']?></td>
+                <td class="col-md-1"><?=is_null($info['order_info']['money'])?0:$info['order_info']['money'];?></td>
+                <td class="col-md-1"><?=$info['order_info']['order_num'];?></td>
+                <td class="col-md-1"><?=$info['total_number']; ?></td>
+                <td class="col-md-1"><?=$info['order_info_total']?>/<?=$info['conversion'];?>%</td>
+                <td class="col-md-1"><?=$info['deal_num']; ?></td>
+                <td class="col-md-1"><?=$info['per_price']; ?></td>
+                <td class="col-md-1"><?=$info['online_time']; ?>/天</td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    </tbody>
+</table>
+</div>
+
+<div class="">
+    <table class="table table-hover" style="text-align: center;">
+        <caption></caption>
+        <thead>
+        <tr>
+            <th>今日订单总数</th>
+            <th>待发货</th>
+            <th>待收货</th>
+            <th>待付款</th>
+            <th>已收货</th>
+            <th>已退款</th>
+            <th>申请退款</th>
+            <th>已取消</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if ($this->developer): ?>
+        <?php foreach ($this->developer as $value): ?>
+            <tr>
+                <td class='col-md-1'><?=$value['order_total']?></td>
+                <td class='col-md-1'><?=$value['order_state'][0]['delivery']?></td>
+                <td class="col-md-1"><?=$value['order_state'][0]['receive']; ?></td>
+                <td class='col-md-1'><?=$value['order_state'][0]['obligations']?></td>
+                <td class="col-md-1"><?=$value['order_state'][0]['confirmed']; ?></td>
+                <td class="col-md-1"><?=$value['order_state'][0]['refunded']; ?></td>
+                <td class="col-md-1"><?=$value['order_state'][0]['refund']; ?></td>
+                <td class="col-md-1"><?=$value['order_state'][0]['canceled']; ?></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+<div class="">
+    <table class="table table-hover" style="text-align: center;">
+        <caption></caption>
+        <thead>
+        <tr>
+            <th>终端店总数</th>
+            <th>今日下单终端店数</th>
+            <th>今日登录终端店数</th>
+            <th>今日未下单终端店数</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if ($this->developer): ?>
+            <?php foreach ($this->developer as $v): ?>
+                <tr>
+                    <td class='col-md-1'><?=$v['total_number']?></td>
+                    <td class='col-md-1'><?=$v['order_user_place']['num']?></td>
+                    <td class='col-md-1'><?=$v['order_user_sign']?></td>
+                    <td class='col-md-1'><?=$v['total_number']-$v['order_user_place']['num']?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+<div class="">
+    <table class="table table-hover" style="text-align: center;">
+        <caption></caption>
+        <thead>
+        <tr>
+            <th>商品总数</th>
+            <th>已上架商品总数</th>
+            <th>库存预警商品总数</th>
+            <th>冰淇淋商品销售数量</th>
+            <th>速冻类商品销售数量</th>
+            <th>饮品类商品销售数量</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if ($this->developer): ?>
+            <?php foreach ($this->developer as $values): ?>
+                <tr>
+                    <td class='col-md-1'><?=$values['goods_state'][0]['total']?></td>
+                    <td class='col-md-1'><?=$values['goods_state'][0]['isshow']?></td>
+                    <td class='col-md-1'><?=$values['goods_warning']?></td>
+                    <td class='col-md-1'><?=is_null($values['goods_sales']['ice_cream'])?0:$values['goods_sales']['ice_cream'];?></td>
+                    <td class='col-md-1'><?=is_null($values['goods_sales']['frozen'])?0:$values['goods_sales']['frozen'];?></td>
+                    <td class='col-md-1'><?=is_null($values['goods_sales']['drink'])?0:$values['goods_sales']['drink'];?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+</div>

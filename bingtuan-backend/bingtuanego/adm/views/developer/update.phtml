@@ -1,0 +1,229 @@
+<link rel="stylesheet" href="/css/treemenu/SimpleTree.css">
+<script src="/js/thumbnails.js" type="text/javascript"></script>
+<script src="/js/SimpleTree.js" type="text/javascript"></script>
+
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="/addressOffice/addressOfficeList">账号管理</a></li>
+      <li class="active">编辑账号</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation"><a href="adminlist">账号列表</a></li>
+	  <li role="presentation"  class="active"><a>编辑账号</a></li>
+    </ul>
+    <br>
+    <hr>
+    <div class='alert alert-danger alert-dismissible hidden' role='alert'>
+        <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span
+                aria-hidden='true'>&times;</span></button>
+        <strong></strong>
+    </div>
+    <div class="tab-content">
+        <div class="form-horizontal col-sm-12">
+            <input type="hidden" name="id" value="<?= $this->info['id']?>">
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label" for="Bingtuan_goodsName">账号名称<span class='s'> *</span></label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" name='name' value='<?=$this->info['name']?>'><span></span>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">公司<i class="s">*</i></label>
+                <div class="col-sm-5">
+                    <div class="st_tree" style="width:500px;margin:0 auto;">
+                        <ul>
+                            <?php foreach($this->provinceList as $key => $value): ?>
+                                <li class="top-menu">
+<!--                                    <input type="checkbox" name="province" value="--><?php //echo $key; ?><!--">-->
+                                    <a href="javascript:void(0);" ref="xtgl"><?php echo $value; ?></a>
+                                </li>
+                                <ul class="city-list">
+                                <?php foreach($this->cityList as $k => $v): ?>
+                                    <?php if($v['province_id'] == $key): ?>
+                                        <li>
+                                            <input type="checkbox" name="city_ids" value="<?php echo $k; ?>">
+                                            <a href="javascript:void(0);" ref="yhgl"><?php echo $v['city_name']; ?></a>
+                                        </li>
+                                        <ul class="company-list">
+                                        <?php foreach($this->companyList as $company): ?>
+                                            <?php if($company['city_id'] == $k): ?>
+                                                <li>
+                                                    <input type="checkbox" name="company_ids" value="<?php echo $company['company_id']; ?>" <?php echo in_array($company['company_id'], $this->companyIds) ? 'checked' : ''?>>
+                                                    <a href="javascript:void(0);" ref="yhgl"><?php echo $company['companyname']; ?></a>
+                                                </li>
+                                            <?php endif; ?>
+                                        <?php endforeach;?>
+                                        </ul>
+                                    <?php endif; ?>
+                                <?php endforeach;?>
+                                </ul>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <!--<select class='form-control col-xs-4' name='company_id'>
+                        <option value=''>请选择</option>
+                        <?php /*if ($this->companyList): */?>
+                            <?php /*foreach ($this->companyList as $k => $v): */?>
+                                <option value='<?/*=$v['id']*/?>' <?/*= ($this->info['company_id'] == $v['id'])?'selected':''; */?>><?/*=$v['name']*/?></option>
+                            <?php /*endforeach; */?>
+                        <?php /*endif; */?>
+                    </select>-->
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">Email<span class='s'> *</span></label>
+                <div class="col-sm-5">
+                  <input type="email" class="form-control" name='email' value='<?=$this->info['email']?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">角色权限<i class="s">*</i></label>
+                <div class="col-sm-5">
+                    <select class='form-control col-xs-4' name='roleId'>
+                        <option value=''>请选择</option>
+                        <?php if ($this->roleList): ?>
+                            <?php foreach ($this->roleList as $k => $v): ?>
+                                <option value='<?=$v['id']?>' <?= ($this->info['roleId'] == $v['id'])?'selected':''; ?>><?=$v['name']?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">当前密码</label>
+                <div class="col-sm-5">
+                  <input type="text" class="form-control" name='current' value='<?=$this->pwd['current']?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">新密码</label>
+                <div class="col-sm-5">
+                  <input type="text" class="form-control" name='pwd' value='<?=$this->pwd['pwd']?>'>
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-2 control-label">确认密码</label>
+                <div class="col-sm-5">
+                  <input type="text" class="form-control" name='confirm' value='<?=$this->pwd['confirm']?>'>
+                </div>
+            </div>
+            
+            <div class="form-group col-sm-12">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-success" id="submit">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+ <style>
+ .s{color:red;}
+.form-updatepwd input, .form-updatepwd button {margin: 10px 0; width: 200px;}
+</style>
+<script type="text/javascript">
+    $(function () {
+        $(".st_tree").SimpleTree({
+
+            /* 可无视代码部分*/
+            click: function (a) {
+                if (!$(a).attr("hasChild"))
+                    alert($(a).attr("ref"));
+            }
+
+        });
+
+        $('.company-list').find(":checkbox").each(function () {
+            if($(this).prop('checked')){
+                $(this).parents('.company-list').attr('show', true);
+                $(this).parents('.company-list').css('display','block');
+                $(this).parents('.company-list').parents('.city-list').attr('show', true);
+                $(this).parents('.company-list').parents('.city-list').css('display','block');
+                if($(this).parent().siblings().find(':checkbox').prop('checked')){
+                    $(this).parents('.company-list').prev().find(':checkbox').prop('checked', true);
+                }
+            }
+        })
+
+        $('#submit').click(function(){
+            var url = '/developer/editdev',
+                id = $("input[name='id']").val(),
+                name = $("input[name='name']").val(),
+                email = $("input[name='email']").val(),
+                companyIds = [],
+                roleId = $("select[name='roleId']").val(),
+                current = $("input[name='current']").val(),
+                password = $("input[name='pwd']").val(),
+                confirm = $("input[name='confirm']").val();
+
+
+            $("input[name='company_ids']").each(function(){
+                if($(this).prop('checked')){
+                    companyIds.push($(this).val());
+                }
+            })
+
+            var tag =  $('.alert');
+            if('' == name || undefined == name){
+                tag.removeClass('hidden');
+                tag.find('strong').text('用户名不能为空!');
+                return;
+            }
+
+            if('' == email || undefined == email){
+                tag.removeClass('hidden');
+                tag.find('strong').text('登陆账号不能为空!');
+                return;
+            }else{
+                var emailPreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/i;
+                if(!emailPreg.test(email)){
+                    tag.removeClass('hidden');
+                    tag.find('strong').text('登陆账号的电子邮箱格式不正确!');
+                    return;
+                }
+            }
+
+            if(companyIds.length == 0){
+                tag.removeClass('hidden');
+                tag.find('strong').text('请选择所在公司!');
+                return;
+            }
+
+            if('' == roleId || undefined == roleId){
+                tag.removeClass('hidden');
+                tag.find('strong').text('请选择角色权限!');
+                return;
+            }
+
+            if('' != current){
+                if('' == password || undefined == password){
+                    tag.removeClass('hidden');
+                    tag.find('strong').text('密码不能为空!');
+                    return;
+                }
+
+                if('' == confirm || undefined == confirm || confirm != password){
+                    tag.removeClass('hidden');
+                    tag.find('strong').text('确认密码不正确!');
+                    return;
+                }
+            }
+
+            var json = {id:id, name:name, email:email, pwd:password, companyIds:companyIds, confirm:confirm, roleId:roleId, current:current};
+
+            $.post(url, json, function(data){
+                var data = jQuery.parseJSON(data);
+                console.log(data);
+                if(data.errorCode != 0){
+                    tag.removeClass('hidden');
+                    tag.find('strong').text(data.errorMsg);
+                    return;
+                }
+                alert('修改成功!');
+                location.href = '/developer/adminlist';
+            })
+        })
+    })
+</script>

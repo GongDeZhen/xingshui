@@ -1,0 +1,228 @@
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<script src="/js/multiselect.js" type="text/javascript"></script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+</style>
+<script>
+    laydate.skin('danlan')
+</script>
+<!-- 代金券详情 -->
+<div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="#">限时抢购管理</a></li>
+      <li class="active">添加限时抢购</li>
+    </ol>
+    <ul class="nav nav-pills">
+      <li role="presentation" class=""><a href="list">限时抢购列表</a></li>
+      <li role="presentation" class='active'><a href="javascript:void(0)">添加限时抢购</a></li>
+    </ul>
+    <br>
+    <div id='errors'></div>
+    <form method="post" action="javascript:void(0)" id="post-form" class="form-horizontal col-sm-12">
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">公司<span class='s'> *</span></label>
+            <div class="col-sm-4">
+                <select name="cid" class='form-control' id='cid'>
+                    <?php foreach($this->getCompanyList as $k => $v){ ?>
+                        <option value="<?=$v['id']?>" <?= ($this->info['cid'] == $v['id']) ? 'selected=selected' :'' ?>><?=$v['name']; ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动名称<span class='s'> *</span></label>
+            <div class="col-md-4">
+                <input class="form-control" type="text" name="name" value="<?= $this->info['name']; ?>" id="name">
+            </div> 
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">排序<span class='s'> *</span></label>
+            <div class="col-md-4">
+                <input class="form-control" type="text" name="order" value="<?= $this->info['order']; ?>" id="order">
+            </div> 
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动时间<span class='s'> *</span></label>
+            <div class="col-md-4" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">开始</div>
+                    <input type="text" class='form-control time' placeholder="开始时间" name="start_time" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" id='start_time' value='<?=$this->info['start_time']?>' style="width:180px;">
+                </div>
+            </div>
+            <div class="col-md-4" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">结束</div>
+                    <input name="end_time" class='form-control' type="text" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" id='end_time' value='<?=$this->info['end_time']?>' style="width:180px;">
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">是否设置日促销时间段<span class='s'> *</span></label>
+            <div class="col-md-1" style="height:47px; line-height:47px;">
+                <input type="radio" name="putaway" value="1"> 是
+            </div>
+            <div class="col-md-1" style="height:47px; line-height:47px;">
+                <input type="radio" name="putaway" value="0" checked> 否
+            </div>
+        </div>
+        <div class="form-group col-sm-12" id="hour_select">
+            <label class="col-sm-2 control-label">日促销时间段<span class='s'> *</span></label>
+            <div class="col-md-3" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">开始</div>
+                    <select class="form-control" name="hour_start" id="hour_start">
+                        <option value="0">请选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3" style='float:left'>
+                <div class="input-group">
+                    <div class="input-group-addon">结束</div>
+                    <select class="form-control" name="hour_end" id="hour_end">
+                        <option value="0">请选择</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">活动描述<span class='s'> *</span></label>
+            <div class="col-md-7">
+                <textarea class="form-control" rows="4" name="description"><?= $this->info['description']; ?></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group col-sm-12">
+            <label class="col-sm-2 control-label">商品搜索<span class='s'> *</span></label>
+            <div class="col-sm-3">
+                <input class="form-control search" type="text" id="goods-keyword" placeholder="商品关键词">
+            </div>
+            <button class="btn btn-primary" type="button" id="goods-search">搜索</button>
+        </div>
+        <div class="form-group" style='margin-left: 0px;width:120%'>
+        	<div class="col-xs-5" style='padding-left: 0px;padding-right: 0px;width: 45%'>
+        		<select id="keepRenderingSort" class="form-control" size="8" multiple="multiple">
+        		</select>
+        	</div>
+        	
+        	<div class="col-xs-1" style='padding-left: 0px;padding-right: 0px;'>
+        	    <input type='text' placeholder="活动价格" id='activity_goods_money' class='form-control'>
+        		<button type="button" id="keepRenderingSort_rightAll" class="btn btn-default btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+        		<button type="button" id="keepRenderingSort_rightSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+        		<button type="button" id="keepRenderingSort_leftSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+        		<button type="button" id="keepRenderingSort_leftAll" class="btn btn-default btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+        	</div>
+        	
+        	<div class="col-xs-5" style='padding-left: 0px;padding-right: 0px;width: 45%'>
+        		<select id="keepRenderingSort_to" class="form-control" size="8" multiple="multiple"></select>
+        	</div>
+        </div>
+        <div class="field-box actions text-center" >
+            <input type="hidden" value="<?=$this->info['id'];?>" name='id' id="id" />
+            <input type="hidden" value="" name='goods_list' id="result" />
+            <input type="submit" class="btn btn-primary" value="提交活动信息">
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+	$('#keepRenderingSort').multiselect({
+		keepRenderingSort: true
+	});
+
+    $('#hour_select').hide();
+
+	//日促销开始时间初始化
+    var html = '';
+    for(var i = 1; i <= 24; i++){
+        html += '<option value="' + i + '">' + i + ' : 00</option>';
+    }
+    $('#hour_start').append(html);
+    $('#hour_end').append(html);
+});
+
+$('#cid').change(function(){
+	$('#keepRenderingSort').empty();
+	$('#keepRenderingSort_to').empty();
+});
+
+$('#hour_start').change(function(){
+    $('#hour_end').html('');
+    var start = parseInt($(this).val()) + 1 == 25 ? 1 : parseInt($(this).val()) + 1;
+    var html = '<option value="0">请选择</option>';
+    for(var i = start; i <= 24; i++){
+        html += '<option value="' + i + '">' + i + ' : 00</option>';
+    }
+    $('#hour_end').append(html);
+})
+
+$("input[name='putaway']").click(function(){
+    var isShow = $(this).val();
+    if(isShow == '0'){
+        $('#hour_select').hide();
+    }else{
+        $('#hour_select').show();
+    }
+})
+
+// 日期插件
+function laydate_time(id){
+	laydate({
+	    elem: '#'+id, //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+	    format: 'YYYY-MM-DD',
+	    choose: function(datas){ //选择日期完毕的回调
+	    	$('#keepRenderingSort').empty();
+	    	$('#keepRenderingSort_to').empty();
+	    }
+	});
+}
+// 商品搜索
+$('#goods-search').click(function(){
+	var company = $('#cid').val();
+	var id = $('#id').val();
+	var keyword = $('#goods-keyword').val();
+	var result = $('#result').val();
+    var start_time = $('input[name="start_time"]').val();
+    var end_time = $('input[name="end_time"]').val();
+	if (start_time == '' || end_time == '') {
+		alert('请选择活动时间');
+		return false;
+	}
+    $.ajax({
+        type: "POST",
+        url: "goodsSearch",
+        dataType: "json",
+        data: "company_id="+company+"&goodsName="+keyword+'&result='+result+'&id='+id+'&start_time='+start_time+'&end_time='+end_time,
+        success: function(data){
+        	$('#keepRenderingSort').empty();
+        	$('#keepRenderingSort').append(data);
+        }
+     });
+});
+// 提交表单
+$(document).on('submit','#post-form',function(){
+	$.ajax({
+        type: "POST",
+        url:'add',
+        dataType: "json",
+        data:$('#post-form').serialize(),// formid
+        success: function(data) {
+            if (data == 200) {
+                alert('提交成功');
+                window.location.href = 'list';
+            } else {
+            	$('#errors').empty();
+            	$('#errors').append("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button><strong>"+data.error+"</strong></div>");
+            }
+        },
+        error: function(request) {
+            console.log(request);
+        	$('#errors').empty();
+        	$('#errors').append("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button><strong>提交失败</strong></div>");
+        }
+    });
+});
+</script>

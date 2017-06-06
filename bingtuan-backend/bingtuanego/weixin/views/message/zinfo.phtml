@@ -1,0 +1,60 @@
+ <?php include(dirname(__FILE__) . '/../sys/header.phtml')?>
+     <script type="text/javascript" src="/js/baidu_count.js"></script>
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="./list" class="icon icon-goback pull-left"></a>
+		<h1 class="title c-white">账单详情</h1>
+	</header>
+	<div class="content pt-0 bg-gray2 dingdan dingdan02" >
+		<div class="toppricebox clearfix">
+			<dl class="bottompricedl fl">
+				<dt>合计 :  <span class="redfont">99.00</span>元</dt>
+				<dd><span class="">商品合计：999元</span><span class="">优惠金额900元</span></dd>
+			</dl>
+		</div>
+		<ul class="table-view dingdan-item bill_dingdan-item">
+			<li class="table-view-cell">
+			  	<div class="order-status clearfix">
+			  		<span class="pull-left">订单号<small>123456</small></span>
+			  		<span class="pull-right">2015-11-27</span>
+			  	</div>
+			    <a class="navigate-right">
+				    <div class="goods-pic">
+				    	<img class="media-object pull-left" src="<?=Yaf_Registry::get('weixinurl')?>/images/goods1.jpg" >
+				    	<img class="media-object pull-left" src="<?=Yaf_Registry::get('weixinurl')?>/images/goods.jpg">
+				    	<img class="media-object pull-left" src="<?=Yaf_Registry::get('weixinurl')?>/images/goods1.jpg">
+				    	<img class="media-object pull-left" src="<?=Yaf_Registry::get('weixinurl')?>/images/goods.jpg">
+				    	<span  class="ellipsis" >...</span>
+				    </div>
+			     	<div class="pull-left goods-des">
+			     		<span class="goods-num">共13件商品</span>
+			     		<span>合计:</span>
+			     		<span class="blackprice">￥243.5</span>
+			     	</div>  
+			    </a>
+			</li>
+			<li class="table-view-cell">
+			  	<div class="order-status clearfix">
+			  		<span class="pull-left">订单号<small>123456</small></span>
+			  		<span class="pull-right">2015-11-27</span>
+			  	</div>
+			    <a class="navigate-right">
+				    <div class="goods-pic">
+				    	<img class="media-object pull-left" src="<?=Yaf_Registry::get('weixinurl')?>/images/goods1.jpg" >
+				    	<img class="media-object pull-left" src="<?=Yaf_Registry::get('weixinurl')?>/images/goods.jpg">
+				    	<img class="media-object pull-left" src="<?=Yaf_Registry::get('weixinurl')?>/images/goods1.jpg">
+				    	<img class="media-object pull-left" src="<?=Yaf_Registry::get('weixinurl')?>/images/goods.jpg">
+				    	<span  class="ellipsis" >...</span>
+				    </div>
+			     	<div class="pull-left goods-des">
+			     		<span class="goods-num">共13件商品</span>
+			     		<span>合计:</span>
+			     		<span class="blackprice">￥243.5</span>
+			     	</div>  
+			    </a>
+			</li>
+		</ul>
+	</div>
+</body>
+<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>/vendor/js/zepto.min.js"></script>
+<script type="text/javascript" src="<?=Yaf_Registry::get('weixinurl')?>/js/tjp.js"></script>
+ <?php include(dirname(__FILE__) . '/../sys/footer.phtml')?>

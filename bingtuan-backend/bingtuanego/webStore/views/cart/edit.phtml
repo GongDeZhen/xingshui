@@ -1,0 +1,105 @@
+﻿ <?php include(dirname(__FILE__) . '/../sys/header.phtml')?>
+     <script type="text/javascript" src="/js/baidu_count.js"></script>
+<div class="contbody whitebg">
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="./index" class="icon icon-goback pull-left"></a>
+		<?php if(!empty($goods_info)){ ?><a href="./index" class=" pull-right edit">完成</a><?php }?>
+		<h1 class="title c-white">购物车</h1>
+	</header>
+	<?php if($goods_info){ ?>
+	<div class="productlistbox mt-56">
+	<?php foreach($goods_info as $k => $v){?>
+    	<div class="productinfo clearfix">
+    		<img src="<?=$v['imgadd']?>" class="productinfopic" />
+    		<div class="productinfodiv">
+    			<span class="productchk labeljs fr">
+    				<input type="checkbox" value="<?=$v['id']?>"  class="productchkput labput" />
+    			</span>
+    			<div class="productinfocenter">
+    				<p class="productnum fr">x<span class="num" id="num"><?=$v['count']?></span></p>
+    				<dl class="productdl">
+    					<dt><?=$v['names']?></dt>
+    					<dd><span class="redfont">￥<?=$v['price']?></span><span class="grayfont">￥<?=$v['all_price']?></span></dd>
+    				</dl>
+    			</div>
+    		</div>
+    	</div>
+    <?php }?>
+	</div>
+	<div class="productbtnbox clearfix">
+		<span class="productbtn allselectjs fl productbtnblue">全选</span>
+		<a href="javascript:;" onclick="del()"><span class="productbtn fr productbtnred" >删除</span></a>
+	</div>
+	<?php }else{?>
+    	<div class="content-box text-center mt-120" >
+          <img src="/images/car-bule.png" width="75px" height="75px" class="mb-20" style="display:inline"/>
+          <a href="/goods/list"><p class="fs-17 c-gary1">商品信息为空</p>
+          <button class="btn btn-block c-white bg-bule b-n btn-public mb-20 f-n mt-50">知道了，去购物！</button>
+          </a>
+         </div>
+	<?php }?>
+</div>
+<script>
+ function del(){
+    var bool=confirm('确认删除么？');
+    var vals=new Array();
+    var obj=$("input[type='checkbox']");
+       if(bool){
+   	       var len=obj.length;
+   	       for(var i=0;i<len;i++){
+    	      if($(obj[i]).is(':checked')){
+      	           vals[i]=$(obj[i]).val();
+      	   	   }
+   	   	   }
+ 	     $.ajax({
+   	         type: "POST",
+   	         url: "/cart/editgoods",
+   	         //dataType: "json",
+   	         data:"goods_id="+vals,
+   	         success: function(data){
+   	   	        var obj=eval('('+data+')'); 
+   	             if(obj.code==200){
+    	           location.reload();
+      	            alert('删除成功');
+   	   	         }else{
+   	   	   	       alert('删除失败');
+   	   	   	     }
+   	          }
+   	        });
+       } 
+    }
+$(document).ready(function(){ 
+	var obj=$(".num");
+	var val=new Array();
+	var num=0;
+      var len=obj.length;
+      for(var i=0;i<len;i++){
+    	   val[i]=$(obj[i]).html();
+    	   num+=Number(val[i]);
+   	   }
+ 	   if(num==0){
+  		  $('.icon-circle1').css('background','000000');
+ 	 	}
+		if(num>0){
+ 	    	$('.icon-circle1').css('background','#fb2727');
+	    	$('.icon-circle1').html(num);
+ 		}
+});
+</script>
+<nav class="bar bar-tab nav-bar">
+    <a class="tab-item active" href="/goods/list">
+        <span class="icon icon-market"></span>
+        <span class="tab-label">冰团商城</span>
+    </a>
+    <a class="tab-item shopcar2" href="/cart/index">
+        <span class="icon icon-shopcar1"></span>
+        <span class="tab-label">购物车</span>
+        <span class="icon-circle1"></span>
+    </a>
+    <a class="tab-item shopcar2" href="/setacc/index">
+        <span class="icon icon-mine"></span>
+        <span class="tab-label">我的账户</span>
+        <span class="icon-circle2"></span>
+    </a>
+</nav>
+ <?php include(dirname(__FILE__) . '/../sys/footer.phtml')?>

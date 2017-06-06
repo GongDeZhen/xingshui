@@ -1,0 +1,175 @@
+<link rel="stylesheet" type="text/css" href="<?= $this->cdnUrl; ?>/css/bootstrap/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<?= $this->cdnUrl; ?>/css/lib/bootstrap.datepicker.css" >
+<link rel="stylesheet" type="text/css" href="<?= $this->cdnUrl; ?>/css/compiled/form-showcase.css"  media="screen" >
+<link rel="stylesheet" type="text/css" href="<?= $this->cdnUrl; ?>/css/compiled/elements.css">
+<link rel="stylesheet" type="text/css" href="<?= $this->cdnUrl; ?>/css/public.css">
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<style>
+th {text-align: center;}
+</style>
+
+<!-- 代金券详情 -->
+<div class="col-md-8">
+     <h4>免费限领</h4>
+    <hr>
+    <div id="pad-wrapper" class="form-page" style="padding: 0">
+        <div class="row form-wrapper">
+            <!-- left column -->
+            <div class="col-md-12 column ">
+                <form method="post" action="update" id="post-form">
+                    <div class="field-box">
+                        <label class="title-content">地区：</label>
+                        <span>省</span>
+                        <select id="province-id" name="province_id">
+                            <?php foreach($this->provinceList as $key => $province) { ?>
+                                <option value="<?= $province['id']; ?>" <?= $this->record['province_id'] == $province['id'] ? 'selected' : ''; ?>><?= $province['name']; ?></option>
+                            <?php } ?>
+                        </select>
+                        <span>市</span>
+                        <select id="city-id" name="city_id">
+                            <?php foreach($this->cityList as $key => $city) { ?>
+                            <option value="<?= $city['id']; ?>" <?= $this->record['city_id'] == $city['id'] ? 'selected' : ''; ?>><?= $city['name']; ?></option>
+                            <?php } ?>
+                        </select><p></p>
+                        <span class="area">区域</span>
+                        <select id="area-id" name="area_id">
+                            <?php foreach($this->areaList as $key => $area) { ?>
+                                <option value="<?= $area['id']; ?>" <?= $this->record['area_id'] == $area['id'] ? 'selected' : ''; ?>><?= $area['name']; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="field-box">
+                        <label>活动名称</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="name" value="<?= $this->record['name']; ?>" id="name">
+                        </div> 
+                        <p class="need">*</p>                           
+                    </div>
+                    <div class="field-box">
+                        <label>所属品牌活动</label>
+                        <div class="col-md-7">
+                            <select name="activity_brand_id">
+                                <option value="0">无</option>
+                                <?php foreach($this->activitybrandList as $key => $item) { ?>
+                                    <option value="<?= $item['id']; ?>" <?php echo $this->record['activity_brand_id'] == $item['id'] ? 'selected' : ''; ?>><?= $item['name']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div> 
+                        <p class="need">*</p>                           
+                    </div>
+                     <div class="field-box">
+                        <label>活动起始日期</label>
+                        <div class="col-md-7">
+                        <input type="text" value="<?= date('m/d/Y', $this->record['start_time'] ? $this->record['start_time'] : time()); ?>" name="start_time" class="form-control input-datepicker" id="start-time">
+                        </div>
+                        <span class="need">*</span>
+                    </div> 
+                    <div class="field-box">
+                        <label>活动结束日期</label>
+                        <div class="col-md-7">
+                        <input type="text" value="<?= date('m/d/Y', $this->record['end_time'] ? $this->record['end_time'] : time()); ?>" name="end_time" class="form-control input-datepicker" id="end-time">
+                        
+                        </div>
+                         <span class="need">*</span>
+                    </div>
+                    <div class="field-box">
+                        <label>用户限领次数</label>
+                        <div class="col-md-7">
+                            <input class="form-control inline-input" value="<?= $this->record['receiving_num'] ?>" name="receiving_num" id="receive-number" placeholder="0" type="text">
+                            
+                        </div>
+                         <span class="need">*</span>
+                    </div> 
+                    <div class="field-box">
+                        <label>用户限领数量</label>
+                        <div class="col-md-7">
+                            <input class="form-control inline-input" value="<?= $this->record['free_num'] ?>" name="free_num" id="free-number" placeholder="0" type="text">
+                            
+                        </div>
+                         <span class="need">*</span>
+                    </div>
+                    <div class="field-box">
+                        <label>活动描述</label>
+                        <div class="col-md-7">
+                            <textarea class="form-control" rows="4" name="description"><?= $this->record['description']; ?></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="field-box">
+                        <label>商品搜索</label>
+                        <div class="col-md-9">
+                            <select id="goods-type-list">
+                                <option value="0">所有分类</option>
+                                <?php foreach($this->goodsTypeList as $goodsType) { ?>
+                                  <option value="<?= $goodsType['id']; ?>"><?= $goodsType['name']; ?></option>
+                                <?php } ?>
+                            </select>
+                            <select id="goods-brand-list">
+                                <option value="0">所有品牌</option>
+                                <?php foreach($this->goodsBrandList as $goodsBrand) { ?>
+                                  <option value="<?= $goodsBrand['id']; ?>"><?= $goodsBrand['brand_name']; ?></option>
+                                <?php } ?>
+                            </select>
+                            <div class="input-group f-l list-all ml-180" style="margin-top:-25px; margin-left:180px;">
+                                    <input class="search" type="text" id="goods-keyword" placeholder="商品关键词">
+                                    <span class="input-group-btn list-all">
+                                        <input type="hidden" id="hidden-goods-list" name="goods_json" value="<?= $this->activityGoodsJson; ?>" />
+                                        <button class="btn btn-default" type="button" style="height:25px;" id="goods-search">搜索</button>
+                                    </span>
+                            </div>
+                         </div>
+                    </div>
+                    <div class="field-box">
+                        <div class="col-md-12" >
+                                <div class="kexuan col-md-5">
+                                    <h6 class="text-center">可选商品</h6>
+                                    <select multiple="multiple" size="10" style="width: 100%" id="goods-list">
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <h6 class="text-center">操作</h6>
+                                    <div class="text-center caozuo" style="padding: 10px 0">
+                                        <span>数量</span>
+                                        <input type="text" id="goods-num" value="1" style="width: 50px;" />
+                                        <input type="hidden" id="hidden-page" value="free" />
+                                        <button type="button" id="more-left-btn" style="margin-bottom: 5px;">>></button><br>
+                                        <button type="button" id="left-btn" style="margin-bottom: 5px;">></button><br>
+                                        <button type="button" id="right-btn" style="margin-bottom: 5px;"><</button><br>
+                                        <button type="button" id="more-right-btn" style="margin-bottom: 5px;"><<</button>
+                                    </div>
+                                </div>
+                                 <div class="kexuan col-md-5">
+                                    <h6 class="text-center">可选商品</h6>
+                                    <select multiple="multiple" size="10" style="width: 100%" id="activity-goods-list">
+                                        <?php foreach($this->activityGoodsList as $key => $item) { ?>
+                                            <option value="<?= $item['goods_id']; ?>" data-nums="<?= $item['goods_num']; ?>" ><?= $item['goods_name'] . ':' . $item['goods_num']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                      <div class="field-box actions" style="text-align: center;">
+                            <input type="hidden" value="<?= $this->record['id']; ?>" name="id" id="id" />
+                            <input type="button" id="submit-btn" class="btn-glow primary" value="确定">
+                           
+                            <input type="reset" value="重置" class="btn-glow primary chongzhi" >
+                        </div>                             
+                </form>
+
+            </div> 
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- /content -->
+ </div>
+
+<?php include(dirname(__FILE__) . '/../sys/plugins.phtml')?>
+<script type="text/javascript" src="<?= $this->cdnUrl; ?>/js/amd/activity.js"></script>
+

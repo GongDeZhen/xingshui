@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>付款-代金券</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="/vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/css/ratchet.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/app.css">
+        <script type="text/javascript" src="/js/baidu_count.js"></script>
+    <script src="js/ratchet.min.js"></script>
+</head>
+<body class="bg-gray2">
+<header class="bar bar-nav bg-bule b-n">
+    <a href="./billing" class="icon icon-goback pull-left"></a>
+    <h1 class="title c-white">可用代金券</h1>
+</header>
+<?php if(isset($coupons)){?>
+	<div class="content content-box ptb-20 used-box">
+	    <?php foreach($coupons as $k => $v){?>
+    	    <div class="afterpr clear">
+    	        <ul class="afterdjin pl-0">
+    	            <li class="bg-white card-box">
+    	                <div class="row">
+    	                    <div class="col-xs-8 pr-0">
+    	                        <div class="coupon1-cont-box">
+    	                            <h3 class="c-gray"><?=$v['name']?></h3>
+    	                            <p>使用条件：全场商品通用</p>
+    	                            <p>使用期限：<?=date("Y-m-d",$v['start_time'])?>-<?=date("Y-m-d",$v['end_time'])?></p>
+    	                        </div>
+    	
+    	                    </div>
+    	                    <div class="col-xs-4" style="padding-left:0;">
+    	                        <div class="discount">
+    	                            <span style="font-size:1.9em;">￥<?=$v['type_num']?></span>
+    	                            <span style="font-size: 0.5em;">.00<?=$v['type_name']?></span>
+    	                        </div>
+    	                    </div>
+    	                </div>
+    	            </li>
+    	        </ul>
+    	        <div class="afterl">
+    	            <span class="paylichk">
+    	               <input type="radio" name="payput"  value ='<?=$v['id']?>' checked="checked" class="payput" />
+    	               <input type="hidden" name="money"  value ='<?=$v['type_num']?>' class="money" />
+    	            </span>
+    	        </div>
+    	    </div>
+        <?php }?>
+	    <button class="btn btn-block button-bule b-n btn-public f-normal" onclick="vouchers()">提交</button>
+	</div>
+<?php }else{ ?>
+	<div class="content uncouple-box">
+	    <p class="text-center c-gary1">
+	        <a class="c-orange ml-10" href="javascript:;">没有更多代金券了</a>
+	    </p>
+	</div>
+<?php }?>
+<script type="text/javascript" src="/vendor/js/zepto.min.js"></script>
+<script type="text/javascript">
+function vouchers(){
+	var obj=$("input[name='payput']:checked");
+	var id=obj.val();
+	var money=obj.siblings('.money').attr('value');
+	var info={'id':id,'money':money};
+	$.ajax({
+	    type:'post',
+	    url:'/cart/setcookie',
+	    dataType:'json',
+	    data:{'info':info,'type':2},
+	    success:function(data){
+	  	   if(data.code==1){
+    		   window.location.href="/cart/billing";
+        	}else{
+        		 alert('选择代金券失败');
+	        }
+		}
+	});	  
+}
+</script>
+</body>
+</html>

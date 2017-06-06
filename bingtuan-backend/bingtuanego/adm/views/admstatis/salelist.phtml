@@ -1,0 +1,144 @@
+<script src="/js/thumbnails.js"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<style>
+.current{color:#000000;}
+.thumbnail{margin-bottom: 0px;}
+tr{border-top: 1px solid #ddd;text-align: center;}
+th {text-align: center;}
+.table>tbody>tr>td>.input-group {float: left;padding: 0.2em;width:23%}
+</style>
+<script>
+    laydate.skin('danlan')
+</script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+        <li><a href="#">平台统计</a></li>
+        <li class="active">销售统计</li>
+    </ol>
+    <div>
+        <form  method="get">
+        <table class="table" style="background:#f5f5f5">
+                <tr>
+                    <td>
+                        <div class="input-group" style='width: 20em'>
+                            <div class="input-group-addon">公司</div>
+                            <select name="company_id" class='form-control' onchange=aa(this.value) >
+                                <option value="0">全部</option>
+                                <?php foreach($this->getwareho as $k => $v){ ?>
+                                        <option value="<?=$v['id']?>" <?= ($this->get['company_id'] == $v['id']) ? 'selected=selected' :'' ?>><?= $v['companyname']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                         <div class="input-group" style='width: 20em'>
+                            <div class="input-group-addon">经销商</div>
+                            <select name="" id="warehouse" class='form-control'  >
+                                <option value="0">全部</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style='width: 18em'>
+                            <div class="input-group-addon">时间</div>
+                            <input type="text" class='form-control' style='width: 18em;' placeholder="开始时间" onclick="laydate()" name="ktime" value='<?= $this->get['ktime']; ?>'>
+                            <input class='form-control' style='width: 18em;' type="text" placeholder="结束时间" onclick="laydate()" name="gtime" value='<?= $this->get['gtime']; ?>'>
+                        </div>
+                        <div class="input-group" style='width: 18em'>
+                            <div class="input-group col-md-1" style='width:0;float: right;'>
+                                <input type="submit" class='btn btn-primary' placeholder="搜索">&nbsp;&nbsp;&nbsp;
+                                <bottom class="btn btn-primary export" style='width:3.9em'>导出</bottom>
+                            <div>
+                      </td>
+                </tr>
+        </table>
+       </form>
+    </div>
+    <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a href="#">销售统计</a></li>
+    </ul>
+    <table class="table table-hover">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>当日销售额排名</th>
+          <th>经销商名称</th>
+          <th>上线天数</th>
+          <th>当日销售额</th>
+          <th>当日有效订单数</th>
+          <th>当月销售额</th>
+          <th>当月有效订单数</th>
+          <th>累积销售额</th>
+          <th>累积有效订单数</th>
+          <th>累积终端店数</th>
+          <th>转化率</th>
+          <th>活跃度</th>
+          <th>日单量</th>
+          <th>日新增终端</th>
+        </tr>
+    </thead>
+      <tbody>
+            <tr>
+              <td class='col-md-2'>平台</td>
+              <td class='col-md-2'>平台统计</td>
+              <td class='col-md-1'><?=intval((time()-strtotime('2016-4-20'))/(60*60*24))?></td>
+              <td class='col-md-1'><?php echo (isset($this->platform['day_money']) && !empty($this->platform['day_money'])) ? $this->platform['day_money'] : 0?></td>
+              <td class='col-md-1'><?php echo (isset($this->platform['day_effective']) && !empty($this->platform['day_effective'])) ? $this->platform['day_effective'] : 0?></td>
+              <td class='col-md-1'><?php echo (isset($this->platform['month_money']) && !empty($this->platform['month_money'])) ? $this->platform['month_money'] : 0?></td>
+              <td class='col-md-1'><?php echo (isset($this->platform['month_effective']) && !empty($this->platform['month_effective'])) ? $this->platform['month_effective'] : 0?></td>
+              <td class='col-md-1'><?php echo (isset($this->platform['zong_money']) && !empty($this->platform['zong_money']))  ? $this->platform['zong_money'] : 0?></td>
+              <td class='col-md-1'><?=$this->platform['zong_effective']?></td>
+              <td class='col-md-1'><?=$this->platform['total_terminal']?></td>
+              <td class='col-md-1'><?=round((float)(empty($this->platform['zongorderwu'])?0:(empty($this->platform['total_terminal'])?0:($this->platform['zongorderwu']/$this->platform['total_terminal'])*100)),2).'%' ?></td>
+              <td class='col-md-1'><?=round((float)(empty($this->platform['total_terminal_1'])?0:(empty($this->platform['total_terminal'])?0:($this->platform['total_terminal_1']/$this->platform['total_terminal'])*100)),2).'%'?></td>
+              <td><?=round($this->platform['zong_effective']/intval((time()-strtotime('2016-4-20'))/(60*60*24)),1)?></td>
+              <td><?=round($this->platform['total_terminal']/intval((time()-strtotime('2016-4-20'))/(60*60*24)),1)?></td>
+            </tr> 
+        <?php foreach ($this->getCompanyList as $k => $v){?>
+            <tr>
+              <td class='col-md-2' ><?=($this->pag == '1' || $this->pag == '0' )? $k+1 : (($this->pag-1)*10) + $k+1?></td>
+              <td class='col-md-2'><?=$v['wname']?></td>
+              <td class='col-md-1'><?=intval((time()-$v['operate_days'])/(60*60*24))?></td>
+              <td class='col-md-1'><?php echo (isset($v['day_amount']) && !empty($v['day_amount'])) ? $v['day_amount'] : 0?></td>
+              <td class='col-md-1'><?php echo (isset($v['day_num']) && !empty($v['day_num'])) ? $v['day_num'] : 0?></td>
+              <td class='col-md-1'><?php echo (isset($v['month_amount']) && !empty($v['month_amount'])) ? $v['month_amount'] : 0?></td>
+              <td class='col-md-1'><?php echo (isset($v['month_num']) && !empty($v['month_num'])) ? $v['month_num'] : 0?></td>
+              <td class='col-md-1'><?php echo (isset($v['total']) && !empty($v['total'])) ? $v['total'] : 0?></td>
+              <td class='col-md-1'><?php echo (isset($v['count']) && !empty($v['count']))  ? $v['count'] : 0?></td>
+              <td class='col-md-1'><?=$v['unum']?></td>
+              <td class='col-md-1'><?=round((float)(empty($v['ucount_s'])?0:(empty($v['unum'])?0:($v['ucount_s']/$v['unum'])*100)),2).'%' ?></td>
+              <td class='col-md-1'><?=round((float)(empty($v['ucount'])?0:(empty($v['unum'])?0:($v['ucount']/$v['unum'])*100)),2).'%'?></td>
+              <td class='col-md-1'><?=round(((isset($v['count']) && !empty($v['count'])) ? $v['count'] : 0) / ($this->platform['total_days'] ? $this->platform['total_days'] : intval((time()-$v['operate_days'])/(60*60*24))),1)?></td>
+              <td class='col-md-1'><?= round($v['unum'] / (empty($v['day']) ? intval((time()-$v['operate_days'])/(60*60*24)) : $v['day']),1)?></td>
+            </tr> 
+            <?php } ?>  
+      </tbody>
+    </table>
+    <?php echo $this->paglist; ?>
+</div>
+<script>
+//===================单品牌导出==============
+$(document).on('click','.export',function(){
+    if (confirm("确定导出？")) {
+    	var export_type = $(this).attr('name');
+    	window.location.href="saleExport?"+$("form").serialize(); 
+    }
+});
+ function aa(id){
+    $.ajax({
+        type: "POST",
+        url: "getwarehouse",
+        dataType: "json",
+        data: {cid:id},
+        success: function(data){
+           if(data==false){
+        	       $('#warehouse').empty();
+        	       $('#warehouse').append("<option value= 0 >全部</option>");
+            }else{
+	               $('#warehouse').empty();
+	               $('#warehouse').append("<option value="+data.id+">"+data.warehousename+"</option>");
+            }
+          
+        }
+     });
+}
+</script>

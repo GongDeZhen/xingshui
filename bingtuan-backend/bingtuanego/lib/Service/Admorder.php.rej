@@ -1,0 +1,10 @@
+diff a/lib/Service/Admorder.php b/lib/Service/Admorder.php	(rejected hunks)
+@@ -396,7 +396,7 @@
+                 Service::getInstance("order")->updateOrderRefundStatusByWeixin($orderID,'',$refund_num);
+                 Service::getInstance('order')->rebackGoodsNumber($orderID); // 把商品退回到库存
+                 Service::getInstance("message")->addMessage($orderID, 'refund');
+-                return '退款成功';
++                return '已退款';
+             } else {
+                 return '退款失败';
+             }

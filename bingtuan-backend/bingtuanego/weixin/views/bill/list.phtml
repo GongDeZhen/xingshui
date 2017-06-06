@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>我的账单(多年分)</title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="vendor/bootstrap/v3/css/bs-col-sys.min.css" />
+	<link rel="stylesheet" type="text/css" href="/vendor/css/ratchet.min.css" />
+	<link rel="stylesheet" type="text/css" href="/css/app.css">
+	<link rel="stylesheet" type="text/css" href="/css/navigator.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/mycss.css">
+	<!--组件依赖js begin-->
+	<script type="text/javascript" src="/js/nav/zepto.js"></script>
+	<script type="text/javascript" src="/js/nav/zepto.extend.js"></script>
+	<script type="text/javascript" src="/js/nav/zepto.ui.js"></script>
+	<script type="text/javascript" src="/js/nav/zepto.iscroll.js"></script>
+	<script type="text/javascript" src="/js/nav/widget/navigator.js"></script>
+	<script type="text/javascript" src="/js/nav/widget/navigator.iscroll.js"></script>
+	    <script type="text/javascript" src="/js/baidu_count.js"></script>
+	<!--组件依赖js end-->
+</head>
+<body class="addressbody">
+<div class="contbody whitebg">
+	<header class="bar bar-nav bg-bule b-n">
+		<a href="#" class="icon icon-goback pull-left"></a>
+		<h1 class="title c-white">我的账单</h1>
+	</header>
+	<div class="mt-56">
+		<div class="bill_Navbox">
+			<span class="billleftbtn"></span>
+			<div id="nav-smartSetup">
+				<ul class="bill_Nav">
+					<li><a class="cur cl" href="javascript:;">2001年</a></li>
+					<li><a href="javascript:;"  class="cl">2002年</a></li>
+					<li><a href="javascript:;" class="cl">2003年</a></li>
+					<li><a href="javascript:;" class="cl">2004年</a></li>
+					<li><a href="javascript:;" class="cl">2005年</a></li>
+					<li><a href="javascript:;" class="cl">2006年</a></li>
+					<li><a href="javascript:;" class="cl">2007年</a></li>
+					<li><a href="javascript:;" class="cl">2008年</a></li>
+					<li><a href="javascript:;" class="cl">2009年</a></li>
+					<li><a href="javascript:;" class="cl">2010年</a></li>
+					<li><a href="javascript:;" class="cl">2011年</a></li>
+					<li><a href="javascript:;" class="cl">2012年</a></li>
+					<li><a href="javascript:;" class="cl">2013年</a></li>
+					<li><a href="javascript:;" class="cl">2014年</a></li>
+					<li><a href="javascript:;" class="cl">2015年</a></li>
+					<li><a href="javascript:;" class="cl">2016年</a></li>
+				</ul>
+			</div>
+			<span class="billrightbtn"></span>
+		</div>
+		<?php if(!empty($binfo)) {?>
+		<ul class="xl_det_ul mybillinfoul">
+		      <?php foreach($binfo as $k => $v){?>
+    			<li class="mybillinfoli unactive">
+    				<div class="mybillleft fl">
+    					<div class="mybillleftMonth">04月<span class="mybillleftMonthgray">（3月16日-4月15日）</span></div>
+    					<div class="mybillleftprice">账单金额：<span class="mybillleftpriceNum">￥3,000</span></div>
+    				</div>
+    				<div class="mybillright fr">
+    					<div class="mybillrightMonth"><span class="grayfont bluefont">未结算</span></div>
+    					<div class="mybillrighttime">结算日：2015-04-15</div>
+    				</div>
+    				<span class="more"><a href="#">&gt;</a></span>
+    			</li>
+    		<?php }?>
+		</ul>
+		<p class="mybillallprice">账单金额上限50000元</p>
+		<?php }else{?>
+		   <div class="content-box text-center mt-120" >
+           <img src="/images/car-bule.png" width="75px" height="75px" class="mb-20" style="display:inline"/>
+           <a href="Javascript:;"><p class="fs-17 c-gary1">你目前还没有账单消息</p></a>
+           <button class="btn btn-block c-white bg-bule b-n btn-public mb-20 f-n mt-50">知道了，去购物！</button>
+           </div>
+		<?php }?>
+	</div>
+</div>
+<script type="text/javascript">
+$('.cl').on('click',function(){
+    var year=$(this).html();
+    $.ajax({
+    	type:'post',
+        url:'/bill/list',
+        data:'year='+year,
+        datatype:'json',
+        success:function(data){
+
+        }
+        
+    });
+});
+    (function () {
+        /*组件初始化js begin*/
+        $('#nav-smartSetup').navigator();    //smart setup方式创建 推荐方式
+    })();
+
+</script>
+<script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/function.js"></script>
+</body>
+</html>

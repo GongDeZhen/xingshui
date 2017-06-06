@@ -1,0 +1,334 @@
+<script src="/js/thumbnails.js"></script>
+<script src="/laydate/laydate.js" type="text/javascript"></script>
+<style>
+.current{color:#000000;}
+.thumbnail{margin-bottom: 0px;}
+tr{border-top: 1px solid #ddd;text-align: center;}
+th {text-align: center;}
+.table>tbody>tr>td>.input-group {float: left;padding: 0.2em;width:23%}
+</style>
+<script>
+    laydate.skin('danlan')
+</script>
+<nav class="col-md-2 hidden-print dev-sidebar">
+    <?php include(dirname(__FILE__) . '/../sys/dev_nav.phtml')?>
+</nav>
+<div class="col-md-10">
+    <ol class="breadcrumb">
+        <li><a href="#">平台统计</a></li>
+        <li class="active">终端店统计</li>
+    </ol>
+    <div>
+        <form action="" method="get" id='ajaxForm'>
+        <table class="table" style="background:#f5f5f5">
+            <tr>
+                <td>
+                    <div class="input-group" style='width: 18em'>
+                        <div class="input-group-addon">公司</div>
+                        <select name="company_id" class='form-control' onchange=aa(this.value) >
+                            <option value="0">全部</option>
+                            <?php foreach($this->getCompanyList as $k => $v){ ?>
+                                    <option value="<?=$v['id']?>" <?= ($this->get['company_id'] == $v['id']) ? 'selected=selected' :'' ?>><?= $v['name']; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="input-group" style='width: 20em'>
+                            <div class="input-group-addon">经销商</div>
+                            <select name="" id="warehouse" class='form-control' >
+                                <option value="0">全部</option>
+                            </select>
+                    </div>
+                    <div class="input-group" style='width: 18em'>
+                        <div class="input-group-addon">时间</div>
+                        <input type="text" class='form-control' style='width: 18em;' placeholder="开始时间" onclick="laydate()" name="ktime" value='<?= $this->get['ktime']; ?>'>
+                        <input class='form-control' style='width: 18em;' type="text" placeholder="结束时间" onclick="laydate()" name="gtime" value='<?= $this->get['gtime']; ?>'>
+                    </div>
+                    <span style='float:right;padding:0.3em'>
+                        <input class="btn btn-primary" type="submit" value="搜索">
+                        <bottom class="btn btn-primary export" style='width:8em'>导出数据</bottom>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        
+    </div>
+<!--     <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a href="#">商品列表</a></li>
+      <li role="presentation"><a href="/goods/add">添加商品</a></li>
+    </ul> -->
+    <table class="table table-hover">
+    <caption></caption>
+    <thead>
+        <tr>
+          <th>公司名称</th>
+          <th>经销商</th>
+          <th>终端店总数</th>
+          <th>下单终端总数</th>
+          <th>转化率</th>
+          <th>活跃终端店总数</th>
+          <th>活跃度</th>
+          <th>客单价</th>
+          <th>复购率</th>
+        </tr>
+    </thead>
+      <tbody>
+              <td class='col-md-2'>平台</td>
+              <td class='col-md-2'>平台</td>
+              <td class='col-md-2'><?=$this->platform['total_terminal']?></td>
+              <td class='col-md-2'><?=$this->platform['zongorderwu']?></td>
+              <td class='col-md-2'><?=round((float)(($this->platform["zongorderwu"]/$this->platform['total_terminal'])*100),2).'%' ?></td>
+              <td class='col-md-2'><?=$this->platform['total_terminal_1']?></td>
+              <td class='col-md-2'><?=round((float)(($this->platform["total_terminal_1"]/$this->platform['total_terminal'])*100),2).'%' ?></td>
+              <td class='col-md-2'><?=round((float)(($this->platform["zong_money"]/$this->platform['zong_effective'])),2) ?></td>
+              <td class='col-md-2'><?=round((float)(($this->platform["zong_effective"]/$this->platform['total_terminal_1'])),2) ?></td>
+          <?php if ($this->list): ?>
+            <?php foreach ($this->list as $k=>$v): ?>
+            <tr id='is_del_1'>
+              <td class='col-md-2'><?=$v["cname"]?></td>
+              <td class='col-md-2'><?=$v["wname"]?></td>
+              <td class='col-md-2'><?=$v["ucount"]?></td>
+              <td class='col-md-2'><?=$v["uorder"]?></td>
+              <!-- 下过单的终端店（含未成交）除以 终端店总数 -->
+              <td class='col-md-2'><?=round((float)(($v["uorder"]/$v['ucount'])*100),2).'%' ?></td>
+              <?php if($v['uorder_1'] == '' ||$v['uorder_1'] == '0'){ ?>
+                    <td class='col-md-2'>0</td>
+                    <!-- 活跃终端除终端店总数 -->
+                    <td class='col-md-2'>0</td>
+                    <!-- 客单价-客单价=销售额÷顾客数 -->
+                    <td class='col-md-2'>0</td>
+                    <!--总复购率（总订单数除活跃终端数）  -->
+                   <td class='col-md-2'>0</td>
+                <?php }else{ ?>
+	               <td class='col-md-2'><?=$v["uorder_1"]?></td>
+	               <!-- 活跃终端除终端店总数 -->
+	               <td class='col-md-2'><?=round((float)(($v["uorder_1"]/$v['ucount'])*100),2).'%' ?></td>
+	               <!-- 客单价-客单价=销售额÷有效订单数 -->                       
+	               <td class='col-md-2'><?php echo (isset($v['order_money']) && !empty($v['ordernum'])) ? round($v['order_money']/$v['ordernum'],2) : 0 ?></td>
+	                <!--总复购率（总有效订单数除活跃终端数）  -->
+	               <td class='col-md-2'><?=round($v["ordernum"]/$v['uorder_1'],2) ?></td>
+             <?php }?>
+            
+            </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
+      </tbody>
+    </table>
+    </form>
+    <?php echo $this->paglist; ?>
+</div>
+
+<script>
+//===================公司=======================
+
+$(document).on('click','.export',function(){
+    if (confirm("你确定要导出终端统计信息吗？")) {
+        window.location.href="/admstatis/storelistExport?"+$("form").serialize();
+    }
+});
+
+$('select[name="company_id"]').change(function(){
+    var cid = $('select[name="company_id"]').val();
+    var coupons = $('select[name="coupons"]');
+    var activity = $('select[name="activity"]');
+    
+    $.ajax({
+        type: "POST",
+        url: "selectList",
+        dataType: "json",
+        data: "cid="+cid,
+        success: function(data){
+            if (data.data == '') {
+                coupons.empty();
+                coupons.append('<option value="0">请选择</option>');
+                activity.empty();
+                activity.append('<option value="0">请选择</option>');
+            } else {
+                coupons.empty();
+                coupons.append('<option value="0">请选择</option>'+data.data[0]);
+                activity.empty();
+                activity.append('<option value="0">请选择</option>'+data.data[1]);
+            }
+        }
+     });
+});
+//============上下架========================
+function show(id,is_show)
+{
+    if ('<?php echo $this->rbac == '*' ? 'true' :(in_array('goods_upshow', $this->rbac['action']) ? 'true':'false')?>' == 'false') {
+        alert('权限不足');
+        return;
+    }
+    
+    $.ajax({
+       type: "POST",
+       url: "upShow",
+       dataType: "json",
+       data: "id="+id+"&is_show="+is_show,
+       success: function(data){
+           if (data == 1) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-default' onclick='show("+id+" ,1)'>已上架</span>");alert('上架成功');
+           } else if(data == 0) {
+                $("#is_show_"+id).children('span').remove();
+                $("#is_show_"+id).append("<span class='btn btn-default' onclick='show("+id+" ,0)'>下架</span>");alert('下架成功');
+           } 
+           if (data == 400) {
+               alert('失败');
+           }
+       }
+    });
+}
+//=========================假删除商品====================
+function del(id,is_delete)
+{
+    $.ajax({
+        type: "POST",
+        url: "delete",
+        dataType: "json",
+        data: "id="+id+"&is_delete="+is_delete,
+        success: function(data){
+            if (data == 200) {
+                $("#is_del_"+id).remove();
+                $("#modal").append('<div class="col-md-3"></div><div class="col-md-6" style="margin-top: 60px"><div class="alert alert-success" role="alert"><p>删除成功</p></div></div><div class="col-md-3"></div>');
+                setTimeout(function(){$("#modal").modal("hide")},2000);
+            }
+            if (data == 400) {
+                alert('请重试');
+            }
+        }
+     });
+}
+//===================排序================================
+function sort(name, state)
+{
+    if (name == 'amount') {
+        if (<?= $this->get['amount'] ? 'true' : 'false' ?> == false) {
+            window.location.href="list?"+$("#ajaxForm").serialize()+'&amount=desc&is_show=<?=($this->get['is_show'] ? $this->get['is_show'] : '')?>';
+        } else {
+            window.location.href="list?"+$("#ajaxForm").serialize()+'&amount='+state+'&is_show=<?=($this->get['is_show'] ? $this->get['is_show'] : '')?>';
+        }
+    }
+    if (name == 'is_show') {
+        if (<?= $this->get['amount'] ? 'true' : 'false' ?> == false) {
+            window.location.href="list?"+$("#ajaxForm").serialize()+'&amount=desc&is_show=<?=($this->get['is_show'] ? $this->get['is_show'] : '')?>';
+        } else {
+            window.location.href="list?"+$("#ajaxForm").serialize()+'&amount=<?=($this->get['amount'] ? $this->get['amount'] : '')?>&is_show='+state;
+        }
+    }
+}
+// ================修改库存===============
+$(document).on('click','.paybian',function(){
+    var id = $(this).parent().attr('id');
+    var val = $('#'+id).attr('value');
+    var tpl = '<input type="text" onclick="amountBlur()" value="'+val+'" style="width: 65px;">';
+    $('#'+id).empty();
+    $('#'+id).append(tpl);
+});
+function amountBlur() {
+    $('input').blur(function(){
+        var id = $(this).parent().attr('id');
+        var val = $(this).val();
+        
+        $.ajax({
+            type: "POST",
+            url: "upAmount",
+            dataType: "json",
+            data: "id="+id+"&amount="+val,
+            success: function(data){
+                if (data.success == 1) {
+                     $('#'+id).empty();
+                     $('#'+id).append(val);
+                     alert(data.data);
+                } else {
+                     alert(data.error);
+                }
+                window.location.reload();
+            }
+         });
+    });
+}
+
+//================修改价格===============
+$(document).on('click','.price',function(){
+    var id = $(this).parent().attr('id');
+    var val = $('#'+id).attr('value');
+    var tpl = '<input type="text" onclick="priceBlur()" value="'+val+'" style="width: 60px;">';
+    $('#'+id).empty();
+    $('#'+id).append(tpl);
+});
+function priceBlur() {
+    
+    $('input').blur(function(){
+        var id = $(this).parent().attr('id');
+        var val = $(this).val();
+        $.ajax({
+            type: "POST",
+            url: "upAllPrice",
+            dataType: "json",
+            data: "id="+id+"&price="+val,
+            success: function(data){
+                if (data.success == 1) {
+                     $('#'+id).empty();
+                     $('#'+id).append(val);
+                     alert(data.data);
+                } else {
+                     alert(data.error);
+                }
+                window.location.reload(); 
+            }
+         });
+    });
+}
+
+//================修改参考价格===============
+$(document).on('click','.city_price',function(){
+    var id = $(this).parent().attr('id');
+    var val = $('#'+id).attr('value');
+    var tpl = '<input type="text" onclick="cityPriceBlur()" value="'+val+'" style="width: 60px;">';
+    $('#'+id).empty();
+    $('#'+id).append(tpl);
+});
+function cityPriceBlur() {
+    $('input').blur(function(){
+        var id = $(this).parent().attr('id');
+        var val = $(this).val();
+     
+        $.ajax({
+            type: "POST",
+            url: "upCityPrice",
+            dataType: "json",
+            data: "id="+id+"&price="+val,
+            success: function(data){
+                 console.log(data);
+                return false;
+                if (data.success == 1) {
+                     $('#'+id).empty();
+                     $('#'+id).append(val);
+                     alert(data.data);
+                } else {
+                     alert(data.error);
+                }
+                //window.location.reload(); 
+            }
+         });
+    });
+}
+function aa(id){
+    $.ajax({
+        type: "POST",
+        url: "getwarehouse",
+        dataType: "json",
+        data: "cid="+id,
+        success: function(data){
+           if(data==false){
+        	       $('#warehouse').empty();
+        	       $('#warehouse').append("<option value= 0 >全部</option>");
+            }else{
+	               $('#warehouse').empty();
+	               $('#warehouse').append("<option value="+data.id+">"+data.warehousename+"</option>");
+            }
+          
+        }
+     });
+}
+</script>
